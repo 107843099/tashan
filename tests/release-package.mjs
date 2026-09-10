@@ -88,6 +88,14 @@ for (const project of catalog.projects) {
     assert.deepEqual(project[field], prior[field], `${project.id}: preserved ${field}`);
   }
   for (const href of [project.sourceHref, project.packageHref, project.cover, project.document?.download, project.example?.cover, project.example?.imageHref]) resolveLocal(href);
+  if(project.coverVariants){
+    assert.deepEqual(project.coverVariants,prior.coverVariants,`${project.id}: display variants preserved`);
+    assert.deepEqual(project.coverVariants.map(image=>image.width),[320,640,960]);
+    for(const image of project.coverVariants){
+      const bytes=read(resolveLocal(image.src));assert.equal(bytes.length,image.bytes);assert.equal(digest(bytes),image.sha256);
+    }
+    assert.equal(project.cover,project.coverVariants.find(image=>image.width===640).src);
+  }
   assert(project.sourceHref.startsWith('./projects/'), `${project.id}: canonical entry path`);
   if (project.kind === 'visual') assert.equal(digest(read(resolveLocal(project.sourceHref))), prior.sha256, `${project.id}: source HTML must be unmodified`);
   if (project.document) {
@@ -95,7 +103,9 @@ for (const project of catalog.projects) {
     assert.equal(project.document.content, prior.document.content, `${project.id}: prompt content preserved`);
   }
   if (project.example) {
-    assert.equal(project.example.imageHref, project.cover, `${project.id}: cover and example share one file`);
+    assert.equal(project.example.cover, project.cover, `${project.id}: example uses the same display cover`);
+    if(project.coverVariants)assert.notEqual(project.example.imageHref, project.cover, `${project.id}: original download is separate from its display variant`);
+    else assert.equal(project.example.imageHref, project.cover, `${project.id}: unoptimized cover shares its original file`);
     assert.equal(digest(read(resolveLocal(project.example.imageHref))), project.example.sha256);
   }
   assert(!JSON.stringify([project.sourceHref, project.packageHref, project.document?.download, project.example?.imageHref]).includes('vibe%20coding'), `${project.id}: no source-folder URLs`);

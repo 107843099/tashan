@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read the local library. Generate browser data; never execute imported projects."""
 from pathlib import Path
-import json, re, hashlib, zipfile
+import json, re, hashlib, zipfile, runpy
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +42,9 @@ curation = json.loads((ROOT/'data/catalog-curation.json').read_text())
 checks = json.loads((ROOT/'data/verification.json').read_text())
 teaching = json.loads((ROOT/'data/teaching-analysis.json').read_text()) if (ROOT/'data/teaching-analysis.json').exists() else {}
 examples = json.loads((ROOT/'data/generated-examples.json').read_text()) if (ROOT/'data/generated-examples.json').exists() else {}
+# Display images are pre-generated and committed; normal builds only validate
+# their source hashes and dimensions, without importing an image encoder.
+cover_variants = runpy.run_path(str(ROOT/'scripts/build-cover-variants.py'))['check']()['projects']
 all_files = [p for p in LIBRARY.rglob('*') if p.is_file() and p.suffix in ('.html','.md') and 'node_modules' not in p.parts]
 by_hash = {}
 for path in all_files: by_hash.setdefault(digest(path.read_bytes()),[]).append(str(path.relative_to(ROOT)))
@@ -64,6 +67,15 @@ for item in curation:
     item['example']=examples.get(item['id'])
     if item['example']:
         item['cover']=item['example']['cover']
+    if item['id'] in cover_variants:
+        variants = cover_variants[item['id']]['variants']
+        default = next(image for image in variants if image['width'] == 640)
+        item['coverVariants']=variants
+        item['cover']=default['src']
+        item['coverWidth']=default['width']
+        item['coverHeight']=default['height']
+        if item['example']:
+            item['example']['cover']=item['cover']
     item['document']=document(path,item['id']) if item['kind']=='prompt' else document(local_file(item['promptSource']),item['id']) if item.get('promptSource') else None
     projects.append(item)
 output={'version':1,'libraryRoot':'vibe coding库','generatedFrom':'local-files','projects':projects,'discoveredFiles':len(all_files),'note':'简介和建议学段为展示整理；来源原文保留。运行检查不等于课堂验证。'}

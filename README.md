@@ -47,6 +47,8 @@ npm run preview
 
 ## 维护文档
 
+- [首屏加载、预览图片与浏览器验收](docs/PERFORMANCE_QA.md)
+
 - [AI 助手、自动分析与真实验证](docs/AI_ASSISTANT.md)
 - [2026-09-11 上线与示例验收](docs/RELEASE_QA_2026-09-11.md)
 - [账户页面、8 位密码与上线复测](docs/ACCOUNT_SETTINGS_QA.md)

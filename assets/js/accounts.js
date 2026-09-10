@@ -282,7 +282,7 @@
   let pendingEntry=false;
   let createdCredentials=null, lastAppearance=null, appearanceForms=null;
   const state = {user:null,configured:false,mode:'unavailable',initialized:false,busy:false,checking:false,error:'',notice:'',username:'',adminTab:'users',users:[],total:0,page:1,pageSize:20,q:'',roleFilter:'',statusFilter:'',editorMode:'empty',errorForm:'',loaded:false,loading:false,adminError:'',selected:null,createDraft:{},events:[],auditLoaded:false,auditLoading:false};
-  let hooks = {}, started = false, sessionVersion = 0, identityEpoch = 0, channel, lastCheck = 0;
+  let hooks = {}, started = false, sessionVersion = 0, identityEpoch = 0, channel, lastCheck = 0, startupPrefetch = null;
   let resolveReady;
   const ready = new Promise(resolve => { resolveReady = resolve; });
 
@@ -349,13 +349,23 @@
   async function refreshSession({initial=false} = {}) {
     if (state.checking || (state.busy && !initial)) return;
     state.checking=true;lastCheck=Date.now();const version=++sessionVersion;
+    const pending=initial?startupPrefetch:null;
+    if(initial)startupPrefetch=null;
     try {
-      const status=await rawRequest('/status');
+      // Only startup overlaps these requests with the remaining deferred
+      // scripts. Identity publication still waits for init to install hooks.
+      const statusResult=pending?await pending[0]:null;
+      if(statusResult?.status==='rejected')throw statusResult.reason;
+      const status=statusResult?statusResult.value:await rawRequest('/status');
       if(version!==sessionVersion)return;
       state.configured=status.configured===true;state.mode=status.mode || 'unavailable';
       let user=null;
       if (state.configured) {
-        try { user=(await rawRequest('/auth/session')).user || null; }
+        try {
+          const sessionResult=pending?await pending[1]:null;
+          if(sessionResult?.status==='rejected')throw sessionResult.reason;
+          user=(sessionResult?sessionResult.value:await rawRequest('/auth/session')).user || null;
+        }
         catch(error) { if(error.status!==401)throw error; }
       }
       if(version!==sessionVersion)return;
@@ -695,4 +705,7 @@
     if(location.hash.split('/')[0]==='#admin'&&state.user?.role==='admin'&&!state.user.mustChangePassword){if(state.adminTab==='users'&&!state.loaded&&!state.loading)queueMicrotask(loadUsers);if(state.adminTab==='audit'&&!state.auditLoaded&&!state.auditLoading)queueMicrotask(loadAudit);if(state.adminTab==='ai'&&!adminAi.loaded&&!adminAi.loading&&!adminAi.error)queueMicrotask(loadAiPrompts);}
   }
   window.TashanAccounts={init,ready,request,header,render,bind,workspaceNotice,guestExportMarkup,refreshSession,get user(){return state.user;},get mode(){return state.mode;},get configured(){return state.configured;},get initialized(){return state.initialized;},get busy(){return state.busy;}};
+  // No UI, persisted identity, or workspace access before init. Settle each
+  // failure now, including when the rest of the application cannot load.
+  startupPrefetch=[rawRequest('/status'),rawRequest('/auth/session')].map(promise=>promise.then(value=>({status:'fulfilled',value}),reason=>({status:'rejected',reason})));
 })();

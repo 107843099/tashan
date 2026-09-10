@@ -189,15 +189,23 @@ def build() -> None:
             if project.get("cover"):
                 cover_source = from_href(project["cover"])
                 project["cover"] = put(cover_source, "assets/covers/" + cover_source.name)
+            for variant in project.get("coverVariants", []):
+                variant_source = from_href(variant["src"])
+                content = variant_source.read_bytes()
+                if sha(content) != variant["sha256"] or len(content) != variant["bytes"]:
+                    raise ValueError(f"Cover variant changed for {identifier}; run the catalog checks")
+                variant["src"] = put(variant_source, "assets/covers/" + variant_source.name)
             example = project.get("example")
             if example:
                 image_source = from_href(example["imageHref"])
-                cover_source = from_href(example["cover"])
-                if image_source.read_bytes() != cover_source.read_bytes():
-                    raise ValueError(f"Example and cover differ for {identifier}; cannot deduplicate safely")
+                original_image = image_source.read_bytes()
+                if sha(original_image) != example["sha256"] or len(original_image) != example["bytes"]:
+                    raise ValueError(f"Original example image changed for {identifier}")
                 example["cover"] = project["cover"]
-                example["imageHref"] = project["cover"]
-                image_references.append({"source": image_source.relative_to(ROOT).as_posix(), "href": project["cover"], "bytes": image_source.stat().st_size, "sha256": sha(image_source.read_bytes())})
+                # Keep one original PNG for full-size viewing and downloading.
+                # Smaller display variants have separate hashes and never replace provenance.
+                example["imageHref"] = put(image_source, "assets/covers/" + identifier + "-example.png")
+                image_references.append({"source": image_source.relative_to(ROOT).as_posix(), "href": example["imageHref"], "bytes": len(original_image), "sha256": sha(original_image)})
 
             routes[identifier] = {"source": project["source"], "entry": entry, "prompt": document["download"] if document else None, "package": project.get("packageHref"), "cover": project.get("cover"), "image": example["imageHref"] if example else None}
 

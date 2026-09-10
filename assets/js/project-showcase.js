@@ -15,12 +15,17 @@
   const nextIndex = () => (index + 1) % featured.length;
   const number = value => String(value).padStart(2, '0');
 
+  function responsiveImage(project, sizes) {
+    const variants = Array.isArray(project.coverVariants) ? project.coverVariants.filter(image => typeof image.src === 'string' && Number.isInteger(image.width) && image.width > 0) : [];
+    return variants.length ? ` srcset="${context.e(variants.map(image => image.src + ' ' + image.width + 'w').join(', '))}" sizes="${sizes}"` : '';
+  }
+
   function slides() {
     const p = current(), next = featured[nextIndex()];
-    return `<a class="showcase-main" data-kind="${p.kind}" href="${context.projectURL(p.id)}" aria-label="${label('查看项目')} · ${context.e(title(p))}"><img src="${context.e(p.cover)}" alt="${context.e(title(p))}" width="1280" height="960" fetchpriority="high" draggable="false"></a>
+    return `<a class="showcase-main" data-kind="${p.kind}" href="${context.projectURL(p.id)}" aria-label="${label('查看项目')} · ${context.e(title(p))}"><img src="${context.e(p.cover)}"${responsiveImage(p, '(max-width: 640px) 70vw, (max-width: 767px) 66vw, (max-width: 1280px) 33vw, 420px')} alt="${context.e(title(p))}" width="${p.coverWidth || 1280}" height="${p.coverHeight || 960}" fetchpriority="high" decoding="async" draggable="false"></a>
       <button type="button" class="showcase-preview" data-kind="${next.kind}" data-showcase="next" aria-label="${label('下一件作品')} · ${context.e(title(next))}">
         <span class="showcase-preview-label">${label('下一件作品')} ${icons['arrow-up-right']}</span>
-        <img src="${context.e(next.cover)}" alt="" width="640" height="960" draggable="false">
+        <img src="${context.e(next.cover)}"${responsiveImage(next, '(max-width: 640px) 22vw, (max-width: 767px) 27vw, (max-width: 1280px) 14vw, 175px')} alt="" width="${next.coverWidth || 640}" height="${next.coverHeight || 960}" fetchpriority="low" decoding="async" draggable="false">
         <span class="showcase-preview-title">${context.e(title(next))}</span>
       </button>`;
   }

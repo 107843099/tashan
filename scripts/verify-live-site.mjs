@@ -138,7 +138,7 @@ export async function verifyLiveSite(value,{fetch:fetchImpl=globalThis.fetch}={}
             const entry=new URL(project.sourceHref,origin+'/');
             ensure(entry.origin===origin&&entry.pathname.startsWith('/projects/'),'项目目录仍引用源文件目录或外部地址。');
             addResource(project.sourceHref,origin+'/',project.kind==='visual'?'runtime':'document');
-            for(const ref of [project.cover,project.packageHref,project.document?.download,project.example?.imageHref])if(ref)addResource(ref,origin+'/');
+            for(const ref of [project.cover,project.packageHref,project.document?.download,project.example?.imageHref,...(project.coverVariants||[]).map(variant=>variant.src)])if(ref)addResource(ref,origin+'/');
           }
           return;
         }

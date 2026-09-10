@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const ui=document.getElementById('practice-ui');
-  let overlay=null, scene=null, opening=0, timers=[], previousFocus=null, locale='zh-CN', paused=false;
+  let overlay=null, scene=null, sceneAbort=null, opening=0, timers=[], previousFocus=null, locale='zh-CN', paused=false;
   let completeOpening=null, transitionPromise=null;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const copy={
@@ -20,7 +20,7 @@
   function finish(animate=true){
     if(!overlay)return;
     clearTimers();const closing=overlay;overlay=null;opening++;
-    scene?.dispose();scene=null;
+    sceneAbort?.abort();sceneAbort=null;scene?.dispose();scene=null;
     closing.inert=true;closing.setAttribute('aria-hidden','true');closing.removeAttribute('aria-modal');
     closing.querySelectorAll('input').forEach(input=>input.value='');
     ui.inert=false;ui.removeAttribute('aria-hidden');
@@ -47,11 +47,36 @@
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     }
   }
+  // Paint the usable login form before importing and preparing the optional 3D scene.
+  function afterPaint(signal){return new Promise(resolve=>{
+    let frame=0,timeout=0;
+    const done=()=>{cancelAnimationFrame(frame);clearTimeout(timeout);signal.removeEventListener('abort',done);resolve();};
+    signal.addEventListener('abort',done,{once:true});
+    timeout=setTimeout(done,150);
+    frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(done);});
+  });}
   async function show(automatic=false,mode='replay'){if(overlay)return;const ticket=++opening;locale=currentLanguage();paused=reduced.matches;previousFocus=document.activeElement;overlay=document.createElement('section');overlay.className='stone-entrance';overlay.dataset.phase='waiting';overlay.dataset.mode=mode;overlay.setAttribute('role','dialog');overlay.tabIndex=-1;overlay.setAttribute('aria-modal','true');overlay.innerHTML=`<div class="entrance-canvas" aria-hidden="true"></div><div class="entrance-fallback">${fallback}</div><div class="entrance-stage-ring" aria-hidden="true"></div><header class="entrance-top"><div class="entrance-brand">${logo}<div><strong data-intro-text="brand"></strong><small>TASHAN</small></div></div><div class="entrance-controls"><div class="entrance-languages" role="group" aria-label="Language"><button data-intro-language="zh-CN" aria-label="简体中文">简</button><button data-intro-language="zh-Hant" aria-label="繁體中文">繁</button><button data-intro-language="en" aria-label="English">EN</button></div><button class="entrance-skip" data-skip><span data-intro-text="skip"></span><span aria-hidden="true">↗</span></button></div></header><div class="entrance-copy"><div class="entrance-overline" data-intro-text="overline"></div><h1><span data-intro-text="first"></span><span data-intro-text="second"></span></h1><p class="entrance-description" data-intro-text="description"></p><small class="entrance-meaning" data-intro-text="meaning"></small><div class="entrance-auth"></div></div><button class="stone-hit" data-carve><span class="stone-crosshair" aria-hidden="true"></span></button><div class="stone-invitation"><button data-carve><span data-intro-text="carve"></span><span aria-hidden="true">↗</span></button><p data-intro-text="hint"></p></div><div class="entrance-reveal-label" aria-hidden="true"><strong data-intro-text="brand"></strong><small data-intro-text="revealed"></small></div><footer class="entrance-footer"><div class="entrance-chapter"><b>01 / 03</b><span data-intro-text="chapter"></span></div><span class="entrance-footer-line" data-intro-text="raw"></span><button class="entrance-pause" data-pause></button></footer><span class="entrance-live" role="status" aria-live="polite"></span>`;
-    document.body.append(overlay);ui.inert=true;ui.setAttribute('aria-hidden','true');document.getElementById('toast')?.setAttribute('aria-hidden','true');document.documentElement.classList.add('entrance-open');updateText();overlay.focus({preventScroll:true});if(automatic){overlay.dataset.automatic='true';later(carve,reduced.matches?80:900);}
+    document.body.append(overlay);ui.inert=true;ui.setAttribute('aria-hidden','true');document.getElementById('toast')?.setAttribute('aria-hidden','true');document.documentElement.classList.add('entrance-open');updateText();if(automatic){overlay.dataset.automatic='true';later(carve,reduced.matches?80:900);}
     overlay.addEventListener('click',event=>{if(event.target.closest('[data-carve]'))carve();if(event.target.closest('[data-skip]')&&overlay?.dataset.mode!=='auth')finish();if(event.target.closest('[data-pause]')&&overlay){paused=!paused;overlay.dataset.paused=String(paused);scene?.setPaused(paused);updateText();}const lang=event.target.closest('[data-intro-language]');if(lang&&overlay){locale=lang.dataset.introLanguage;try{localStorage.setItem('practice-language',locale);}catch{}document.querySelector(`#practice-ui [data-language="${locale}"]`)?.click();updateText();}});
     overlay.addEventListener('pointermove',event=>{if(!paused)scene?.pointer(event.clientX/window.innerWidth-.5,event.clientY/window.innerHeight-.5);});
-    try{const module=await import('./entry-stone-scene.js?v=c9637bfe5c');if(ticket!==opening||!overlay||overlay.dataset.phase==='revealed')return;scene=module.createStoneScene(overlay.querySelector('.entrance-canvas'),{reduced:reduced.matches,authLayout:mode==='auth',onLost:()=>{overlay?.classList.remove('has-webgl');}});overlay.classList.add('has-webgl');if(paused)scene.setPaused(true);if(overlay.dataset.phase==='carving')scene.carve();}catch(error){console.info('Tashan entrance: using the lightweight stone illustration.',error.message);}
+    const host=overlay,controller=new AbortController();sceneAbort=controller;
+    const current=()=>ticket===opening&&overlay===host&&!controller.signal.aborted&&host.dataset.phase!=='revealed';
+    try{
+      await afterPaint(controller.signal);if(!current())return;
+      // Auth mounts synchronously after show starts; avoid laying out the empty
+      // scene first, and never steal focus from someone already typing.
+      if(!host.contains(document.activeElement))host.focus({preventScroll:true});
+      if(reduced.matches)return;
+      const module=await import('./entry-stone-scene.js?v=2837c00e1a');if(!current())return;
+      const ready=await module.createStoneScene(host.querySelector('.entrance-canvas'),{reduced:reduced.matches,authLayout:mode==='auth',signal:controller.signal,onLost:()=>host.classList.remove('has-webgl')});
+      if(!current()){ready.dispose();return;}
+      scene=ready;host.classList.add('has-webgl');scene.setPaused(document.hidden||paused);
+      if(host.dataset.phase==='carving')scene.carve();
+    }catch(error){
+      controller.abort();
+      if(error.name!=='AbortError')console.info('Tashan entrance: using the lightweight stone illustration.',error.message);
+    }
+
   }
   document.addEventListener('keydown',keyHandler);
   document.addEventListener('visibilitychange',()=>{scene?.setPaused(document.hidden||paused);});

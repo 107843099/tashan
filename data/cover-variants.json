@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "generatedBy": "scripts/build-cover-variants.py",
+  "recipe": {
+    "pillow": "12.3.0",
+    "libwebp": "1.6.0",
+    "quality": 84,
+    "method": 6,
+    "resample": "LANCZOS",
+    "widths": [
+      320,
+      640,
+      960
+    ],
+    "defaultWidth": 640
+  },
+  "projects": {
+    "dynasty": {
+      "source": "./assets/covers/dynasty-example.png",
+      "sourceSha256": "808b5b8e3995c2fac5dc89b112a1cea3ed117e8f0a178dafb2c3600357341720",
+      "sourceBytes": 2822806,
+      "width": 1054,
+      "height": 1492,
+      "variants": [
+        {
+          "src": "./assets/covers/dynasty-example-320.webp",
+          "width": 320,
+          "height": 453,
+          "bytes": 47612,
+          "sha256": "1d0d2d0477c8b4db8862ddafb8867203b2b68e73eed760598f2acda6b5683110"
+        },
+        {
+          "src": "./assets/covers/dynasty-example-640.webp",
+          "width": 640,
+          "height": 906,
+          "bytes": 157602,
+          "sha256": "9b701b01e1233a79f57738a8b473e2a399dfb21abc17056a9ff1046431638eab"
+        },
+        {
+          "src": "./assets/covers/dynasty-example-960.webp",
+          "width": 960,
+          "height": 1359,
+          "bytes": 303264,
+          "sha256": "9c454cf1b15043a3bcb93726cb170126ce6f8a68625f416084e24135bc7adb93"
+        }
+      ]
+    },
+    "history": {
+      "source": "./assets/covers/history-example.png",
+      "sourceSha256": "0b3d26b9ea353e76fa280e474af911588728b3f9a00869dc41d1cbc26e6a632d",
+      "sourceBytes": 2175011,
+      "width": 1672,
+      "height": 941,
+      "variants": [
+        {
+          "src": "./assets/covers/history-example-320.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 21154,
+          "sha256": "421cd029a5d7eb3a8865ff94cae4eabc55bba90da439d0efa7b0f261fce386e6"
+        },
+        {
+          "src": "./assets/covers/history-example-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 62166,
+          "sha256": "bcc576c9aa2fd372dcfb85b331136449565e1ee288f9e6faa95c30ee92bf5131"
+        },
+        {
+          "src": "./assets/covers/history-example-960.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 113728,
+          "sha256": "33a8612b414def52c667dceb140ce2e54a597e6407e618b80c1d258b8c4d11c7"
+        }
+      ]
+    },
+    "lesson": {
+      "source": "./assets/covers/lesson-example.png",
+      "sourceSha256": "2d19bb5a943062ddc1b7bdf98f5791e35f8f921fcec86e59d0074491d39f9629",
+      "sourceBytes": 2271060,
+      "width": 1672,
+      "height": 940,
+      "variants": [
+        {
+          "src": "./assets/covers/lesson-example-320.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 15216,
+          "sha256": "6fc7c5cb00cc0d6f6511d1cf2f0809f9ce5482d13e2ebe3b91172f3dbc37e368"
+        },
+        {
+          "src": "./assets/covers/lesson-example-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 47952,
+          "sha256": "ee3e8f3be6206dc57156ec21daeb917767991a66cb43f4f4f372f631a09406a2"
+        },
+        {
+          "src": "./assets/covers/lesson-example-960.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 94202,
+          "sha256": "1e037120a6f91487afe6fe41df92c57f65ec27b0b645b4ecd166807b3b4eaedd"
+        }
+      ]
+    },
+    "pbl": {
+      "source": "./assets/covers/pbl-example.png",
+      "sourceSha256": "b30315baede515edfaadd359bedb07dc8b1b7476014dfa26124601221aee71e5",
+      "sourceBytes": 2160948,
+      "width": 1672,
+      "height": 941,
+      "variants": [
+        {
+          "src": "./assets/covers/pbl-example-320.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 15166,
+          "sha256": "cc19811016cdd1ac58c6b846ea726904b47feb726623631e0b3c3e278695baf1"
+        },
+        {
+          "src": "./assets/covers/pbl-example-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 44220,
+          "sha256": "89f746c540921b074b2c17c6e318e1a320a54e10baab43868709d0ede48e594f"
+        },
+        {
+          "src": "./assets/covers/pbl-example-960.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 82886,
+          "sha256": "d640239419bcf4dc6c3592f31ed1060cb7ca2b56164dad5ffe317a77898c558d"
+        }
+      ]
+    },
+    "poetry": {
+      "source": "./assets/covers/poetry-example.png",
+      "sourceSha256": "38015c0ffb0e7c42835374c375fa8af144897753a9cafd764a9db9be29a16b7b",
+      "sourceBytes": 2598505,
+      "width": 1672,
+      "height": 941,
+      "variants": [
+        {
+          "src": "./assets/covers/poetry-example-320.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 19482,
+          "sha256": "f401a0181e28c06c64103e2835972b2ace2611f21315f2a2c73bb0293a79206f"
+        },
+        {
+          "src": "./assets/covers/poetry-example-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 61156,
+          "sha256": "9c1a9dc68df2eec2d13cdbcacac23ad2c9f48e7a7787e44128fe03e8be84dc52"
+        },
+        {
+          "src": "./assets/covers/poetry-example-960.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 114674,
+          "sha256": "03ed6a190ad108cfb43f2bb7e1945e7a79153338e5c5cc9907b9b8478147d3ef"
+        }
+      ]
+    }
+  }
+}

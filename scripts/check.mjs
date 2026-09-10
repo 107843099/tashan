@@ -48,6 +48,8 @@ for (const directory of ['assets/js', 'assets/data']) {
       const target = resolve(root, dirname(path), dependency.split('?')[0]);
       assert(!relative(root, target).startsWith('..'), `${path}: import escapes the project`);
       assert(existsSync(target), `${path}: missing import ${dependency}`);
+      const version = new URLSearchParams(dependency.split('?')[1]).get('v');
+      if (version) assert.equal(version, createHash('sha256').update(readFileSync(target)).digest('hex').slice(0, 10), `${path}: stale lazy import ${dependency}; run npm run catalog`);
     }
   }
 }
