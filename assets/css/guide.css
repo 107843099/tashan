@@ -1,0 +1,79 @@
+.guide-page{max-width:1120px;margin:0 auto;padding:52px 0 64px}
+.guide-hero{padding-bottom:38px;border-bottom:1px solid var(--line);margin-bottom:42px}
+.guide-kicker{font-size:11px;letter-spacing:2px;color:var(--muted)}
+.guide-hero h1{margin:18px 0 14px;font-size:42px;line-height:1.4;letter-spacing:-1px}
+.guide-hero>p{max-width:640px;margin:0;color:var(--muted);font-size:16px;line-height:1.9}
+.guide-hero-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:26px}
+.guide-text-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--brand);font-size:14px;font-weight:600;text-underline-offset:5px}
+.guide-text-link:hover{text-decoration:underline}
+.guide-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:64px;align-items:start}
+.guide-sidebar{position:sticky;top:28px}
+.guide-nav-label{font-size:12px;color:var(--muted);margin:0 0 12px}
+.guide-sidebar nav button{justify-content:flex-start;gap:12px;width:100%;min-height:46px;padding:10px 8px;border:0;border-radius:5px;background:transparent;text-align:left;font-size:13px;font-weight:500;line-height:1.6}
+.guide-sidebar nav button span{font:11px/1.6 ui-monospace,monospace;color:var(--muted);flex-shrink:0}
+.guide-sidebar nav button:hover,.guide-sidebar nav button:focus-visible{background:var(--soft);color:var(--brand)}
+.guide-nav-note{border-top:1px solid var(--line);padding-top:18px;margin:24px 8px 0;font-size:12px;line-height:1.9;color:var(--muted)}
+.guide-content{min-width:0}
+.guide-chapter{padding-bottom:38px;margin-bottom:38px;border-bottom:1px solid var(--line)}
+.guide-chapter:last-child{margin-bottom:0;border-bottom:0;padding-bottom:0}
+.guide-chapter>header{display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;margin-bottom:25px;align-items:start}
+.guide-number{font:12px/1.7 ui-monospace,monospace;color:var(--brand);padding-top:7px}
+.guide-chapter h2{font-size:25px;font-weight:600;line-height:1.45;letter-spacing:-.4px;margin:0 0 8px;scroll-margin-top:28px}
+.guide-chapter h2[tabindex="-1"]:focus{outline:none}
+.guide-chapter>header p{margin:0;color:var(--muted);font-size:14px;line-height:1.8}
+.guide-chapter h3{font-size:16px;line-height:1.6;margin:0 0 7px;font-weight:600}
+.guide-chapter p{color:var(--muted);font-size:15px;line-height:1.95;margin:0 0 12px;overflow-wrap:break-word}
+.guide-chapter p:last-child{margin-bottom:0}
+.guide-steps{list-style:none;counter-reset:guide-step;padding:0;margin:0}
+.guide-steps li{counter-increment:guide-step;position:relative;padding-left:34px;margin-bottom:22px}
+.guide-steps li:before{content:counter(guide-step) ".";position:absolute;left:0;top:2px;color:var(--brand);font:14px/1.6 ui-monospace,monospace}
+.guide-steps li:last-child{margin-bottom:0}
+.guide-note,.guide-ai-note{border-left:2px solid var(--brand);padding:18px 22px;margin-top:24px;background:var(--soft);border-radius:0 8px 8px 0}
+.guide-note-title{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.guide-note-title h3{margin:0}
+.guide-ai-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:1px 6px;border:1px solid var(--border-strong);border-radius:5px;color:var(--brand);font:600 10px/1.7 ui-monospace,monospace;letter-spacing:.5px}
+.guide-chapter .guide-footnote{border-top:1px dashed var(--line);margin-top:22px;padding-top:16px;font-size:13px;line-height:1.9}
+.guide-states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;list-style:none;padding:0;margin:0}
+.guide-states li{border-top:2px solid var(--brand);padding-top:16px}
+.guide-states h3{font-size:15px}
+.guide-states p{font-size:14px;line-height:1.9}
+.guide-backup-options,.guide-account-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.guide-backup-options>section+section,.guide-account-options>section+section{border-left:1px solid var(--line);padding-left:28px}
+.guide-small-label{display:block;font-size:11px;color:var(--brand);margin-bottom:8px}
+.guide-faq{border-top:1px solid var(--line);padding:0}
+.guide-faq:last-child{border-bottom:1px solid var(--line)}
+.guide-faq summary{font-size:14px;font-weight:550;cursor:pointer;padding:18px 6px;line-height:1.75}
+.guide-faq summary:hover{color:var(--brand)}
+.guide-faq[open] summary{color:var(--brand)}
+.guide-faq p{padding:0 6px 20px}
+.guide-finish{border-top:1px solid var(--line);margin-top:48px;padding-top:28px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.guide-finish h2{font-size:24px;line-height:1.5;margin:0 0 7px}
+.guide-finish p{font-size:14px;color:var(--muted);margin:0}
+.guide-finish .btn{flex-shrink:0}
+@media(max-width:900px){
+ .guide-layout{grid-template-columns:160px minmax(0,1fr);gap:32px}
+ .guide-states{grid-template-columns:1fr;gap:18px}
+ .guide-states li{padding-top:12px}
+ .guide-backup-options,.guide-account-options{grid-template-columns:1fr;gap:22px}
+ .guide-backup-options>section+section,.guide-account-options>section+section{border-left:0;border-top:1px solid var(--line);padding:22px 0 0}
+}
+@media(max-width:640px){
+ .guide-page{padding-top:28px;padding-bottom:40px}
+ .guide-hero{padding-bottom:26px;margin-bottom:26px}
+ .guide-hero h1{font-size:30px;letter-spacing:-.7px}
+ .guide-hero>p{font-size:14px}
+ .guide-hero-actions{gap:12px 20px;margin-top:20px}
+ .guide-layout{grid-template-columns:1fr;gap:32px}
+ .guide-sidebar{position:static;border-bottom:1px solid var(--line);padding-bottom:22px}
+ .guide-sidebar nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}
+ .guide-nav-label{grid-column:1/-1;margin-bottom:8px}
+ .guide-sidebar nav button{padding:8px 4px;font-size:12px;gap:9px}
+ .guide-nav-note{display:none}
+ .guide-chapter{padding-bottom:28px;margin-bottom:28px}
+ .guide-chapter>header{grid-template-columns:23px minmax(0,1fr);gap:9px;margin-bottom:20px}
+ .guide-chapter h2{font-size:22px}
+ .guide-number{padding-top:5px;font-size:11px}
+ .guide-steps li{padding-left:25px}
+ .guide-note,.guide-ai-note{padding:16px}
+ .guide-finish{align-items:flex-start;flex-direction:column;margin-top:30px}
+}

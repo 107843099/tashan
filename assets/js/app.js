@@ -209,17 +209,7 @@ function draftPreview(){
 function errorMarkup(){return state.error?`<p class="error" role="alert" tabindex="-1">${txt(state.error)}</p>`:'';}
 
 function draftField(key,label,placeholder='',area=true){return inputField(key,label,state.draft[key],placeholder,area).replace('data-edit=','data-draft=');}
-function guide(){return `<section class="guide"><div class="page-head"><h1>${txt('第一次使用，从这里开始')}</h1><p>${txt('发现、体验、改造，再分享。')}</p></div>${[
-['我只是想找到一个能用的项目','选择学科、学段或关键词，打开项目介绍，再点击“打开本地项目”。项目在独立标签页运行，原目录中的配套文件保持可用。'],
-['我想使用这些 Prompt','打开 Prompt 条目，展开原始内容并复制。界面可切换语言，原文保持不变；请在外部 AI 工具中使用，并人工检查生成结果。'],
-['验证状态代表什么？','“运行已检查”代表记录中列出的基础交互已经测试；“待验证”代表尚未完成该检查；“内容待修订”代表发现了具体问题。它们都不代表课堂成效认证。'],
-['这些内容来自哪里？','项目和文档来自本地 vibe coding库。相同文件合并展示，压缩包中的 Prompt 读取为原始文档。卡片中的姓名来自目录名；不据此推断实际作者或课堂使用记录。'],
-['哪些内容是为展示补充的？','教学建议依据本地项目与课程参考资料整理。5 个 Prompt 项目附本次生成的示例图，保存在源资料同目录；它们不代表历史作品或课堂成效。原文与参考来源可在详情中核对。'],
-['我想把一个好思路用到自己的课堂','选择“基于它继续创作”，填写学生背景、目标、使用条件和第一版范围。确认任务说明后复制到外部 AI 工具，成果完成后可回来保存分享草稿。'],
-['可以下载和重新分享吗？','本地拥有文件不代表已获得公开再分发授权。当前材料未统一附带开放许可，下载和再创作前请确认原作者及第三方素材的权限。'],
-['如何更新本地项目库？','页面读取由本地文件生成的目录。修改文件后运行 npm run catalog 更新；新增展示条目可在 data/catalog-curation.json 中登记，检查记录在 data/verification.json 中维护。'],
-['工作台数据保存在哪里？',ai?.guide()||'收藏、任务、草稿和项目版本按账号保存在此浏览器，可完整导出备份。上传到服务端后可在其他设备登录读取；公开发布需选择固定版本并确认。']
-].map(([q,a],i)=>`<details ${i===0?'open':''}><summary>${txt(q)}</summary><p>${txt(a)}</p></details>`).join('')}</section>`;}
+function guide(){return window.TashanGuide?.render({txt,isAdmin:accounts?.user?.role==='admin'})||`<section class="page-head"><h1>${txt('使用指南')}</h1></section>`;}
 function render(){
  let {view,id}=route();document.documentElement.lang=locale;
  if(accounts){
@@ -325,6 +315,7 @@ root.addEventListener('click',async event=>{
  if(privateActions.includes(b.dataset.action)&&!requireAccount())return;
  try{
  switch(b.dataset.action){
+ case 'guide-jump':window.TashanGuide?.jump(id);break;
  case 'replay-intro':window.TashanEntrance?.replay();break;
  case 'language-menu':setLanguageMenu(!state.languageOpen);break;
  case 'theme':state.languageOpen=false;document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';render();root.querySelector('[data-action="theme"]')?.focus({preventScroll:true});break;
