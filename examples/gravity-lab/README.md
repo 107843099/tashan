@@ -90,12 +90,12 @@ U + K = m*g*H
 
 ## 验证与设计
 
-2026-09-11 已在真实 Worker 上传并公开，正式项目为 [同一颗球，三种重力](https://tashan.dev/index.html#cloud/local-437e16a6-d574-4488-ba07-fda85d4e1dbf)，编号 `TS-L-437E16A6D5744488`，当前为 v1；也可 [直接运行公开版本](https://tashan.dev/project-preview.html?remote=local-437e16a6-d574-4488-ba07-fda85d4e1dbf&version=version-72677291-21e9-47bd-a286-aab84459507a&public=1)。HTML 与 PNG 封面下载哈希一致，重新登录后仍可读取，正式域名复测已通过。DeepSeek `deepseek-flash` 的上传分析、教学建议实际调用均成功；图片来自内置图像工具，不是 DeepSeek 生成。
+2026-09-11 已补齐正式网站界面流程：管理员新建 `test_share` 成员，再由该成员登录、选择文件、核对 AI 分析、上传并确认发布。当前项目为 [同一颗球，三种重力](https://tashan.dev/#cloud/local-9ec74d9f-9497-4ef0-8609-aee064537ad4)，编号 `TS-L-5DC47F212C105ADF`，v1；也可 [直接运行分享版本](https://tashan.dev/project-preview.html?remote=local-9ec74d9f-9497-4ef0-8609-aee064537ad4&version=version-0cfb5c9e-5e76-4295-b234-46357a532fa2&public=1)。全新浏览器没有本地项目，登录后仍可读取；游客下载的 HTML 与 PNG 封面哈希一致，单步、天体切换与重置可用。此次 DeepSeek 上传分析返回 200；此前教学建议调用见历史验收。图片来自内置图像工具，不是 DeepSeek 生成。
 
-完整项目备份已生成于本机私有 `.local/backups/test-projects/gravity-complete.json`，包含 1 个版本与 2 个文件，通过应用导入器校验。公开上传、正式域名、AI 与备份的详细范围见 [2026-09-11 发布验收](../../docs/RELEASE_QA_2026-09-11.md)。
+旧 `test` 账号的重复示例已撤回公开，私有记录和文件保留；其备份 `.local/backups/test-projects/gravity-complete.json` 包含 1 个版本与 2 个文件，通过应用导入器校验。该备份保留旧项目身份。最新流程见 [正式站分享验收](../../docs/SHARING_UI_QA.md)，此前接口与备份范围见 [发布验收](../../docs/RELEASE_QA_2026-09-11.md)。
 
 在项目根目录运行 `node --test tests/gravity-lab.mjs`（Node.js 22.13 或更新版本）。测试从实际 HTML 提取脚本，验证已知解析解、质量与高度缩放规律、能量守恒、落地边界，以及开始/暂停/单步/拖动/参数更新/后台暂停等真实事件处理。
 
 沿用他山的浅底、深绿与原生控件，应用已安装 UI/UX 技能中的对比度、键盘、响应式、减少动态指导。技能设计检索未返回与中学科学实验吻合的完整设计系统，因此采用项目现有色系与原生 CSS，没有套用检索中的儿童风格或其他品牌系统。
 
-尚未做真实课堂试教。当前浏览器控制连接不可用，未声称完成浏览器视觉或手机实机验收；以数值与 DOM 事件测试记录为准。
+尚未做真实课堂试教或手机实机验收。此次浏览器验证使用桌面 Chrome，覆盖云端分享和指定交互，不代表全部设备与课堂环境。
