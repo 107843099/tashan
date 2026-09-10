@@ -27,7 +27,8 @@
     "contributors": [
       "傅可晗"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0001"
   },
   {
     "id": "chemistry",
@@ -57,7 +58,8 @@
       "林志凡"
     ],
     "related": [],
-    "package": "vibe coding库/林志凡/化学3D模型微观反应实验室.zip"
+    "package": "vibe coding库/林志凡/化学3D模型微观反应实验室.zip",
+    "projectCode": "TS-0014"
   },
   {
     "id": "mendel",
@@ -87,7 +89,8 @@
       "卢永哲"
     ],
     "related": [],
-    "package": "vibe coding库/卢永哲/孟德尔的豌豆杂交实验（一）.zip"
+    "package": "vibe coding库/卢永哲/孟德尔的豌豆杂交实验（一）.zip",
+    "projectCode": "TS-0007"
   },
   {
     "id": "conics",
@@ -117,7 +120,8 @@
       "陈捷"
     ],
     "related": [],
-    "package": "vibe coding库/陈捷/圆锥曲线离心率演示(1).zip"
+    "package": "vibe coding库/陈捷/圆锥曲线离心率演示(1).zip",
+    "projectCode": "TS-0004"
   },
   {
     "id": "cpp",
@@ -126,7 +130,7 @@
       "en": "C++ variables & arrays",
       "zh-Hant": "C++ 變量與數組動畫模擬器"
     },
-    "source": "vibe coding库/傅可晗/C++变量数组动画模拟器.html",
+    "source": "vibe coding库/傅可晗/C++变量数组动画模拟器_fu_0910.html",
     "subject": "信息技术",
     "stages": [
       "初中",
@@ -149,7 +153,8 @@
     ],
     "related": [
       "recursion"
-    ]
+    ],
+    "projectCode": "TS-0011"
   },
   {
     "id": "lens",
@@ -182,7 +187,8 @@
     "related": [
       "pinhole"
     ],
-    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip"
+    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip",
+    "projectCode": "TS-0006"
   },
   {
     "id": "pinhole",
@@ -214,7 +220,8 @@
     "related": [
       "lens"
     ],
-    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip"
+    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip",
+    "projectCode": "TS-0012"
   },
   {
     "id": "gcd",
@@ -246,7 +253,8 @@
     ],
     "related": [
       "recursion"
-    ]
+    ],
+    "projectCode": "TS-0009"
   },
   {
     "id": "recursion",
@@ -279,7 +287,8 @@
     "related": [
       "gcd",
       "cpp"
-    ]
+    ],
+    "projectCode": "TS-0013"
   },
   {
     "id": "pbl",
@@ -308,7 +317,8 @@
     "contributors": [
       "傅可晗"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0003"
   },
   {
     "id": "poetry",
@@ -339,7 +349,8 @@
     "contributors": [
       "郭尚玮"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0002"
   },
   {
     "id": "dynasty",
@@ -370,7 +381,8 @@
       "郭尚玮",
       "林志凡"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0005"
   },
   {
     "id": "history",
@@ -400,7 +412,8 @@
     "contributors": [
       "卢永哲"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0008"
   },
   {
     "id": "lesson",
@@ -431,6 +444,7 @@
     "contributors": [
       "陈捷"
     ],
-    "related": []
+    "related": [],
+    "projectCode": "TS-0010"
   }
 ]

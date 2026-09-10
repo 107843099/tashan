@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { createContext, runInContext } from 'node:vm';
 import { strict as assert } from 'assert';
+import { webcrypto } from 'node:crypto';
 
-// A small transaction adapter exercises rollback and serialization on Node 14.
+// A small transaction adapter exercises rollback and serialization.
 // The platform also uses the real browser IndexedDB for the UI acceptance check.
 class TestBlob {
   constructor(parts = [], options = {}) {
@@ -93,7 +94,7 @@ function memoryIndexedDB() {
   };
 }
 const indexedDB = memoryIndexedDB();
-const context = createContext({ Blob: TestBlob, indexedDB, setTimeout, Uint8Array, Uint32Array,
+const context = createContext({ Blob: TestBlob, indexedDB, crypto: webcrypto, setTimeout, Uint8Array, Uint32Array,
   btoa: value => Buffer.from(value, 'binary').toString('base64'), atob: value => Buffer.from(value, 'base64').toString('binary') });
 runInContext('window = globalThis', context);
 runInContext(readFileSync('assets/js/storage.js', 'utf8'), context);
@@ -135,13 +136,16 @@ await store.putDraft(draft);
 assert.equal(await (await store.getDraft()).attachment.blob.text(), '从观察开始。');
 const exported = JSON.parse(await (await store.exportAll()).text());
 assert.equal(exported.format, 'tashan-practice-library');
-assert.equal(exported.version, 1);
+assert.equal(exported.version, 2);
 assert.equal(exported.projects.length, 1);
 assert(!('blob' in exported.projects[0].attachment));
-assert.equal(Buffer.from(exported.projects[0].attachment.base64, 'base64').toString('utf8'), '<!doctype html><h1>圆的探索</h1>');
-assert.deepEqual(Array.from(Buffer.from(exported.projects[0].coverFile.base64, 'base64')), [137, 80, 78, 71]);
+assert.equal(Buffer.from(exported.files[exported.projects[0].attachment.sha256].base64, 'base64').toString('utf8'), '<!doctype html><h1>圆的探索</h1>');
+assert.deepEqual(Array.from(Buffer.from(exported.files[exported.projects[0].coverFile.sha256].base64, 'base64')), [137, 80, 78, 71]);
 await store.putDraft(object({ title: '当前草稿不能被备份覆盖' }));
-assert.equal((await store.importBackup(blob(JSON.stringify(exported)))).count, 1);
+assert.equal((await store.importBackup(blob(JSON.stringify(exported)))).count, 0, 'Repeated backups skip identical projects by default');
+exported.projects[0].title = '同一项目的另一个版本';
+assert.equal((await store.importBackup(blob(JSON.stringify(exported)))).count, 0, 'Conflicting projects stay untouched by default');
+assert.equal((await store.importBackup(blob(JSON.stringify(exported)), {conflict:'copy'})).count, 1);
 assert.equal((await store.list()).length, 2);
 assert.equal(new Set((await store.list()).map(p => p.id)).size, 2, 'Import collisions get a fresh ID');
 assert.equal((await store.getDraft()).title, '当前草稿不能被备份覆盖');
@@ -182,11 +186,28 @@ assert.equal(await store.getDraft(), null, 'Completing a project removes its dra
 assert.equal((await store.list()).length, beforeCommit + 1);
 for (const project of await store.list()) await store.remove(project.id);
 const maximumFiles = object({ title: '最大单件附件与封面', attachment: { name: 'project.html', type: 'text/html' }, coverFile: { name: 'cover.png', type: 'image/png' } });
-maximumFiles.attachment.blob = blob(Buffer.alloc(20 * 1024 * 1024), 'text/html');
+maximumFiles.attachment.blob = blob(Buffer.alloc(10 * 1024 * 1024), 'text/html');
 maximumFiles.coverFile.blob = blob(Buffer.alloc(5 * 1024 * 1024), 'image/png');
 await store.putDraft(maximumFiles);
-await assert.rejects(store.put(maximumFiles), /50 MB/, 'Keeping both a maximum-size draft and a project exceeds total capacity');
-assert((await store.getDraft()).attachment.blob.size === 20 * 1024 * 1024);
+const duplicateFiles = await store.put(maximumFiles);
+assert(duplicateFiles.id, 'Identical draft/project files count once by SHA256');
+const capacityProjects = [];
+for (let index = 1; index <= 2; index++) {
+  const distinctFiles = object({ title:'不同的大附件 '+index,attachment:{name:'distinct.html',type:'text/html'},coverFile:{name:'distinct.png',type:'image/png'}});
+  distinctFiles.attachment.blob = blob(Buffer.alloc(10*1024*1024,index),'text/html');
+  distinctFiles.coverFile.blob = blob(Buffer.alloc(5*1024*1024,index),'image/png');
+  capacityProjects.push(await store.put(distinctFiles));
+}
+const overCapacity = object({ title:'总容量超限',attachment:{name:'extra.html',type:'text/html'}});
+overCapacity.attachment.blob = blob(Buffer.alloc(5*1024*1024,3),'text/html');
+await assert.rejects(store.put(overCapacity), /50 MB/, '45 MiB unique files plus 5 MiB and metadata still enforce total capacity');
+const overAttachment = object({title:'单附件超限',attachment:{name:'over.html',type:'text/html'}});
+overAttachment.attachment.blob = blob(Buffer.alloc(10*1024*1024+1),'text/html');
+await assert.rejects(store.put(overAttachment), /10 MB/, '10 MiB plus one byte is rejected before persistence');
+assert.equal((await store.list()).length, 3, 'Rejected writes leave the three saved projects untouched');
+for (const project of capacityProjects) await store.remove(project.id);
+await store.remove(duplicateFiles.id);
+assert((await store.getDraft()).attachment.blob.size === 10 * 1024 * 1024);
 const maximumSaved = await store.put(maximumFiles, { clearDraft: true });
 assert.equal((await store.get(maximumSaved.id)).coverFile.blob.size, 5 * 1024 * 1024);
 assert.equal(await store.getDraft(), null, 'Atomic completion counts the files once');
@@ -195,20 +216,32 @@ await store.remove(maximumSaved.id);
 const previewPage = readFileSync('project-preview.html', 'utf8');
 assert(/sandbox="allow-scripts"/.test(previewPage), 'Uploaded scripts only receive the isolated sandbox capability');
 assert(!/allow-same-origin|allow-top-navigation|allow-popups/.test(previewPage), 'The preview must not grant host origin or navigation access');
-assert(previewPage.includes("connect-src 'none'") && previewPage.includes("form-action 'none'"));
+assert(previewPage.includes("connect-src 'self'") && previewPage.includes("form-action 'none'"), 'Only the host preview may verify the same-origin session');
 const previewScript = readFileSync('assets/js/project-preview.js', 'utf8');
-async function preview(record, id = 'local-preview') {
+async function preview(record, id = 'local-preview', user = {id:'preview-account'}) {
   const elements = new Map();
+  const handlers = new Map();
+  const makeElement = (name = '') => ({ id: name, hidden: name === 'preview-frame', srcdoc: '', isConnected: !!name, attributes: {},
+    addEventListener() {}, remove() {this.isConnected=false;}, click() {},
+    setAttribute(key, value) {this.attributes[key]=value;},
+    replaceWith(next) {this.isConnected=false;next.isConnected=true;elements.set(this.id,next);}
+  });
   const element = name => {
-    if (!elements.has(name)) elements.set(name, { hidden: name === 'preview-frame', addEventListener() {}, remove() {}, click() {} });
+    if (!elements.has(name)) elements.set(name, makeElement(name));
     return elements.get(name);
   };
-  const environment = createContext({ Blob: TestBlob, URLSearchParams, location: { search: '?project=' + encodeURIComponent(id) },
+  const document = { documentElement: {}, visibilityState:'visible', getElementById: element, createElement: () => makeElement(), addEventListener: (name, handler) => handlers.set(name,handler) };
+  let sessionFetch = async () => ({ ok: true, headers: { get: () => 'application/json' }, json: async () => ({ user }) });
+  const environment = createContext({ Blob: TestBlob, URLSearchParams, AbortController, location: { search: '?project=' + encodeURIComponent(id) },
     localStorage: { getItem: () => 'en' },
-    document: { documentElement: {}, getElementById: element },
-    window: { addEventListener() {}, PracticeStore: { get: async () => record } } });
+    fetch: (...args) => sessionFetch(...args),
+    document,
+    window: { addEventListener() {}, PracticeStore: { setScope: async () => {}, get: async () => {assert(user, 'Guests must never read saved private or legacy projects');return record;} } } });
   runInContext(previewScript, environment);
   await new Promise(resolve => setTimeout(resolve, 0));
+  elements.setVisibility=async state=>{document.visibilityState=state;handlers.get('visibilitychange')();await new Promise(resolve=>setTimeout(resolve,0));};
+  elements.setUser=value=>{user=value;};
+  elements.setSessionFetch=value=>{sessionFetch=value;};
   return elements;
 }
 const source = '<html><head><meta http-equiv="Content-Security-Policy" content="default-src *"></head><body><script>parent.document.body.innerHTML="bad"</script></body></html>';
@@ -218,10 +251,39 @@ assert(documentSource.indexOf("connect-src 'none'") < documentSource.indexOf(sou
 assert(documentSource.includes("script-src 'unsafe-inline' blob:") && documentSource.includes("frame-src 'none'"));
 assert.equal(htmlPreview.get('preview-title').textContent, '<script>Not a heading</script>', 'Metadata is rendered as text');
 assert.equal(htmlPreview.get('preview-frame').hidden, false);
+assert.equal(htmlPreview.get('preview-frame').attributes.sandbox, 'allow-scripts', 'Every fresh frame retains the same isolated sandbox');
 assert.equal(htmlPreview.get('preview-back').href, './index.html#project/local-preview');
+const firstFrame = htmlPreview.get('preview-frame');
+await htmlPreview.setVisibility('hidden');
+assert.equal(firstFrame.isConnected,false,'Hiding the tab destroys the running private frame');
+assert.equal(htmlPreview.get('preview-frame').hidden,true);
+assert.equal(htmlPreview.get('preview-frame').srcdoc,'','Hidden tabs keep no private markup in their replacement frame');
+await htmlPreview.setVisibility('visible');
+assert.notEqual(htmlPreview.get('preview-frame'),firstFrame,'Returning to a visible tab mounts a new browsing context');
+assert.equal(htmlPreview.get('preview-frame').hidden,false);
+assert.equal(htmlPreview.get('preview-frame').srcdoc,documentSource);
+await htmlPreview.setVisibility('hidden');
+htmlPreview.setUser({id:'another-account'});
+await htmlPreview.setVisibility('visible');
+assert.equal(htmlPreview.get('preview-frame').hidden,true,'The existing preview URL cannot load a different account after a switch');
+const asyncPreview=await preview({attachment:{name:'private.html',blob:blob('<h1>Private</h1>','text/html')}});
+let rejectStaleSession;
+asyncPreview.setSessionFetch(()=>new Promise((resolve,reject)=>{rejectStaleSession=reject;}));
+await asyncPreview.setVisibility('hidden');await asyncPreview.setVisibility('visible');
+asyncPreview.setSessionFetch(async()=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>({user:{id:'preview-account'}})}));
+await asyncPreview.setVisibility('hidden');await asyncPreview.setVisibility('visible');
+const currentFrame=asyncPreview.get('preview-frame');
+rejectStaleSession(new Error('Older request failed after the new view loaded'));
+await new Promise(resolve=>setTimeout(resolve,0));
+assert.equal(asyncPreview.get('preview-frame'),currentFrame,'A stale session error cannot destroy the current authorized frame');
+assert.equal(currentFrame.hidden,false);
 const zipPreview = await preview({ attachment: { name: 'project.zip', blob: blob('zip') } });
-assert.equal(zipPreview.get('preview-frame').srcdoc, undefined, 'ZIP and other files are offered as downloads, never interpreted as HTML');
+assert(!zipPreview.get('preview-frame').srcdoc, 'ZIP and other files are offered as downloads, never interpreted as HTML');
 assert.equal(zipPreview.get('preview-download').disabled, false);
 const invalidPreview = await preview(null, '../bad');
-assert.equal(invalidPreview.get('preview-frame').srcdoc, undefined);
+assert(!invalidPreview.get('preview-frame').srcdoc);
+const guestPreview = await preview({title:'Legacy private project'}, 'local-preview', null);
+assert.equal(guestPreview.get('preview-back').href, './index.html#login');
+assert.equal(guestPreview.get('preview-download').disabled, true);
+assert.equal(guestPreview.get('preview-frame').hidden, true);
 console.log('Local storage checks passed: files, edits, drafts, backup round trip, validation, conflict handling, capacity, atomic rollback and preview isolation invariants.');

@@ -51,6 +51,8 @@ for item in curation:
     item['sourceHref']=href(item['source'])
     item['bytes']=path.stat().st_size
     item['sha256']=digest(path.read_bytes())
+    item['currentVersionId']='catalog-'+item['sha256'][:32]
+    item['sourceReferences']=item.get('sourceReferences',[])
     item['packageHref']=href(item['package']) if item.get('package') and local_file(item['package']) else href(item['source']) if path.suffix == '.zip' else None
     html=path.read_text() if item['kind']=='visual' else ''
     item['hasCompanionFiles']=bool(re.search(r'(?:src|href)=[\"\'](?:\./)?(?:src|assets|pinhole)[^\"\']*',html))

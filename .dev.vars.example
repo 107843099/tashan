@@ -1,0 +1,10 @@
+# Optional hosted-account development with `npm run dev:worker`.
+# Copy to .dev.vars and fill locally. Never put credentials in assets/ or dist/.
+# Local SQLite development with `npm run dev` does not need these values.
+SUPABASE_URL=
+SUPABASE_SECRET_KEY=
+# Legacy alternative if the project still uses the service-role JWT key:
+SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_AUTH_EMAIL_DOMAIN=accounts.tashan.invalid
+# Server-only teaching suggestions / Prompt refinement (optional).
+DEEPSEEK_API_KEY=

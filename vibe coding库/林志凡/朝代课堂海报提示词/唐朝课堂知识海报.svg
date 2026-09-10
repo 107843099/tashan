@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 1800 2546" role="img" aria-labelledby="title desc">
+  <title id="title">唐朝课堂知识海报</title>
+  <desc id="desc">唐朝从建立、兴盛到衰亡的初中历史知识信息图</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBF5E8"/><stop offset="0.52" stop-color="#F6E9CF"/><stop offset="1" stop-color="#F1DFC0"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7B1E24"/><stop offset="0.56" stop-color="#A7312F"/><stop offset="1" stop-color="#BF5A3F"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#5B2F1F" flood-opacity=".13"/>
+    </filter>
+    <pattern id="grain" width="72" height="72" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="14" r="1.3" fill="#7A5133" opacity=".08"/><circle cx="49" cy="37" r="1" fill="#7A5133" opacity=".07"/>
+      <path d="M0 62 Q22 51 41 62 T82 62" fill="none" stroke="#7A5133" stroke-width="1" opacity=".045"/>
+    </pattern>
+    <clipPath id="photo-economy"><rect x="548" y="86" width="208" height="152" rx="16"/></clipPath>
+    <clipPath id="photo-ethnic"><rect x="548" y="86" width="208" height="152" rx="16"/></clipPath>
+    <clipPath id="photo-foreign"><rect x="548" y="86" width="208" height="152" rx="16"/></clipPath>
+    <clipPath id="photo-culture"><rect x="584" y="84" width="166" height="190" rx="16"/></clipPath>
+    <style>
+      .cn{font-family:'Microsoft YaHei','PingFang SC','Noto Sans CJK SC',sans-serif}
+      .serif{font-family:'STZhongsong','Songti SC','Noto Serif CJK SC',serif}
+      .card{fill:#FFFDF7;stroke:#D9C7A3;stroke-width:2}
+      .h{font-size:34px;font-weight:800;fill:#6E2023;letter-spacing:2px}
+      .t{font-size:27px;font-weight:600;fill:#243B3A}
+      .s{font-size:23px;font-weight:500;fill:#4E4A42}
+      .tiny{font-size:20px;font-weight:600;fill:#765F46}
+      .chip{fill:#F5E3BC;stroke:#D1A85B;stroke-width:2}
+    </style>
+  </defs>
+
+  <rect width="1800" height="2546" fill="url(#paper)"/>
+  <rect width="1800" height="2546" fill="url(#grain)"/>
+  <path d="M70 112 H1730 M70 2532 H1730" stroke="#AA7C43" stroke-width="3" opacity=".55"/>
+  <path d="M85 85 h90 l18 18 -18 18 h-90z M1715 85h-90l-18 18 18 18h90z" fill="#B99155" opacity=".75"/>
+
+  <!-- header -->
+  <rect x="80" y="145" width="1640" height="385" rx="42" fill="url(#hero)" filter="url(#shadow)"/>
+  <circle cx="1560" cy="335" r="132" fill="none" stroke="#F4D69A" stroke-width="4" opacity=".22"/>
+  <circle cx="1560" cy="335" r="100" fill="none" stroke="#F4D69A" stroke-width="2" opacity=".18"/>
+  <path d="M1472 359h176M1504 359v-52h112v52M1533 307v-44h54v44M1492 384h136" fill="none" stroke="#F9E4B8" stroke-width="8" stroke-linecap="round" opacity=".48"/>
+  <text x="145" y="315" class="serif" font-size="126" font-weight="900" fill="#FFF7E7" letter-spacing="20">唐朝</text>
+  <text x="150" y="390" class="cn" font-size="39" font-weight="700" fill="#F7D99D" letter-spacing="10">盛世气象与开放文明</text>
+  <rect x="145" y="432" width="1030" height="56" rx="28" fill="#5A1B20" opacity=".68"/>
+  <text x="177" y="469" class="cn" font-size="27" font-weight="700" fill="#FFF5DE">618—907 年　｜　618 年 李渊建立　｜　都城：长安</text>
+
+  <!-- rise section -->
+  <text x="90" y="610" class="h cn">一、盛世三章</text>
+  <line x1="90" y1="630" x2="1710" y2="630" stroke="#B69253" stroke-width="3"/>
+
+  <g transform="translate(90 675)" filter="url(#shadow)">
+    <rect class="card" width="520" height="390" rx="28"/>
+    <rect width="520" height="82" rx="28" fill="#153F3C"/><rect y="55" width="520" height="27" fill="#153F3C"/>
+    <circle cx="62" cy="41" r="26" fill="#D4A750"/><text x="62" y="51" text-anchor="middle" class="serif" font-size="30" font-weight="900" fill="#153F3C">贞</text>
+    <text x="110" y="51" class="cn" font-size="32" font-weight="800" fill="#FFF9E9">唐太宗 · 贞观之治</text>
+    <text x="30" y="130" class="cn" font-size="21" font-weight="700" fill="#243B3A">隋亡教训｜认识到百姓决定政权安危</text>
+    <text x="30" y="184" class="cn" font-size="21" font-weight="700" fill="#243B3A">纳谏用贤｜魏征等帮助减少决策失误</text>
+    <text x="30" y="238" class="cn" font-size="21" font-weight="700" fill="#243B3A">三省六部·科举｜提升治理与选才效率</text>
+    <text x="30" y="292" class="cn" font-size="21" font-weight="700" fill="#243B3A">轻徭薄赋·重农｜减轻负担并恢复生产</text>
+    <rect x="24" y="326" width="472" height="52" rx="22" class="chip"/><text x="260" y="359" text-anchor="middle" class="cn" font-size="18" font-weight="700" fill="#765F46">开明民族政策｜赢得各族拥戴</text>
+  </g>
+
+  <g transform="translate(640 675)" filter="url(#shadow)">
+    <rect class="card" width="520" height="390" rx="28"/>
+    <rect width="520" height="82" rx="28" fill="#7B1E24"/><rect y="55" width="520" height="27" fill="#7B1E24"/>
+    <circle cx="62" cy="41" r="26" fill="#D4A750"/><text x="62" y="51" text-anchor="middle" class="serif" font-size="30" font-weight="900" fill="#7B1E24">武</text>
+    <text x="110" y="51" class="cn" font-size="32" font-weight="800" fill="#FFF9E9">武则天 · 承前启后</text>
+    <text x="30" y="130" class="cn" font-size="21" font-weight="700" fill="#243B3A">唯一女皇帝｜突破古代帝位性别限制</text>
+    <text x="30" y="184" class="cn" font-size="21" font-weight="700" fill="#243B3A">打击敌对官僚｜巩固皇权与中央统治</text>
+    <text x="30" y="238" class="cn" font-size="21" font-weight="700" fill="#243B3A">创立殿试｜由皇帝亲自考查选拔人才</text>
+    <text x="30" y="292" class="cn" font-size="21" font-weight="700" fill="#243B3A">创设武举·重农｜广纳人才并稳定生产</text>
+    <rect x="24" y="326" width="472" height="52" rx="22" class="chip"/><text x="260" y="359" text-anchor="middle" class="cn" font-size="18" font-weight="700" fill="#765F46">承前启后｜为开元盛世积蓄力量</text>
+  </g>
+
+  <g transform="translate(1190 675)" filter="url(#shadow)">
+    <rect class="card" width="520" height="390" rx="28"/>
+    <rect width="520" height="82" rx="28" fill="#9C4D28"/><rect y="55" width="520" height="27" fill="#9C4D28"/>
+    <circle cx="62" cy="41" r="26" fill="#E5B858"/><text x="62" y="51" text-anchor="middle" class="serif" font-size="30" font-weight="900" fill="#713116">开</text>
+    <text x="110" y="51" class="cn" font-size="32" font-weight="800" fill="#FFF9E9">唐玄宗 · 开元盛世</text>
+    <text x="30" y="130" class="cn" font-size="21" font-weight="700" fill="#243B3A">整顿吏治｜提高官员办事效率与能力</text>
+    <text x="30" y="184" class="cn" font-size="21" font-weight="700" fill="#243B3A">裁减冗员｜减少官僚机构与财政负担</text>
+    <text x="30" y="238" class="cn" font-size="21" font-weight="700" fill="#243B3A">发展经济·税制｜充实国家财力</text>
+    <text x="30" y="292" class="cn" font-size="21" font-weight="700" fill="#243B3A">注重文教｜推动文化教育繁荣</text>
+    <rect x="24" y="326" width="472" height="52" rx="22" class="chip"/><text x="260" y="359" text-anchor="middle" class="cn" font-size="18" font-weight="700" fill="#765F46">多项改革合力｜国力达到鼎盛</text>
+  </g>
+
+  <!-- knowledge grid -->
+  <text x="90" y="1150" class="h cn">二、繁荣与开放</text>
+  <line x1="90" y1="1170" x2="1710" y2="1170" stroke="#B69253" stroke-width="3"/>
+
+  <g transform="translate(90 1215)" filter="url(#shadow)">
+    <rect class="card" width="790" height="430" rx="28"/>
+    <rect x="0" y="0" width="18" height="430" rx="9" fill="#A13A2E"/>
+    <text x="54" y="65" class="h cn">经济繁荣</text>
+    <image href="assets/tang-sancai-camel.jpg" x="548" y="86" width="208" height="152" preserveAspectRatio="xMidYMid slice" clip-path="url(#photo-economy)"/>
+    <rect x="548" y="86" width="208" height="152" rx="16" fill="none" stroke="#A13A2E" stroke-width="4"/>
+    <text x="652" y="268" text-anchor="middle" class="tiny cn">故宫藏唐三彩骆驼</text>
+    <text x="42" y="125" class="cn" font-size="21" font-weight="700" fill="#243B3A">曲辕犁｜改进耕作，提升翻土效率</text>
+    <text x="42" y="180" class="cn" font-size="21" font-weight="700" fill="#243B3A">筒车｜借助水力灌溉，节省人力</text>
+    <text x="42" y="235" class="cn" font-size="21" font-weight="700" fill="#243B3A">蜀锦·瓷器｜体现高超手工业水平</text>
+    <text x="42" y="290" class="cn" font-size="21" font-weight="700" fill="#243B3A">唐三彩｜低温釉陶，反映开放风貌</text>
+    <text x="42" y="345" class="cn" font-size="21" font-weight="700" fill="#243B3A">长安坊市｜严整规划促进商业繁荣</text>
+    <text x="42" y="400" class="cn" font-size="18" font-weight="700" fill="#8A3732">易错解析：唐三彩是陶器，不是瓷器。</text>
+  </g>
+
+  <g transform="translate(920 1215)" filter="url(#shadow)">
+    <rect class="card" width="790" height="430" rx="28"/>
+    <rect x="0" y="0" width="18" height="430" rx="9" fill="#1D5A56"/>
+    <text x="54" y="65" class="h cn">民族关系</text>
+    <image href="assets/potala-palace.jpg" x="548" y="86" width="208" height="152" preserveAspectRatio="xMidYMin slice" clip-path="url(#photo-ethnic)"/>
+    <rect x="548" y="86" width="208" height="152" rx="16" fill="none" stroke="#1D5A56" stroke-width="4"/>
+    <text x="652" y="268" text-anchor="middle" class="tiny cn">布达拉宫 · 拉萨</text>
+    <text x="42" y="125" class="cn" font-size="21" font-weight="700" fill="#243B3A">开明政策｜尊重各族，减少民族隔阂</text>
+    <text x="42" y="180" class="cn" font-size="21" font-weight="700" fill="#243B3A">文成入藏｜带去技术，增进汉藏友好</text>
+    <text x="42" y="235" class="cn" font-size="21" font-weight="700" fill="#243B3A">松赞干布｜推动吐蕃经济文化发展</text>
+    <text x="42" y="290" class="cn" font-size="21" font-weight="700" fill="#243B3A">金城公主·会盟｜延续唐蕃友好交往</text>
+    <text x="42" y="345" class="cn" font-size="21" font-weight="700" fill="#243B3A">“天可汗”｜体现唐太宗获各族拥戴</text>
+    <text x="42" y="400" class="cn" font-size="18" font-weight="700" fill="#1D5A56">关系解析：和亲与会盟促进交往交融。</text>
+  </g>
+
+  <g transform="translate(90 1680)" filter="url(#shadow)">
+    <rect class="card" width="790" height="430" rx="28"/>
+    <rect x="0" y="0" width="18" height="430" rx="9" fill="#315A7D"/>
+    <text x="54" y="65" class="h cn" fill="#315A7D">对外交往</text>
+    <image href="assets/toshodaiji.jpg" x="548" y="86" width="208" height="152" preserveAspectRatio="xMidYMid slice" clip-path="url(#photo-foreign)"/>
+    <rect x="548" y="86" width="208" height="152" rx="16" fill="none" stroke="#315A7D" stroke-width="4"/>
+    <text x="652" y="268" text-anchor="middle" class="tiny cn">日本奈良 · 唐招提寺</text>
+    <text x="42" y="125" class="cn" font-size="21" font-weight="700" fill="#243B3A">遣唐使｜日本主动学习唐朝制度文化</text>
+    <text x="42" y="185" class="cn" font-size="21" font-weight="700" fill="#243B3A">鉴真东渡｜向日本传播唐朝文化</text>
+    <text x="42" y="245" class="cn" font-size="21" font-weight="700" fill="#243B3A">唐招提寺｜见证鉴真在日本的贡献</text>
+    <text x="42" y="305" class="cn" font-size="21" font-weight="700" fill="#243B3A">玄奘西行｜赴天竺求取佛教经典</text>
+    <text x="42" y="365" class="cn" font-size="21" font-weight="700" fill="#243B3A">《大唐西域记》｜留下珍贵区域史料</text>
+    <text x="42" y="405" class="cn" font-size="18" font-weight="700" fill="#315A7D">方向解析：鉴真传出去，玄奘学回来。</text>
+  </g>
+
+  <g transform="translate(920 1680)" filter="url(#shadow)">
+    <rect class="card" width="790" height="430" rx="28"/>
+    <rect x="0" y="0" width="18" height="430" rx="9" fill="#74508A"/>
+    <text x="54" y="65" class="h cn" fill="#74508A">灿烂文化</text>
+    <image href="assets/li-bai-portrait.jpg" x="584" y="84" width="166" height="190" preserveAspectRatio="xMidYMid slice" clip-path="url(#photo-culture)"/>
+    <rect x="584" y="84" width="166" height="190" rx="16" fill="none" stroke="#74508A" stroke-width="4"/>
+    <text x="667" y="302" text-anchor="middle" class="tiny cn">课本常用李白画像</text>
+    <text x="42" y="125" class="cn" font-size="21" font-weight="700" fill="#243B3A">李白｜浪漫诗风展现盛唐豪迈气象</text>
+    <text x="42" y="180" class="cn" font-size="21" font-weight="700" fill="#243B3A">杜甫｜现实“诗史”记录社会变迁</text>
+    <text x="42" y="235" class="cn" font-size="21" font-weight="700" fill="#243B3A">白居易｜语言通俗，诗歌关注现实</text>
+    <text x="42" y="290" class="cn" font-size="21" font-weight="700" fill="#243B3A">颜真卿·柳公权｜楷书端庄严谨</text>
+    <text x="42" y="345" class="cn" font-size="21" font-weight="700" fill="#243B3A">吴道子｜线条传神，被尊为“画圣”</text>
+    <text x="42" y="400" class="cn" font-size="18" font-weight="700" fill="#74508A">文化解析：名家辈出反映开放自信。</text>
+  </g>
+
+  <g display="none">
+  <!-- legacy portraits and artifacts, hidden in the current integrated-photo layout -->
+  <text x="90" y="2200" class="h cn">三、人物与文物识记</text>
+  <line x1="90" y1="2220" x2="1710" y2="2220" stroke="#B69253" stroke-width="3"/>
+  <g transform="translate(90 2260)" filter="url(#shadow)">
+    <rect class="card" width="300" height="330" rx="26"/>
+    <circle cx="150" cy="120" r="82" fill="#E7D3AC" stroke="#8A3732" stroke-width="5"/>
+    <path d="M100 97q50-52 100 0v18q-50 25-100 0zM113 169q37-29 74 0l26 47H87z" fill="#6F2929"/><circle cx="150" cy="118" r="42" fill="#EBC9A0"/>
+    <path d="M104 77h92l-18-31h-56z" fill="#263E3D"/><path d="M115 123q35 18 70 0M131 109h8M162 109h8" stroke="#543528" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <text x="150" y="249" text-anchor="middle" class="t cn">唐太宗 李世民</text><text x="150" y="291" text-anchor="middle" class="tiny cn">纳谏用人｜贞观之治</text>
+  </g>
+  <g transform="translate(420 2260)" filter="url(#shadow)">
+    <rect class="card" width="300" height="330" rx="26"/>
+    <circle cx="150" cy="120" r="82" fill="#E7D3AC" stroke="#8A3732" stroke-width="5"/>
+    <path d="M100 100q50-58 100 0v16q-50 25-100 0zM108 169q42-31 84 0l25 47H83z" fill="#8A2733"/><circle cx="150" cy="120" r="43" fill="#EBC9A0"/>
+    <path d="M112 78h76l-12-34h-52zM130 43l20-26 20 26" fill="#D4A750"/><path d="M129 112h9M162 112h9M135 139q15 9 30 0" stroke="#543528" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="150" y="249" text-anchor="middle" class="t cn">武则天</text><text x="150" y="291" text-anchor="middle" class="tiny cn">唯一女皇帝｜殿试·武举</text>
+  </g>
+  <g transform="translate(750 2260)" filter="url(#shadow)">
+    <rect class="card" width="300" height="330" rx="26"/>
+    <circle cx="150" cy="120" r="82" fill="#E7D3AC" stroke="#8A3732" stroke-width="5"/>
+    <path d="M99 98q51-51 102 0v18q-51 24-102 0zM112 169q38-29 76 0l27 47H85z" fill="#9A4D26"/><circle cx="150" cy="119" r="42" fill="#EBC9A0"/>
+    <path d="M103 77h94l-20-31h-54z" fill="#263E3D"/><path d="M130 111h9M162 111h9M134 138q16 8 32 0" stroke="#543528" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="150" y="249" text-anchor="middle" class="t cn">唐玄宗 李隆基</text><text x="150" y="291" text-anchor="middle" class="tiny cn">整顿吏治｜开元盛世</text>
+  </g>
+  <g transform="translate(1080 2260)" filter="url(#shadow)">
+    <rect class="card" width="300" height="330" rx="26"/>
+    <circle cx="150" cy="120" r="82" fill="#D7E3D0" stroke="#8A572D" stroke-width="5"/>
+    <path d="M76 165q12-70 55-67l20-45 19 47q44 2 54 65h-29l-10 43h-20l-4-40h-43l-5 40H93l-7-43z" fill="#C9853B" stroke="#6D4A31" stroke-width="5"/>
+    <path d="M151 56q23-25 45-7M134 107q20 18 40 0" fill="none" stroke="#F1D36D" stroke-width="7"/>
+    <text x="150" y="249" text-anchor="middle" class="t cn">唐三彩骆驼</text><text x="150" y="291" text-anchor="middle" class="tiny cn">陶器｜见证丝路交流</text>
+  </g>
+  <g transform="translate(1410 2260)" filter="url(#shadow)">
+    <rect class="card" width="300" height="330" rx="26"/>
+    <circle cx="150" cy="120" r="82" fill="#D5E1DC" stroke="#2E5B57" stroke-width="5"/>
+    <path d="M78 145q46-58 119-41l26 27q-94-11-133 42zM112 177h94M156 76v111" fill="none" stroke="#6E4A2C" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="189" cy="99" r="30" fill="none" stroke="#2E5B57" stroke-width="8"/><path d="M189 69v60M159 99h60" stroke="#2E5B57" stroke-width="5"/>
+    <text x="150" y="249" text-anchor="middle" class="t cn">曲辕犁 · 筒车</text><text x="150" y="291" text-anchor="middle" class="tiny cn">耕地改进｜水力灌溉</text>
+  </g>
+
+  </g>
+
+  <!-- decline -->
+  <text x="90" y="2200" class="h cn">三、由盛转衰</text>
+  <line x1="90" y1="2220" x2="1710" y2="2220" stroke="#B69253" stroke-width="3"/>
+  <g transform="translate(90 2260)">
+    <line x1="120" y1="82" x2="1500" y2="82" stroke="#9A3A32" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="150" cy="82" r="23" fill="#9A3A32"/><circle cx="800" cy="82" r="23" fill="#C68A3F"/><circle cx="1460" cy="82" r="23" fill="#293E3E"/>
+    <text x="150" y="28" text-anchor="middle" class="t cn">755—763</text><text x="150" y="133" text-anchor="middle" class="s cn">安史之乱</text><text x="150" y="175" text-anchor="middle" class="tiny cn">安禄山、史思明｜由盛转衰</text>
+    <text x="800" y="28" text-anchor="middle" class="t cn">唐末</text><text x="800" y="133" text-anchor="middle" class="s cn">黄巢起义</text><text x="800" y="175" text-anchor="middle" class="tiny cn">沉重打击唐朝统治</text>
+    <text x="1460" y="28" text-anchor="middle" class="t cn">907 年</text><text x="1460" y="133" text-anchor="middle" class="s cn">朱温建后梁</text><text x="1460" y="175" text-anchor="middle" class="tiny cn">唐亡 · 进入五代十国</text>
+  </g>
+
+  <rect x="135" y="2465" width="1530" height="58" rx="29" fill="#6F2024"/>
+  <text x="900" y="2504" text-anchor="middle" class="cn" font-size="22" font-weight="800" fill="#FFF5DF" letter-spacing="1">记忆解析：安史之乱是转折，黄巢起义重创统治，朱温建后梁终结唐朝。</text>
+</svg>

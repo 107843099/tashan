@@ -1,10 +1,35 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "tashan",
+  "main": "server/worker.mjs",
   "compatibility_date": "2026-09-10",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [{"pattern":"tashan.dev","custom_domain":true}],
+  "vars": {
+    "SUPABASE_URL": "https://aiplmzlnqzlgypcvtbuf.supabase.co",
+    "SUPABASE_AUTH_EMAIL_DOMAIN": "accounts.tashan.invalid",
+    "TASHAN_UPLOAD_TRANSPORT": "r2-stream-v1",
+    "TASHAN_UPLOAD_REQUEST_BYTES": "98304",
+    "TASHAN_UPLOAD_ATTACHMENT_BYTES": "10485760",
+    "TASHAN_UPLOAD_COVER_BYTES": "5242880",
+    "TASHAN_UPLOAD_METADATA_BYTES": "65536"
+  },
+  "r2_buckets": [{"binding":"TASHAN_PROJECT_FILES","bucket_name":"tashan-project-files"}],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api",
+      "/api/*",
+      "/projects/*",
+      "/vibe*"
+    ],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
   }
 }

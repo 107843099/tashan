@@ -29,16 +29,22 @@ const cloudflare = JSON.parse(readFileSync(path.join(root, 'wrangler.jsonc'), 'u
 assert.equal(path.resolve(root, cloudflare.assets.directory), dist, 'Cloudflare assets.directory must point to dist');
 assert.equal(cloudflare.assets.html_handling, 'auto-trailing-slash', 'Directory pages retain a base URL for their relative resources');
 assert.equal(cloudflare.assets.not_found_handling, 'none', 'Missing project resources must not receive the platform HTML');
+assert.equal(cloudflare.main, 'server/worker.mjs', 'Account API uses a server-only Worker entry');
+assert.equal(cloudflare.assets.binding, 'ASSETS');
+assert(cloudflare.assets.run_worker_first.includes('/api/*'), 'Account requests must reach the Worker before assets');
 for (const file of files) {
   assert(statSync(path.join(dist, file)).size <= 25 * 1024 * 1024, `Cloudflare asset exceeds 25 MiB: ${file}`);
 }
-const forbidden = /(?:^|\/)(?:node_modules|\.git|\.codex|\.agents|\.env(?:\.[^/]*)?|backups|archives?|tests|scripts|docs|vibe coding库|__MACOSX|\.DS_Store)(?:\/|$)/;
+const forbidden = /(?:^|\/)(?:node_modules|\.git|\.codex|\.agents|\.local|\.wrangler|\.dev\.vars(?:\.[^/]*)?|\.env(?:\.[^/]*)?|backups|archives?|tests|scripts|server|supabase|docs|vibe coding库|__MACOSX|\.DS_Store)(?:\/|$)/;
 for (const file of files) {
   assert(!forbidden.test(file), `Development/private content included: ${file}`);
+  assert(!/\.(?:sqlite(?:3)?|db|sql)(?:-(?:wal|shm))?$/i.test(file), `Account database or migration included in static assets: ${file}`);
   assert(/^[\x20-\x7e]+$/.test(file), `Non-ASCII release filename: ${file}`);
   assert(!file.startsWith('/') && !file.split('/').includes('..'), `Unsafe path: ${file}`);
 }
 assert.deepEqual(files.filter(file => !file.includes('/')).sort(), ['index.html', 'local-project-preview.html', 'project-preview.html', 'release-manifest.json', 'teacher-practice-demo-v3.html']);
+assert(files.includes('assets/js/accounts.js'), 'Account UI must be included in the static release');
+assert(files.includes('assets/css/accounts.css'), 'Account styles must be included in the static release');
 
 // Manifest hashes cover every payload file, with no stale or undocumented files.
 assert.deepEqual(manifest.files.map(file => file.path).sort(), files.filter(file => file !== 'release-manifest.json').sort());

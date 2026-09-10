@@ -77,4 +77,5 @@ const restored = flow.normalizeDraft({ id: 'local-imported', title: { unexpected
 for (const key of ['title', 'core', 'purpose', 'stage']) assert.equal(restored[key], '', 'Imported non-text form fields are normalized before .trim() validation');
 assert.equal(restored.id, 'local-imported');
 assert.equal(restored.prior, '保留文字');
+assert.equal(flow.normalizeDraft({title:{'zh-CN':'保留中文标题',en:'English title'}}).title,'保留中文标题');
 console.log('Local project flow checks passed: record mapping, optional teaching fields, retained descriptions, original downloads, safe links and imported form normalization.');

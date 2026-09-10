@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<!--
+MIT License
+
+Copyright (c) 2026 Tashan project contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="在地球、月球和火星同时释放物体，比较自由落体、重力与机械能。适合初高中物理课堂的离线互动实验。">
+<title>重力实验室 · 同一次释放，不同的下落</title>
+<style>
+:root{color-scheme:light;--bg:#f4f7f3;--paper:#ffffff;--ink:#203a30;--muted:#5c6d64;--brand:#21664c;--soft:#e6eee7;--line:#cbd8ce;--track:#edf2ed;--energy:#8b631b;--energy-soft:#f6e5b8;--ring:#227457;--shadow:0 14px 38px #26432c0a;--radius:18px}
+:root[data-theme=dark]{color-scheme:dark;--bg:#14221c;--paper:#1c2c24;--ink:#e8f0e8;--muted:#adbfaf;--brand:#93d1ad;--soft:#2b4033;--line:#455d4b;--track:#25372b;--energy:#efd28f;--energy-soft:#625333;--ring:#93d1ad;--shadow:none}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button,select,input[type=range],input[type=checkbox]{cursor:pointer}a{color:var(--brand);text-underline-offset:4px}button{min-height:44px;border:1px solid var(--line);border-radius:10px;padding:9px 15px;background:var(--paper);color:var(--ink);font-weight:600;transition:background .16s,border-color .16s}button:hover:not(:disabled){background:var(--soft);border-color:var(--brand)}button:disabled{cursor:default;opacity:.5}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--ring);outline-offset:4px}input,select{color:var(--ink);accent-color:var(--brand)}.wrap{width:min(1320px,100% - 64px);margin-inline:auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;border-bottom:1px solid var(--line)}.wordmark{display:flex;align-items:center;gap:12px;font-weight:650;letter-spacing:.02em}.wordmark svg{width:30px;height:30px;color:var(--brand)}.top-actions{display:flex;gap:18px;align-items:center}.top-actions a{font-size:14px;text-decoration:none}.theme{padding:9px 13px;font-size:13px}.hero{padding:38px 0 28px}.hero h1{margin:0 0 10px;font-size:clamp(28px,3.8vw,48px);line-height:1.25;font-weight:650;letter-spacing:-.025em}.hero h1 span{color:var(--brand)}.hero p{color:var(--muted);margin:0;max-width:66ch}.lab{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;align-items:start}.controls{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}h2{font-size:19px;margin:0 0 16px;font-weight:650}h3{font-size:16px;margin:0}.control{margin:24px 0}.control-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:14px;font-weight:600}.numeric{display:flex;gap:6px;align-items:center}.numeric input{width:78px;min-height:40px;padding:5px 8px;text-align:right;font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:7px;background:var(--bg)}.numeric span{font-size:13px;color:var(--muted);font-weight:400}input[type=range]{width:100%;margin:0;min-height:30px}.range-limits{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.control select{width:100%;min-height:44px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}.help{font-size:13px;color:var(--muted);line-height:1.65;margin:10px 0 0}.mode{display:flex;align-items:center;gap:9px;font-size:14px;min-height:44px}.mode input{width:18px;height:18px;flex:none}.model-note{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}.model-note strong{font-size:14px}.model-note p{font-size:13px;color:var(--muted);margin:7px 0 0}.error{font-size:13px;color:var(--energy);margin:12px 0 0}.error:empty{display:none}.experiment{min-width:0}.stage{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}.stage-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}.stage-top strong{font-size:14px;color:var(--ink)}.tracks{display:grid;grid-template-columns:36px repeat(3,minmax(0,1fr));padding:18px 18px 0 8px}.ruler{position:relative;margin-top:89px;height:264px;font:11px/1.1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted)}.ruler span{position:absolute;right:6px;transform:translateY(-50%)}.planet{position:relative;min-width:0;border-left:1px solid var(--line);padding:0 8px 0;background:transparent}.planet.is-selected{background:var(--track);border-radius:10px 10px 0 0}.planet-heading{text-align:center;height:89px}.planet-heading button{border:0;background:transparent;min-height:44px;padding:4px 10px;font-size:19px}.planet-heading button[aria-pressed=true]{color:var(--brand)}.planet-heading button[aria-pressed=true]:after{content:'';display:block;width:18px;height:2px;background:var(--brand);margin:3px auto 0}.planet-heading p{font-size:12px;line-height:1.4;color:var(--muted);margin:2px 0 0}.lane{height:264px;position:relative;margin:0 7px;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%)}.lane:before{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed var(--line)}.mover{position:absolute;inset:0;pointer-events:none;will-change:transform}.ball{position:absolute;width:30px;height:30px;left:50%;top:0;transform:translate(-50%,-50%);border-radius:50%;background:var(--brand);border:5px solid var(--paper);box-shadow:0 0 0 1px var(--brand)}.ball:after{content:'';position:absolute;inset:5px;border:1px solid var(--paper);border-radius:50%;opacity:.7}.trail{position:absolute;width:6px;height:6px;left:50%;transform:translate(-50%,-50%);border:1px solid var(--brand);border-radius:50%;background:var(--paper);opacity:.6}.ground{position:relative;height:20px;border-top:2px solid var(--brand);background:var(--soft);margin-top:0}.planet-foot{text-align:center;padding:10px 0 16px;min-height:66px}.planet-foot strong{display:block;font:600 18px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace}.planet-foot small{font-size:12px;color:var(--muted)}.stage-caption{font-size:12px;color:var(--muted);padding:2px 24px 16px;margin:0}.playback{padding:19px 24px 20px;border-top:1px solid var(--line);background:var(--paper)}.playback-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.playback .primary{background:var(--brand);border-color:var(--brand);color:var(--paper);min-width:128px}.playback .primary:hover:not(:disabled){filter:brightness(1.08);background:var(--brand)}.clock{margin-left:auto;display:flex;align-items:baseline;gap:7px;font:600 24px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;font-variant-numeric:tabular-nums}.clock small{font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--muted)}.timeline-label{display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:var(--muted);margin-top:15px}.status{font-size:13px;min-height:22px;line-height:1.6;margin:9px 0 0;color:var(--brand)}.readings{margin-top:24px;padding:22px 24px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}.readings-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:15px}.readings-head h2{margin:0}.readings-head p{font-size:12px;margin:0;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:0}.metrics div{min-width:0}.metrics dt{font-size:12px;color:var(--muted);margin-bottom:6px}.metrics dd{margin:0;font:600 clamp(19px,2vw,27px)/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap}.metrics dd small{font-size:12px;font-weight:400}.energy{border-top:1px solid var(--line);margin-top:20px;padding-top:17px}.energy-heading{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px}.energy-heading span{color:var(--muted)}.energy-chart{display:flex;height:12px;border-radius:4px;overflow:hidden;margin-top:12px;background:var(--track)}.potential-fill{background:var(--brand);flex-basis:100%}.kinetic-fill{background:var(--energy);flex-basis:0}.energy-legend{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:9px;font-size:13px}.energy-legend span{display:flex;align-items:center;gap:7px}.energy-legend i{display:inline-block;width:8px;height:8px;background:var(--brand);border-radius:2px}.energy-legend .kinetic-key{background:var(--energy)}.energy-legend b{font-variant-numeric:tabular-nums;font-weight:500}.explore{margin-top:34px;padding:28px 0;border-top:1px solid var(--line)}.explore h2{font-size:24px;margin-bottom:18px}.questions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.questions article{border-left:2px solid var(--line);padding-left:18px}.questions p{font-size:14px;color:var(--muted);margin:9px 0 0}.questions strong{color:var(--ink);font-weight:600}.notes{margin-top:12px;border-top:1px solid var(--line);padding:20px 0 0}.notes summary{cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:600}.notes summary:after{content:'＋';color:var(--brand)}.notes[open] summary:after{content:'−'}.notes-content{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:12px;font-size:14px}.notes p{margin:8px 0;color:var(--muted)}.formula{color:var(--ink)!important;line-height:1.9;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.sources{padding-left:18px;color:var(--muted);font-size:13px}.sources li{padding:4px 0}.footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:24px 0 32px;color:var(--muted);font-size:12px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}noscript p{border:1px solid var(--line);padding:20px;background:var(--paper)}
+@media(max-width:1024px){.wrap{width:calc(100% - 40px)}.lab{grid-template-columns:240px minmax(0,1fr);gap:18px}.controls{padding:20px}.playback,.readings{padding:18px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px}.stage-top{padding:16px 18px}.clock{font-size:21px}.questions{gap:20px}.hero{padding-top:30px}}
+@media(max-width:768px){.lab{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;column-gap:22px;padding:20px}.controls h2,.controls>.help,.controls>.error,.model-note{grid-column:1/-1}.controls h2{margin-bottom:0}.control{margin:18px 0 0}.control-head{margin-bottom:8px}.mode{align-self:end;margin-top:18px}.model-note{margin-top:18px;padding-top:14px}.hero{padding:26px 0 22px}.hero p{font-size:14px}.topbar{padding:18px 0}.questions{grid-template-columns:1fr;gap:20px}.notes-content{grid-template-columns:1fr;gap:12px}.ruler{height:220px}.lane{height:220px}.explore{margin-top:28px;padding-top:24px}.top-actions a{display:none}.wordmark{font-size:15px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.metrics dd{font-size:22px}.energy-heading{font-size:12px}}
+@media(max-width:480px){.wrap{width:calc(100% - 28px)}.controls{padding:17px;column-gap:16px}.control-head{align-items:flex-start;flex-direction:column;gap:6px}.numeric{width:100%}.numeric input{width:calc(100% - 30px);text-align:left}.stage-top{padding:14px;align-items:flex-start;flex-direction:column;gap:3px}.tracks{padding-inline:4px;grid-template-columns:26px repeat(3,minmax(0,1fr))}.planet{padding:0 3px}.planet-heading button{font-size:16px;padding-inline:8px}.planet-heading p{font-size:12px}.planet-heading{height:80px}.ruler{margin-top:80px;font-size:10px}.lane{margin-inline:4px}.planet-foot strong{font-size:16px}.stage-caption{padding-inline:14px}.playback,.readings{padding:16px 14px}.playback-row{gap:8px}.playback button{padding-inline:11px;font-size:13px}.playback .primary{min-width:108px}.clock{width:100%;margin-left:0;margin-top:8px;justify-content:flex-end}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.energy-legend{font-size:12px}.mode{font-size:13px}.footer{display:block}.footer span{display:block;margin-top:4px}}
+@media(prefers-reduced-motion:reduce){button{transition:none}.mover{will-change:auto}}
+@media print{button,input,select,.playback,.top-actions{display:none}.wrap{width:100%}.lab{grid-template-columns:220px 1fr}.notes-content{display:block}.stage,.readings,.controls{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="topbar"><div class="wordmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M12 10v9m-3-3 3 3 3-3M4 22h16"/></svg><span>他山 · 重力实验室</span></div><div class="top-actions"><a href="#explore">课堂怎么用</a><button class="theme" id="theme" type="button" aria-pressed="false">切换深色</button></div></header>
+<main>
+<section class="hero"><h1>同一次释放，<span>不同的下落。</span></h1><p>在三个天体上同时松手。改变高度与质量，看看什么会影响落地时间。</p></section>
+<noscript><p>此互动需要启用 JavaScript。自由落体从静止开始，落地时间为 √(2H/g)，与物体质量无关。下方的课堂问题与公式仍可阅读。</p></noscript>
+<div class="lab">
+<aside class="controls" aria-labelledby="conditions-title"><h2 id="conditions-title">设置实验条件</h2><p class="help">三组物体使用相同高度和质量。调整条件会暂停并重置实验。</p>
+<div class="control"><div class="control-head"><label for="height-number">释放高度 H</label><div class="numeric"><input id="height-number" type="number" min="1" max="100" step="1" value="20" inputmode="decimal" aria-describedby="height-limits input-error"><span>m</span></div></div><input id="height-range" type="range" min="1" max="100" step="1" value="20" aria-label="释放高度"><div class="range-limits" id="height-limits"><span>1 m</span><span>100 m</span></div></div>
+<div class="control"><div class="control-head"><label for="mass-number">物体质量 m</label><div class="numeric"><input id="mass-number" type="number" min="0.1" max="10" step="0.1" value="1" inputmode="decimal" aria-describedby="mass-limits input-error"><span>kg</span></div></div><input id="mass-range" type="range" min="0.1" max="10" step="0.1" value="1" aria-label="物体质量"><div class="range-limits" id="mass-limits"><span>0.1 kg</span><span>10 kg</span></div></div>
+<div class="control"><label class="control-head" for="speed">播放速度</label><select id="speed"><option value="1">正常速度 · 1×</option><option value="0.5">慢速观察 · 0.5×</option><option value="0.25">细看变化 · 0.25×</option></select><p class="help">仅改变播放快慢，不改变实验中的物理时间。</p></div>
+<label class="mode"><input id="step-mode" type="checkbox">分步模式</label>
+<p class="error" id="input-error" role="alert"></p>
+<div class="model-note"><strong>先说清楚模型</strong><p>物体从静止释放；忽略空气阻力；重力加速度视为常量。屏幕中的圆点只是物体标记，不代表真实体积。</p><p id="motion-help">点击开始才会播放，也可以逐步前进或拖动时间轴。</p></div>
+</aside>
+<div class="experiment">
+<section class="stage" aria-label="三地自由落体实验"><div class="stage-top"><strong>同时释放，比较下落</strong><span>点选天体，查看下方读数</span></div>
+<div class="tracks"><div class="ruler" aria-hidden="true"><span style="top:0" id="ruler-top">20</span><span style="top:25%" id="ruler-three">15</span><span style="top:50%" id="ruler-half">10</span><span style="top:75%" id="ruler-quarter">5</span><span style="top:100%">0 m</span></div>
+<article class="planet is-selected" id="planet-earth"><div class="planet-heading"><button type="button" data-planet="earth" aria-pressed="true">地球</button><p>g = 9.80 m/s²</p></div><div class="lane" aria-hidden="true"><span class="trail" style="top:4%"></span><span class="trail" style="top:16%"></span><span class="trail" style="top:36%"></span><span class="trail" style="top:64%"></span><div class="mover" id="ball-earth"><span class="ball"></span></div></div><div class="ground" aria-hidden="true"></div><div class="planet-foot"><strong id="landing-earth">2.02 s</strong><small>预计落地用时</small></div></article>
+<article class="planet" id="planet-moon"><div class="planet-heading"><button type="button" data-planet="moon" aria-pressed="false">月球</button><p>g = 1.62 m/s²</p></div><div class="lane" aria-hidden="true"><span class="trail" style="top:4%"></span><span class="trail" style="top:16%"></span><span class="trail" style="top:36%"></span><span class="trail" style="top:64%"></span><div class="mover" id="ball-moon"><span class="ball"></span></div></div><div class="ground" aria-hidden="true"></div><div class="planet-foot"><strong id="landing-moon">4.97 s</strong><small>预计落地用时</small></div></article>
+<article class="planet" id="planet-mars"><div class="planet-heading"><button type="button" data-planet="mars" aria-pressed="false">火星</button><p>g = 3.71 m/s²</p></div><div class="lane" aria-hidden="true"><span class="trail" style="top:4%"></span><span class="trail" style="top:16%"></span><span class="trail" style="top:36%"></span><span class="trail" style="top:64%"></span><div class="mover" id="ball-mars"><span class="ball"></span></div></div><div class="ground" aria-hidden="true"></div><div class="planet-foot"><strong id="landing-mars">3.28 s</strong><small>预计落地用时</small></div></article>
+</div><p class="stage-caption">三条轨道使用同一高度刻度；小圆环标出各自下落总时长的 20%、40%、60%、80% 时刻的位置。</p>
+<div class="playback"><div class="playback-row"><button type="button" class="primary" id="play">开始下落</button><button type="button" id="step">前进 0.1 秒</button><button type="button" id="reset">重置</button><output class="clock" aria-label="实验时间"><span id="clock">0.00</span><small>秒</small></output></div><label class="timeline-label" for="timeline"><span>时间轴 · 可拖动回看</span><span id="duration-label">共 4.97 s</span></label><input id="timeline" type="range" min="0" max="1000" step="1" value="0" aria-valuetext="0 秒"><p class="status" id="status" role="status" aria-live="polite">准备就绪。先预测哪一组最早落地。</p></div></section>
+<section class="readings" aria-labelledby="readings-title"><div class="readings-head"><h2 id="readings-title">地球 · 此刻的读数</h2><p id="reading-note">下落方向取正；地面为势能零点。</p></div><dl class="metrics"><div><dt>距地面高度 y</dt><dd><span id="height-value">20.00</span> <small>m</small></dd></div><div><dt id="velocity-label">下落速度 v</dt><dd><span id="velocity-value">0.00</span> <small>m/s</small></dd></div><div><dt>此物体下落用时</dt><dd><span id="time-value">0.00</span> <small>s</small></dd></div><div><dt>重力 F = mg</dt><dd><span id="force-value">9.80</span> <small>N</small></dd></div></dl><div class="energy"><div class="energy-heading"><strong>势能正在变成动能</strong><span>机械能总量 <b id="total-value">196.00</b> J</span></div><div class="energy-chart" aria-hidden="true"><div class="potential-fill" id="potential-fill"></div><div class="kinetic-fill" id="kinetic-fill"></div></div><div class="energy-legend"><span><i aria-hidden="true"></i>重力势能 <b id="potential-value">196.00</b> J</span><span><i class="kinetic-key" aria-hidden="true"></i>动能 <b id="kinetic-value">0.00</b> J</span></div><p class="help" id="energy-note">显示落地前的能量转换，不计算碰撞、形变、发热或反弹。</p></div></section>
+</div></div>
+<section class="explore" id="explore"><h2>每次只改一个条件。</h2><div class="questions"><article><h3>更重，会落得更快吗？</h3><p>保持高度不变，把质量从 1 kg 改为 2 kg。比较<strong>落地用时</strong>和<strong>重力</strong>：哪些数值变了，哪些没有？</p></article><article><h3>高度翻倍，时间也翻倍吗？</h3><p>在地球上比较 20 m 与 40 m。用记录的时间求比值，再用 <strong>t ∝ √H</strong> 检查预测。</p></article><article><h3>速度为什么越来越快？</h3><p>暂停实验，每次前进 0.1 秒。观察速度增加量与位置变化，再看<strong>势能减少了多少</strong>。</p></article></div></section>
+<details class="notes"><summary>公式、模型边界与资料来源</summary><div class="notes-content"><div><h3>这个实验怎样计算</h3><p>释放高度为 H，距地面高度为 y，向下速度的大小为 v；初速度为 0。</p><p class="formula">t<sub>落地</sub> = √(2H/g)<br>y = H − ½gt²　　v = gt<br>F = mg　　U = mgy　　K = ½mv²<br>U + K = mgH（仅下落阶段）</p><p>在同一重力场中，质量同时出现在重力 F = mg 和牛顿第二定律 F = ma 中，因此 a = g。质量变大，重力和能量都增大，但理想落地时间不变。</p></div><div><h3>怎样理解这些近似</h3><p>取地球 9.80、月球 1.62、火星 3.71 m/s² 为课堂代表值；实际 g 随位置和高度略有变化。这里不计算空气阻力、天体自转、曲率、浮力或碰撞。</p><p>某组到达地面后，圆点停止，速度和动能<strong>保留触地前一瞬的值</strong>。它不是静止在地面上的物体，也不表示碰撞后机械能仍守恒。自由落体模型不能直接用于预测羽毛在空气中的运动。</p><ol class="sources"><li><a href="https://ssd.jpl.nasa.gov/planets/phys_par.html" target="_blank" rel="noopener noreferrer">NASA JPL · Planetary Physical Parameters</a>：地球、火星重力代表值。</li><li><a href="https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/moon/" target="_blank" rel="noopener noreferrer">NASA Glenn · Moon</a>：月球表面平均重力加速度。</li><li><a href="https://openstax.org/books/university-physics-volume-1/pages/3-5-free-fall" target="_blank" rel="noopener noreferrer">OpenStax · Free Fall</a>：自由落体与质量无关的前提。</li><li><a href="https://openstax.org/books/college-physics-2e/pages/7-3-gravitational-potential-energy" target="_blank" rel="noopener noreferrer">OpenStax · Gravitational Potential Energy</a>：近地表势能与能量转换。</li></ol><p class="help">链接仅在你主动打开时访问；实验运行不需要联网。</p></div></div></details>
+</main><footer class="footer"><span>适用：初中物理定性探究 · 高中运动学与能量分析</span><span>独立离线实验 · 原创代码以 MIT 许可开放</span></footer>
+</div>
+<script>
+(() => {
+ 'use strict';
+ // Exact constant-g kinematics avoids numerical-integration drift during seeking.
+ const planets=Object.freeze({earth:Object.freeze({name:'地球',g:9.80}),moon:Object.freeze({name:'月球',g:1.62}),mars:Object.freeze({name:'火星',g:3.71})});
+ function stateAt({height,mass,g,time}){
+  if(![height,mass,g,time].every(Number.isFinite)||height<0||mass<=0||g<=0||time<0)throw new RangeError('Invalid free-fall conditions');
+  const landingTime=Math.sqrt(2*height/g),elapsed=Math.min(time,landingTime),remaining=Math.max(0,height-.5*g*elapsed*elapsed),velocity=g*elapsed;
+  return Object.freeze({landingTime,elapsed,height:remaining,velocity,force:mass*g,potential:mass*g*remaining,kinetic:.5*mass*velocity*velocity,total:mass*g*height,finished:time>=landingTime});
+ }
+ const $=id=>document.getElementById(id),planetButtons=[...document.querySelectorAll('[data-planet]')];
+ const media=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+ const state={height:20,mass:1,selected:'earth',time:0,speed:1,playing:false,stepMode:!!media?.matches};
+ let frame=null,lastTimestamp=null,destroyed=false;
+ const number=(value,digits=2)=>value.toFixed(digits);
+ const duration=()=>Math.sqrt(2*state.height/planets.moon.g);
+ const sample=key=>stateAt({height:state.height,mass:state.mass,g:planets[key].g,time:state.time});
+ const announce=message=>{$('status').textContent=message;};
+ function render(){
+  for(const [key,planet] of Object.entries(planets)){
+   const point=sample(key),fraction=(state.height-point.height)/state.height;
+   $('ball-'+key).style.transform='translateY('+(fraction*100)+'%)';
+   $('landing-'+key).textContent=number(point.landingTime)+' s';
+   $('planet-'+key).classList.toggle('is-selected',state.selected===key);
+  }
+  for(const button of planetButtons)button.setAttribute('aria-pressed',String(button.dataset.planet===state.selected));
+  const point=sample(state.selected),planet=planets[state.selected];
+  $('readings-title').textContent=planet.name+' · '+(point.finished?'触地前的读数':'此刻的读数');
+  $('reading-note').textContent=point.finished?'已到达地面；读数保留触地前一瞬。':'下落方向取正；地面为势能零点。';
+  $('velocity-label').textContent=point.finished?'触地前速度 v':'下落速度 v';
+  for(const [id,value] of Object.entries({'height-value':point.height,'velocity-value':point.velocity,'time-value':point.elapsed,'force-value':point.force,'total-value':point.total,'potential-value':point.potential,'kinetic-value':point.kinetic,'clock':state.time}))$(id).textContent=number(value);
+  $('potential-fill').style.flexBasis=(point.potential/point.total*100)+'%';$('kinetic-fill').style.flexBasis=(point.kinetic/point.total*100)+'%';
+  $('timeline').value=String(Math.round(state.time/duration()*1000));$('timeline').setAttribute('aria-valuetext',number(state.time)+' 秒，共 '+number(duration())+' 秒');
+  $('duration-label').textContent='共 '+number(duration())+' s';
+  $('play').textContent=state.playing?'暂停':state.time>=duration()?'重新播放':'开始下落';$('play').disabled=state.stepMode;$('play').setAttribute('aria-pressed',String(state.playing));
+  $('step').disabled=state.time>=duration();
+  for(const key of ['height','mass'])for(const suffix of ['number','range']){const input=$(key+'-'+suffix);if(document.activeElement!==input)input.value=String(state[key]);}
+  for(const [id,fraction] of [['ruler-top',1],['ruler-three',.75],['ruler-half',.5],['ruler-quarter',.25]])$(id).textContent=number(state.height*fraction,state.height%4?1:0);
+ }
+ function pause(){state.playing=false;lastTimestamp=null;if(frame!==null)cancelAnimationFrame(frame);frame=null;}
+ function tick(timestamp){
+  frame=null;if(!state.playing||destroyed)return;
+  if(lastTimestamp!==null)state.time=Math.min(duration(),state.time+Math.max(0,timestamp-lastTimestamp)/1000*state.speed);
+  lastTimestamp=timestamp;
+  if(state.time>=duration()){pause();announce('三组均已到达地面。比较落地用时，或拖动时间轴回看。');}
+  render();if(state.playing)frame=requestAnimationFrame(tick);
+ }
+ function reset(message='已重置。三组物体回到释放位置。'){pause();state.time=0;render();announce(message);}
+ function play(){
+  if(state.stepMode)return;
+  if(state.playing){pause();render();announce('已暂停。可以查看读数，或前进 0.1 秒。');return;}
+  if(state.time>=duration())state.time=0;
+  state.playing=true;lastTimestamp=null;render();announce('正在下落。三组物体从静止同时释放。');frame=requestAnimationFrame(tick);
+ }
+ function changeCondition(key,raw){
+  const value=Number(raw),valid=String(raw).trim()!==''&&Number.isFinite(value)&&(key==='height'?value>=1&&value<=100&&Number.isInteger(value):value>=.1&&value<=10&&Math.abs(value*10-Math.round(value*10))<1e-8);
+  if(!valid){$('input-error').textContent=key==='height'?'高度请填写 1 至 100 之间的整数（米）。':'质量请填写 0.1 至 10 kg，精确到 0.1 kg。';$(key+'-number').setAttribute('aria-invalid','true');return;}
+  $('input-error').textContent='';$(key+'-number').removeAttribute('aria-invalid');state[key]=value;reset('实验条件已更新。高度 '+state.height+' 米，质量 '+state.mass+' 千克；重新开始后比较。');
+ }
+ for(const key of ['height','mass']){$(key+'-range').addEventListener('input',event=>changeCondition(key,event.target.value));$(key+'-number').addEventListener('change',event=>changeCondition(key,event.target.value));}
+ for(const button of planetButtons)button.addEventListener('click',()=>{state.selected=button.dataset.planet;render();const point=sample(state.selected);announce('查看'+planets[state.selected].name+'：预计 '+number(point.landingTime)+' 秒落地，重力 '+number(point.force)+' 牛顿。');});
+ $('play').addEventListener('click',play);
+ $('reset').addEventListener('click',()=>reset());
+ $('step').addEventListener('click',()=>{pause();state.time=Math.min(duration(),state.time+.1);render();announce('实验时间 '+number(state.time)+' 秒。'+(state.time>=duration()?'三组均已到达地面。':'可以继续单步观察。'));});
+ $('timeline').addEventListener('input',event=>{const value=Number(event.target.value);if(!Number.isFinite(value))return;pause();state.time=Math.min(duration(),Math.max(0,value/1000*duration()));render();announce('已回看到实验时间 '+number(state.time)+' 秒。');});
+ $('speed').addEventListener('change',event=>{const value=Number(event.target.value);if(![1,.5,.25].includes(value))return;state.speed=value;lastTimestamp=null;announce('播放速度改为 '+value+' 倍，物理计算保持不变。');});
+ $('step-mode').checked=state.stepMode;
+ $('step-mode').addEventListener('change',event=>{pause();state.stepMode=event.target.checked;render();announce(state.stepMode?'分步模式已开启。使用前进按钮或时间轴观察。':'连续播放已恢复，点击开始才会运动。');});
+ if(state.stepMode)$('motion-help').textContent='已按系统减少动态偏好启用分步模式。你可用前进按钮或时间轴观察，也可取消勾选后主动播放。';
+ $('theme').addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=dark?'dark':'light';$('theme').setAttribute('aria-pressed',String(dark));$('theme').textContent=dark?'切换浅色':'切换深色';});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.playing){pause();render();announce('页面暂时离开，实验已暂停。');}});
+ window.addEventListener('pagehide',()=>{pause();destroyed=true;});
+ window.addEventListener('pageshow',()=>{destroyed=false;});
+ window.GravityLab=Object.freeze({stateAt,planets,inspect:()=>({...state,duration:duration()}),destroy:()=>{pause();destroyed=true;}});
+ render();
+})();
+</script>
+</body>
+</html>

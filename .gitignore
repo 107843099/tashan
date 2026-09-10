@@ -16,6 +16,10 @@ Thumbs.db
 /.wrangler/
 .dev.vars
 .dev.vars.*
+!.dev.vars.example
+
+# Local account database, private configuration and development sessions
+/.local/
 
 # Local hosting metadata and superseded optical exports
 **/.openai/

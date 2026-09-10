@@ -8,28 +8,89 @@
   let locale = 'zh-CN';
   try { const saved = localStorage.getItem('practice-language'); if (words[saved]) locale = saved; } catch (_) {}
   const t = words[locale];
+  const loginMessage=locale==='en'?'Sign in to preview your own saved projects.':locale==='zh-Hant'?'請先登入，再預覽自己儲存的作品。':'请先登录，再预览自己保存的作品。';
   document.documentElement.lang = locale;
   for (const key of ['brand', 'back', 'download', 'title', 'status', 'description']) document.getElementById('preview-' + key).textContent = t[key];
   document.getElementById('preview-message').textContent = t.loading;
-  const frame = document.getElementById('preview-frame');
+  let frame = document.getElementById('preview-frame');
   frame.title = t.frame;
   const message = value => { document.getElementById('preview-message').textContent = value; };
-  let downloadURL;
-  window.addEventListener('pagehide', () => { if (downloadURL) URL.revokeObjectURL(downloadURL); });
+  let downloadURL, loadedScope, epoch=0, sessionRequest;
+  const download = document.getElementById('preview-download');
+  function replaceFrame(source) {
+    // A new browsing context starts with its final visibility and size. Reusing a
+    // display:none srcdoc frame can preserve a zero-size child layout in Chromium.
+    // Detaching the previous frame also stops its scripts before identity changes.
+    const next = document.createElement('iframe');
+    next.id = 'preview-frame';
+    next.className = 'preview-frame';
+    next.title = t.frame;
+    next.setAttribute('sandbox', 'allow-scripts');
+    next.referrerPolicy = 'no-referrer';
+    next.hidden = source === undefined;
+    if (source !== undefined) next.srcdoc = source;
+    frame.replaceWith(next);
+    frame = next;
+  }
+  function clearPreview() {
+    epoch++;
+    if(sessionRequest){sessionRequest.abort();sessionRequest=null;}
+    replaceFrame();
+    document.getElementById('preview-empty').hidden=false;
+    document.getElementById('preview-title').textContent=t.title;
+    document.title=t.title+' · '+t.brand;
+    download.disabled=true;download.onclick=null;
+    if(downloadURL){URL.revokeObjectURL(downloadURL);downloadURL=null;}
+  }
+  window.addEventListener('pagehide', clearPreview);
   async function openProject() {
-    const id = new URLSearchParams(location.search).get('project');
-    if (!id || !/^local-[A-Za-z0-9][A-Za-z0-9_-]{0,95}$/.test(id)) { message(t.missing); return; }
-    const project = await window.PracticeStore.get(id);
-    if (!project) { message(t.missing); return; }
+    clearPreview();const ticket=epoch;message(t.loading);
+    // Hidden pages contain no running private artwork. Becoming visible triggers
+    // a fresh session check rather than completing an earlier background render.
+    if(document.visibilityState!=='visible')return;
+    const params=new URLSearchParams(location.search),remoteId=params.get('remote'),versionId=params.get('version'),isPublic=Boolean(remoteId&&params.get('public')==='1');
+    const id=remoteId||params.get('project');
+    if (!id || !/^local-[A-Za-z0-9][A-Za-z0-9_-]{0,95}$/.test(id) || (remoteId&&!versionId)) { message(t.missing); return; }
+    // The host verifies identity; the iframe below cannot access the API or cookies.
+    sessionRequest = new AbortController();
+    const response = !isPublic&&await fetch('/api/v1/auth/session', { credentials: 'same-origin', cache: 'no-store', signal:sessionRequest.signal });
+    let user = null;
+    if (response&&response.ok && (response.headers.get('content-type') || '').includes('application/json')) user = (await response.json()).user;
+    else if(response&&response.status!==404)throw new Error(t.failed);
+    if(ticket!==epoch)return;
+    if(!user&&!isPublic){message(loginMessage);document.getElementById('preview-back').href='./index.html#login';return;}
+    const scope=user?.id||null;
+    if(loadedScope!==undefined&&loadedScope!==scope){message(t.missing);return;}
+    if(user?.mustChangePassword){location.replace('./index.html#account');return;}
+    loadedScope=scope;
+    let project;
+    if(remoteId){
+      const api='/api/v1/'+(isPublic?'published':'projects')+'/'+encodeURIComponent(id)+'/versions/'+encodeURIComponent(versionId);
+      const response=await fetch(api,{credentials:'same-origin',cache:'no-store',signal:sessionRequest.signal});
+      if(!response.ok)throw new Error(t.failed);
+      const result=await response.json();if(ticket!==epoch)return;
+      project={...result.version.metadata};const attachment=result.version.files?.attachment;
+      if(attachment){
+        const expected=api+'/files/attachment';if(attachment.url!==expected)throw new Error(t.failed);
+        const fileResponse=await fetch(expected,{credentials:'same-origin',cache:'no-store',signal:sessionRequest.signal});
+        if(!fileResponse.ok)throw new Error(t.failed);
+        project.attachment={name:attachment.name,type:attachment.type,blob:await fileResponse.blob()};
+      }
+      document.getElementById('preview-status').textContent=(locale==='en'?'Version ':locale==='zh-Hant'?'固定版本 ':'固定版本 ')+'v'+result.version.number;
+    }else{
+      await window.PracticeStore.setScope(scope);if(ticket!==epoch)return;
+      project=await window.PracticeStore.get(id);
+    }
+    if(ticket!==epoch)return;
+    if(!project){message(t.missing);return;}
     const name = typeof project.title === 'string' ? project.title : project.title && (project.title[locale] || project.title['zh-CN'] || project.title.en);
     document.getElementById('preview-title').textContent = name || t.status;
     document.title = (name || t.status) + ' · ' + t.brand;
-    document.getElementById('preview-back').href = './index.html#project/' + encodeURIComponent(id);
+    document.getElementById('preview-back').href = (remoteId?'./index.html#cloud/':'./index.html#project/') + encodeURIComponent(id);
     const file = project.attachment;
     if (!file || !(file.blob instanceof Blob)) { message(t.noFile); return; }
-    const download = document.getElementById('preview-download');
     download.disabled = false;
-    download.addEventListener('click', () => {
+    download.onclick = () => {
       if (!downloadURL) downloadURL = URL.createObjectURL(file.blob);
       const link = document.createElement('a');
       link.href = downloadURL;
@@ -37,15 +98,19 @@
       document.body.appendChild(link);
       link.click();
       link.remove();
-    });
+    };
     if (!/\.html?$/i.test(file.name)) { message(t.package); return; }
     const source = await file.blob.text();
+    if(ticket!==epoch)return;
     // The first parsed policy constrains even HTML that declares its own looser CSP.
     // The unique sandbox origin prevents access to the host's storage and document.
     const policy = "default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src data:; media-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'";
-    frame.srcdoc = '<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="' + policy + '">' + source;
-    frame.hidden = false;
     document.getElementById('preview-empty').hidden = true;
+    replaceFrame('<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="' + policy + '">' + source);
   }
-  openProject().catch(reason => { message(t.failed + ' ' + (reason && reason.message || '')); });
+  function reload(){const pending=openProject(),ticket=epoch;pending.catch(()=>{if(ticket!==epoch)return;clearPreview();message(t.failed);});}
+  if(typeof BroadcastChannel==='function'){const channel=new BroadcastChannel('tashan-account-sync');channel.onmessage=event=>{if(event.data==='session-changed'){clearPreview();reload();}};}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reload();else clearPreview();});
+  window.addEventListener('pageshow',event=>{if(event.persisted)reload();});
+  reload();
 })();
