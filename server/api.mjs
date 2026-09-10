@@ -1,6 +1,7 @@
 // The browser receives account data only. Provider credentials and tokens stay server-side.
 import { handleProjectRequest } from './projects-api.mjs';
 import { AI_LIMITS, validateAiInput } from './ai-provider.mjs';
+import { AI_PROMPT_LIMITS, validatePromptTask, validatePromptUpdate } from './ai-prompts.mjs';
 export class ApiError extends Error {
   constructor(status, code, message) { super(message); this.status = status; this.code = code; }
 }
@@ -184,14 +185,22 @@ export async function handleApi(request, provider, context = {}) {
     if (path === PREFIX + '/ai/assist' && method === 'POST') {
       const input = validateAiInput(await body(request, AI_LIMITS.requestBytes));
       if (!context.aiProvider?.status().configured) fail(503, 'AI_NOT_CONFIGURED', 'AI 服务尚未配置，请联系管理员。');
+      const promptConfig = context.aiProvider.prepare ? await context.aiProvider.prepare(input.task,{signal:request.signal}) : undefined;
       await aiLimit(provider, `ai:minute:${user.id}`, AI_LIMITS.perMinute, 60, 'AI_MINUTE_LIMIT', '每个账号每分钟最多生成 3 次，请稍后重试。');
       await aiLimit(provider, `ai:day:${user.id}`, AI_LIMITS.perDay, 86400, 'AI_DAILY_LIMIT', '已达到账号 24 小时内 30 次的 AI 额度，请额度恢复后再试。');
       await aiLimit(provider, 'ai:global:day', AI_LIMITS.globalPerDay, 86400, 'AI_GLOBAL_LIMIT', '平台已达到 24 小时内的 AI 总额度，请稍后再来或联系管理员。');
-      return respond(await context.aiProvider.assist(input, {signal:request.signal}));
+      return respond(await context.aiProvider.assist(input, {signal:request.signal,promptConfig}));
     }
     if (!path.startsWith(PREFIX + '/admin/')) fail(404, 'NOT_FOUND', '接口不存在。');
     if (user.role !== 'admin') fail(403, 'FORBIDDEN', '只有管理员可以执行此操作。');
     await limit(provider, `admin:${user.id}`, method === 'GET' ? 120 : 30, 60);
+    if (path === PREFIX + '/admin/ai-prompts' && method === 'GET') return respond(await provider.listAiPrompts(user));
+    const promptMatch = path.match(/^\/api\/v1\/admin\/ai-prompts\/([^/]+)$/);
+    if (promptMatch && method === 'PATCH') {
+      const task = validatePromptTask(promptMatch[1]);
+      const changes = validatePromptUpdate(await body(request, AI_PROMPT_LIMITS.requestBytes));
+      return respond({prompt:await provider.updateAiPrompt(user,task,changes)});
+    }
     if (path === PREFIX + '/admin/users' && method === 'GET') {
       const page = Number(url.searchParams.get('page') || 1);
       const query = (url.searchParams.get('query') || '').trim();

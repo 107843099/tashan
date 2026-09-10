@@ -1,4 +1,5 @@
 import { ApiError, validateUsername, validatePassword, validateDisplayName, validateAffiliation } from './api.mjs';
+import { AI_PROMPT_TASKS, validatePromptTask, validatePromptUpdate, resolvePromptConfig, promptStorageError } from './ai-prompts.mjs';
 
 const account = row => row ? ({ id: row.id, username: row.username, displayName: row.display_name, role: row.role, status: row.status, mustChangePassword: row.must_change_password, createdAt: row.created_at, updatedAt: row.updated_at, affiliationType:row.affiliation_type || 'personal', organizationName:row.organization_name || '' }) : null;
 const session = data => ({ accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in });
@@ -15,7 +16,9 @@ const SQL_ERRORS = {
   E_BOOTSTRAP_CLOSED: [409, 'BOOTSTRAP_CLOSED', '初始管理员已创建，请通过管理员工作台管理账号。'],
   E_INVALID_INPUT: [400, 'INVALID_INPUT', '账号信息格式无效。'],
   E_INVALID_AFFILIATION: [400, 'INVALID_AFFILIATION_TYPE', '请选择个人、学校或机构。'],
-  E_INVALID_ORGANIZATION: [400, 'INVALID_ORGANIZATION_NAME', '学校或机构名称需为 1–100 个字符，不能包含控制字符。']
+  E_INVALID_ORGANIZATION: [400, 'INVALID_ORGANIZATION_NAME', '学校或机构名称需为 1–100 个字符，不能包含控制字符。'],
+  E_AI_PROMPT_INVALID: [400, 'AI_PROMPT_INVALID', 'AI 指令或当前版本号无效。'],
+  E_AI_PROMPT_CONFLICT: [409, 'AI_PROMPT_CONFLICT', 'AI 指令已由另一位管理员更新，请重新读取后再修改。']
 };
 function trustedClaims(token) {
   // Only inspect a token AFTER Auth has validated it with GET /user.
@@ -34,7 +37,7 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
   try { const url = new URL(endpoint); isConfigured &&= url.protocol === 'https:' || (url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)); } catch { isConfigured = false; }
   function requireConfig() { if (!isConfigured) throw new ApiError(503, 'ACCOUNT_SERVICE_UNAVAILABLE', '账号服务尚未配置，请联系管理员。'); }
   const email = username => `${validateUsername(username)}@${emailDomain}`;
-  async function request(path, { method = 'GET', body, bearer = key, allowInvalidAuth = false } = {}) {
+  async function request(path, { method = 'GET', body, bearer = key, allowInvalidAuth = false, signal, requireJson200 = false } = {}) {
     requireConfig();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
@@ -43,8 +46,11 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
       const headers = { apikey: key, 'Content-Type': 'application/json' };
       // Current sb_secret keys are opaque API keys, not JWT bearer tokens.
       if (bearer !== key || !key.startsWith('sb_secret_')) headers.Authorization = `Bearer ${bearer}`;
-      response = await fetchImpl(endpoint + path, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: controller.signal });
+      response = await fetchImpl(endpoint + path, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: signal ? AbortSignal.any([signal,controller.signal]) : controller.signal });
     } catch { throw unavailable(); } finally { clearTimeout(timeout); }
+    // A missing JSONB RPC row is HTTP 200 with JSON null. Other successful
+    // statuses cannot prove absence; never silently replace saved AI settings.
+    if (requireJson200 && response.ok && response.status !== 200) throw unavailable();
     let result = null;
     if (response.status !== 204) { try { result = await response.json(); } catch { if (response.ok) throw unavailable(); } }
     if (!response.ok) {
@@ -59,6 +65,9 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
     return result;
   }
   const rpc = (name, body) => request('/rest/v1/rpc/' + name, { method: 'POST', body });
+  async function promptRpc(name,body,{signal}={}){
+    try{return await request('/rest/v1/rpc/'+name,{method:'POST',body,signal,requireJson200:true});}catch(error){if(error.status===403||error.code?.startsWith('AI_PROMPT_'))throw error;throw promptStorageError();}
+  }
   async function authIdentity(accessToken) {
     if (!accessToken) return null;
     const data = await request('/auth/v1/user', { bearer: accessToken, allowInvalidAuth: true });
@@ -170,6 +179,19 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
     listAudit: async actor => {
       const result = await rpc('tashan_list_audit', { p_actor: actor.id });
       return { events: result.events.map(event => ({ id: String(event.id), action: event.action, details: event.details, createdAt: event.created_at, actorUsername: event.actor_username, targetUsername: event.target_username })) };
+    },
+    getAiPrompt:async(task,{signal}={})=>{
+      validatePromptTask(task);return resolvePromptConfig(task,await promptRpc('tashan_get_ai_prompt',{p_task:task},{signal}));
+    },
+    listAiPrompts:async actor=>{
+      const result=await promptRpc('tashan_list_ai_prompts',{p_actor:actor.id});
+      if(!Array.isArray(result?.prompts)||result.prompts.some(row=>!row||!AI_PROMPT_TASKS.includes(row.task))||new Set(result.prompts.map(row=>row.task)).size!==result.prompts.length)throw promptStorageError();
+      return {prompts:AI_PROMPT_TASKS.map(task=>resolvePromptConfig(task,result.prompts.find(row=>row.task===task)||null))};
+    },
+    updateAiPrompt:async(actor,task,changes)=>{
+      validatePromptTask(task);const input=validatePromptUpdate(changes);
+      const result=await promptRpc('tashan_update_ai_prompt',{p_actor:actor.id,p_task:task,p_prompt:input.prompt,p_expected_revision:input.expectedRevision});
+      if(result===null)throw promptStorageError();return resolvePromptConfig(task,result);
     },
     // Exposed to the private CLI only, never routed by handleApi.
     bootstrapAdmin: input => makeAccount(null, { ...input, role: 'admin' }, true)

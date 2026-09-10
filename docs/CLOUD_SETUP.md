@@ -12,6 +12,7 @@ v3.4 使用 Supabase Auth 与 Postgres 保存账号、项目版本、权限和�
 4. `supabase/migrations/202609100004_account_onboarding.sql`：新账号默认直接登录；只解除有明确创建审计、未改密且没有凭据锁的启用账号的初始改密标记。管理员重置、来源不明或存在中断凭据操作的账号保留原状态。
 5. `supabase/migrations/202609110005_stream_uploads.sql`：增加版本存储后端和经过服务端校验的文件回执；R2 文件全部核对成功后才完成版本。旧版本保留 Supabase 后端，001–004 不改写。
 6. `supabase/migrations/202609110006_account_affiliation.sql`：增加个人／学校／机构归属及名称，旧账号默认个人；保留旧版创建账号 RPC，新增完整资料创建 RPC，并扩展编辑资料校验。先安装此迁移并通过 `cloud:check`，再发布使用新字段的 Worker。不会修改已有密码、角色、项目或时间戳。
+7. `supabase/migrations/202609110007_ai_prompts.sql`：增加管理员 AI 提示词配置及三个服务端 RPC，支持按功能保存、版本冲突保护与恢复默认。先安装迁移，再发布新版 Worker；详见 [AI 提示词管理](AI_PROMPTS.md)。
 
 将本轮待安装的 SQL 放在同一事务中执行，任意语句失败就回滚，避免表或函数已创建但权限尚未收紧的中间状态。迁移仅授权各自声明的精确函数签名，不修改同名前缀的其他函数或重载；审计序列也显式撤销 `PUBLIC`、`anon`、`authenticated` 的默认权限。已有 CLI 迁移流程时，先查看 `supabase migration list` 和 `supabase db push --dry-run`，不要混用未登记的手动迁移。参见 [迁移与历史同步](https://supabase.com/docs/guides/deployment/database-migrations)。
 

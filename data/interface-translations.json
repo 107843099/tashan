@@ -871,7 +871,8 @@
     "现在，把想法用起来。": "Now put your idea to work.",
     "从一个小作品开始，留下清楚的教学说明。": "Start with a small project and clear teaching notes.",
     "从“我的账户”进入“账户管理”，点击“新建账户”，填写用户名、显示名称、角色和初始密码，再选择所属类型。学校、机构需填写名称，个人不用填写。选中已有账户可编辑资料、重置密码或启停用。": "From “My account”, open “Manage accounts” and choose “New account”. Enter the username, display name, role and initial password, then choose an affiliation. Schools and organisations require a name; personal accounts do not. Select an existing account to edit its details, reset its password or enable or disable access.",
-    "点击右上角的账户入口，进入“我的账户”。可查看个人及所属资料、填写当前密码与新密码，并退出登录。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "Open the account control in the top-right corner and go to “My account”. View your profile and affiliation, change your password by entering the current and new passwords, or sign out. New passwords need at least 8 characters and may contain digits only. Contact an administrator to change your display name, school or organisation."
+    "点击右上角的账户入口，进入“我的账户”。可查看个人及所属资料、填写当前密码与新密码，并退出登录。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "Open the account control in the top-right corner and go to “My account”. View your profile and affiliation, change your password by entering the current and new passwords, or sign out. New passwords need at least 8 characters and may contain digits only. Contact an administrator to change your display name, school or organisation.",
+    "在“AI 提示词”中分别调整上传信息分析、教学建议和创作 Prompt。保存后从下一次 AI 调用生效，可查看默认内容并恢复；遇到保存冲突时，先读取最新内容，再核对自己的草稿。": "In AI prompts, adjust instructions for upload analysis, teaching suggestions and creative prompts separately. Saved changes apply to the next AI request. You can compare with the defaults or restore them. If a save conflicts, load the latest version and review your draft before continuing."
   },
   "zh-Hant": {
     "教师实践平台 V3 页面原型": "教師實踐平臺 V3 頁面原型",
@@ -1745,6 +1746,7 @@
     "现在，把想法用起来。": "現在，把想法用起來。",
     "从一个小作品开始，留下清楚的教学说明。": "從一個小作品開始，留下清楚的教學說明。",
     "从“我的账户”进入“账户管理”，点击“新建账户”，填写用户名、显示名称、角色和初始密码，再选择所属类型。学校、机构需填写名称，个人不用填写。选中已有账户可编辑资料、重置密码或启停用。": "從「我的帳戶」進入「帳戶管理」，點擊「新建帳戶」，填寫使用者名稱、顯示名稱、角色和初始密碼，再選擇所屬類型。學校、機構需填寫名稱，個人不用填寫。選取已有帳戶可編輯資料、重設密碼或啟停用。",
-    "点击右上角的账户入口，进入“我的账户”。可查看个人及所属资料、填写当前密码与新密码，并退出登录。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "點擊右上角的帳戶入口，進入「我的帳戶」。可查看個人及所屬資料、填寫目前密碼與新密碼，並登出。新密碼至少 8 位，允許純數字；修改顯示名稱或所屬學校、機構請聯絡管理員。"
+    "点击右上角的账户入口，进入“我的账户”。可查看个人及所属资料、填写当前密码与新密码，并退出登录。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "點擊右上角的帳戶入口，進入「我的帳戶」。可查看個人及所屬資料、填寫目前密碼與新密碼，並登出。新密碼至少 8 位，允許純數字；修改顯示名稱或所屬學校、機構請聯絡管理員。",
+    "在“AI 提示词”中分别调整上传信息分析、教学建议和创作 Prompt。保存后从下一次 AI 调用生效，可查看默认内容并恢复；遇到保存冲突时，先读取最新内容，再核对自己的草稿。": "在「AI 提示詞」中分別調整上傳資訊分析、教學建議和創作 Prompt。儲存後從下一次 AI 呼叫生效，可查看預設內容並還原；遇到儲存衝突時，先讀取最新內容，再核對自己的草稿。"
   }
 }

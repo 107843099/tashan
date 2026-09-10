@@ -95,6 +95,185 @@
     '确认停用账户':['確認停用帳戶','Disable this account'],'停用后，该用户的会话会失效。':['停用後，該使用者的工作階段會失效。','Disabling this account will revoke the user’s sessions.'],
     '导出旧版浏览器资料':['匯出舊版瀏覽器資料','Export previous browser projects'],'导出登录功能上线前的访客项目、草稿、收藏、任务与版本记录。':['匯出登入功能上線前的訪客專案、草稿、收藏、任務與版本記錄。','Exports guest projects, drafts, bookmarks, tasks and versions saved before accounts were added.'],'取消':['取消','Cancel'],'确认停用':['確認停用','Disable account']
   };
+  Object.assign(translations,{
+  "AI 提示词": [
+    "AI 提示詞",
+    "AI prompts"
+  ],
+  "上传信息分析": [
+    "上傳資訊分析",
+    "Upload analysis"
+  ],
+  "教学建议": [
+    "教學建議",
+    "Teaching suggestions"
+  ],
+  "创作 Prompt": [
+    "創作 Prompt",
+    "Creative prompt"
+  ],
+  "分享项目时，分析上传材料并补充必填信息。": [
+    "分享專案時，分析上傳材料並補充必填資訊。",
+    "Analyses uploaded materials and fills required fields when sharing a project."
+  ],
+  "补充教学信息时，生成可审阅的教学建议。": [
+    "補充教學資訊時，產生可審閱的教學建議。",
+    "Generates teaching suggestions for review while adding teaching details."
+  ],
+  "基于项目继续创作时，优化创作 Prompt。": [
+    "基於專案繼續創作時，優化創作 Prompt。",
+    "Refines the creative prompt when adapting an existing project."
+  ],
+  "选择功能": [
+    "選擇功能",
+    "Choose a feature"
+  ],
+  "AI 功能": [
+    "AI 功能",
+    "AI features"
+  ],
+  "未保存": [
+    "未保存",
+    "Unsaved"
+  ],
+  "系统默认": [
+    "系統預設",
+    "System default"
+  ],
+  "已自定义": [
+    "已自訂",
+    "Custom"
+  ],
+  "修改只保留在当前会话；退出或切换账号后清除未保存内容。": [
+    "修改只保留在目前工作階段；登出或切換帳戶後清除未保存內容。",
+    "Drafts stay in this session. Signing out or switching accounts clears unsaved edits."
+  ],
+  "提示词配置读取失败，请重试。": [
+    "提示詞設定讀取失敗，請重試。",
+    "Could not load prompt settings. Please retry."
+  ],
+  "重新读取最新配置": [
+    "重新讀取最新設定",
+    "Load latest settings"
+  ],
+  "正在读取提示词…": [
+    "正在讀取提示詞…",
+    "Loading prompts…"
+  ],
+  "其他管理员已修改这项提示词。": [
+    "其他管理員已修改這項提示詞。",
+    "Another administrator changed this prompt."
+  ],
+  "你的草稿已保留。请先读取最新配置，再核对需要保留的内容。": [
+    "你的草稿已保留。請先讀取最新設定，再核對需要保留的內容。",
+    "Your draft is safe. Load the latest settings, then compare the content you want to keep."
+  ],
+  "最新已保存内容": [
+    "最新已保存內容",
+    "Latest saved content"
+  ],
+  "以最新版本继续编辑": [
+    "以最新版本繼續編輯",
+    "Continue from this revision"
+  ],
+  "保留你的草稿，下一次保存将基于此版本。请先核对差异。": [
+    "保留你的草稿，下一次保存將基於此版本。請先核對差異。",
+    "Keep your draft and base your next save on this revision. Review the differences first."
+  ],
+  "保存后，下次调用生效；不会立即运行 AI。": [
+    "保存後，下次呼叫生效；不會立即執行 AI。",
+    "Saved changes apply to the next request. Saving does not run AI."
+  ],
+  "最近更新": [
+    "最近更新",
+    "Last updated"
+  ],
+  "尚未自定义，当前使用系统默认内容。": [
+    "尚未自訂，目前使用系統預設內容。",
+    "No custom settings yet. The system default is active."
+  ],
+  "任务提示词": [
+    "任務提示詞",
+    "Task prompt"
+  ],
+  "1–4000 个字符，可换行。": [
+    "1–4000 個字元，可換行。",
+    "1–4000 characters; line breaks are allowed."
+  ],
+  "已与服务器同步": [
+    "已與伺服器同步",
+    "Up to date"
+  ],
+  "恢复默认": [
+    "恢復預設",
+    "Restore default"
+  ],
+  "保存提示词": [
+    "保存提示詞",
+    "Save prompt"
+  ],
+  "正在保存…": [
+    "正在保存…",
+    "Saving…"
+  ],
+  "查看系统默认提示词": [
+    "查看系統預設提示詞",
+    "View the system default prompt"
+  ],
+  "提示词需为 1–4000 个字符，可换行或使用制表符。": [
+    "提示詞需為 1–4000 個字元，可換行或使用定位字元。",
+    "Use 1–4000 characters. Line breaks and tabs are allowed."
+  ],
+  "提示词已保存，下次调用生效。": [
+    "提示詞已保存，下次呼叫生效。",
+    "Prompt saved. It applies to the next request."
+  ],
+  "本次已保存，你还有新的未保存修改。": [
+    "本次已保存，你還有新的未保存修改。",
+    "Saved. You also have newer unsaved edits."
+  ],
+  "已恢复默认，下次调用生效。": [
+    "已恢復預設，下次呼叫生效。",
+    "Default restored. It applies to the next request."
+  ],
+  "恢复默认提示词？": [
+    "恢復預設提示詞？",
+    "Restore the default prompt?"
+  ],
+  "将用系统默认内容替换当前配置与这项功能的未保存草稿。保存后，下次调用生效。": [
+    "將用系統預設內容取代目前設定與這項功能的未保存草稿。保存後，下次呼叫生效。",
+    "Replace this setting and its unsaved draft with the system default. It applies to the next request."
+  ],
+  "确认恢复默认": [
+    "確認恢復預設",
+    "Restore default"
+  ],
+  "已保留草稿，请核对后再保存。": [
+    "已保留草稿，請核對後再保存。",
+    "Draft kept. Review it before saving."
+  ],
+  "管理成员与 AI 的工作方式。": [
+    "管理成員與 AI 的工作方式。",
+    "Manage your people and how AI works."
+  ],
+  "管理员可管理账户与 AI 提示词。": [
+    "管理員可管理帳戶與 AI 提示詞。",
+    "Administrators manage accounts and AI prompts."
+  ],
+  "显示名称留空时使用用户名。": [
+    "顯示名稱留空時使用使用者名稱。",
+    "Leave blank to use the username."
+  ],
+  "AI 提示词已更新": [
+    "AI 提示詞已更新",
+    "AI prompt updated"
+  ],
+  "AI 提示词已恢复默认": [
+    "AI 提示詞已恢復預設",
+    "AI prompt restored to default"
+  ]
+});
+  Object.assign(translations,{'未读取':['未讀取','Not loaded'],'正在读取':['正在讀取','Loading'],'更新 AI 提示词':['更新 AI 提示詞','Update AI prompt'],'恢复默认 AI 提示词':['恢復預設 AI 提示詞','Restore default AI prompt'],'去工作台试用':['到工作台試用','Try it in your workspace']});
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const language = () => document.documentElement.lang || 'zh-CN';
   const t = key => translations[key]?.[language() === 'en' ? 1 : language() === 'zh-Hant' ? 0 : -1] || key;
@@ -108,11 +287,11 @@
   const ready = new Promise(resolve => { resolveReady = resolve; });
 
   function errorMessage(error) {
-    const byCode = {INVALID_AFFILIATION_TYPE:'请选择个人、学校或机构。',INVALID_ORGANIZATION_NAME:'学校或机构名称需为 1–100 个字符。',UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',WEAK_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
+    const byCode = {AI_PROMPT_INVALID:'提示词需为 1–4000 个字符，可换行或使用制表符。',AI_PROMPT_STORAGE_UNAVAILABLE:'提示词配置读取失败，请重试。',INVALID_AFFILIATION_TYPE:'请选择个人、学校或机构。',INVALID_ORGANIZATION_NAME:'学校或机构名称需为 1–100 个字符。',UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',WEAK_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
     return t(byCode[error?.code] || error?.message || '操作未完成，请稍后重试。');
   }
   function snapshotForms() {
-    return [...document.querySelectorAll('[data-account-form]')].map(form=>({kind:form.dataset.accountForm,id:form.dataset.userId||'',fields:[...form.elements].filter(field=>field.name&&field.type!=='submit').map(field=>({name:field.name,value:field.value,focused:field===document.activeElement,start:field.selectionStart,end:field.selectionEnd}))}));
+    return [...document.querySelectorAll('[data-account-form]')].filter(form=>form.dataset.accountForm!=='ai-prompt').map(form=>({kind:form.dataset.accountForm,id:form.dataset.userId||'',fields:[...form.elements].filter(field=>field.name&&field.type!=='submit').map(field=>({name:field.name,value:field.value,focused:field===document.activeElement,start:field.selectionStart,end:field.selectionEnd}))}));
   }
   function restoreForms(snapshots) {
     for(const snapshot of snapshots){
@@ -152,13 +331,13 @@
         await changeIdentity(null, {reason:'expired',forced:true});
         if(identityEpoch===expiredEpoch){state.error=t('登录已过期，请重新登录。');location.hash='login';redraw();}
       } else if (error.code === 'PASSWORD_CHANGE_REQUIRED' && state.user) {
-        state.user={...state.user,mustChangePassword:true};location.hash='account';redraw();
+        resetAdminAi();state.user={...state.user,mustChangePassword:true};location.hash='account';redraw();
       }
       throw error;
     }
   }
   async function changeIdentity(user, context) {
-    identityEpoch+=1;createdCredentials=null;appearanceForms=null;lastAppearance=null;
+    identityEpoch+=1;createdCredentials=null;appearanceForms=null;lastAppearance=null;resetAdminAi();
     const confirmation=document.querySelector('.account-confirm');confirmation?.close('cancel');confirmation?.remove();
     const oldId=state.user?.id || null, nextId=user?.id || null;
     // Clear administrative records before publishing any new identity.
@@ -184,7 +363,7 @@
         state.busy=true;
         await hooks.onBeforeChange?.({reason:initial?'initial':'external',forced:true});
         await changeIdentity(user,{reason:initial?'initial':'external',forced:true});
-      } else state.user=user;
+      } else {if(state.user?.role==='admin'&&(user?.role!=='admin'||user?.mustChangePassword))resetAdminAi();state.user=user;}
       if(user?.mustChangePassword)location.hash='account';else if(initial&&user&&(!location.hash||location.hash==='#login')){location.hash='discover';window.scrollTo({top:0,left:0,behavior:'instant'});}
     } catch(error) {
       if(initial) { state.configured=false;state.mode='unavailable';await changeIdentity(null,{reason:'initial',forced:true}); }
@@ -248,7 +427,77 @@
     const personal=control.value==='personal';field.hidden=personal;input.disabled=personal;input.required=!personal;
     field.querySelector('[data-account-organization-label]').textContent=t(control.value==='school'?'学校名称':'机构名称');
   }
-  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" aria-describedby="account-display-help" value="${escape(user?.displayName||'')}"></label><p class="account-help" id="account-display-help">${text('显示名称可用中文；留空时使用用户名。')}</p>${affiliationFields(user)}<fieldset class="account-permissions"><legend>${text('账户权限')}</legend><label class="account-field"><span>${text('角色')}</span><select name="role" aria-describedby="account-role-help" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label><p class="account-help" id="account-role-help">${text('成员可使用自己的工作台；管理员还可管理账户。')}</p></fieldset>`;}
+  const aiTasks={
+    upload:{title:'上传信息分析',description:'分享项目时，分析上传材料并补充必填信息。'},
+    teaching:{title:'教学建议',description:'补充教学信息时，生成可审阅的教学建议。'},
+    prompt:{title:'创作 Prompt',description:'基于项目继续创作时，优化创作 Prompt。'}
+  };
+  const freshAiState=()=>({selected:'upload',configs:{},drafts:{},loaded:false,loading:false,saving:null,error:''});
+  let adminAi=freshAiState();
+  const normalizeAiText=value=>String(value??'').replace(/\r\n?/g,'\n');
+  const invalidAiText=value=>!value.trim()||Array.from(value).length>4000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]/u.test(value);
+  const aiDirty=task=>Boolean(adminAi.drafts[task]&&adminAi.drafts[task].text!==adminAi.configs[task]?.prompt);
+  function resetAdminAi(){adminAi=freshAiState();document.querySelector('.account-ai-confirm')?.close('cancel');}
+  function acceptAiConfig(config,{saved=false}={}){
+    const task=config?.task;
+    if(!aiTasks[task]||typeof config.prompt!=='string'||typeof config.defaultPrompt!=='string'||!Number.isInteger(config.revision)||config.revision<0)throw new Error('提示词配置读取失败，请重试。');
+    const old=adminAi.configs[task],draft=adminAi.drafts[task];adminAi.configs[task]={...config};
+    if(!draft||(!draft.conflict&&draft.text===old?.prompt)||saved)adminAi.drafts[task]={text:config.prompt,revision:config.revision,error:'',notice:'',conflict:false,reviewed:false};
+    else if(draft.revision!==config.revision){draft.conflict=true;draft.reviewed=true;}
+  }
+  async function loadAiPrompts(){
+    if(state.user?.role!=='admin'||state.user.mustChangePassword||adminAi.loading||adminAi.saving)return;
+    const epoch=identityEpoch,scope=adminAi;adminAi.loading=true;adminAi.error='';redraw(false,true);
+    try{
+      const result=await request('/admin/ai-prompts');if(epoch!==identityEpoch||scope!==adminAi)return;
+      if(!Array.isArray(result.prompts)||!Object.keys(aiTasks).every(task=>result.prompts.some(item=>item?.task===task)))throw new Error('提示词配置读取失败，请重试。');
+      for(const config of result.prompts)acceptAiConfig(config);
+      for(const draft of Object.values(adminAi.drafts))if(draft.conflict)draft.reviewed=true;
+      adminAi.loaded=true;
+    }catch(error){if(epoch===identityEpoch&&scope===adminAi)adminAi.error=errorMessage(error);}
+    finally{if(epoch===identityEpoch&&scope===adminAi){adminAi.loading=false;redraw(false,true);}}
+  }
+  function aiPromptMarkup(){
+    const task=adminAi.selected,config=adminAi.configs[task],draft=adminAi.drafts[task],busy=Boolean(adminAi.loading||adminAi.saving);
+    const navigation=`<aside class="account-ai-functions"><p class="account-eyebrow">${text('选择功能')}</p><div role="group" aria-label="${text('AI 功能')}">${Object.entries(aiTasks).map(([key,item])=>`<button data-account-action="ai-task" data-task="${key}" aria-pressed="${key===task}"><span>${text(item.title)}</span><small>${text(!adminAi.configs[key]?(adminAi.loading?'正在读取':'未读取'):adminAi.drafts[key]&&aiDirty(key)?'未保存':adminAi.configs[key].isDefault===false?'已自定义':'系统默认')}</small><span class="account-ai-function-arrow" aria-hidden="true">↗</span></button>`).join('')}</div><p class="account-help">${text('修改只保留在当前会话；退出或切换账号后清除未保存内容。')}</p></aside>`;
+    const failure=adminAi.error?`<p class="account-message account-message--error" role="alert">${escape(translateMessage(adminAi.error))}</p><button class="subtle" data-account-action="reload-ai-prompts">${text('重新读取最新配置')}</button>`:'';
+    if(!adminAi.loaded||!config||!draft)return `<section class="account-ai-layout">${navigation}<section class="account-card account-ai-editor"><h2>${text(aiTasks[task].title)}</h2>${failure||`<p role="status" class="account-lead">${text('正在读取提示词…')}</p>`}</section></section>`;
+    const status=config.isDefault?'系统默认':'已自定义',count=Array.from(draft.text).length;
+    const conflict=draft.conflict?`<section class="account-ai-conflict" role="alert"><h3>${text('其他管理员已修改这项提示词。')}</h3><p>${text('你的草稿已保留。请先读取最新配置，再核对需要保留的内容。')}</p><button data-account-action="reload-ai-prompts" ${busy?'disabled':''}>${text('重新读取最新配置')}</button>${draft.reviewed?`<details open><summary>${text('最新已保存内容')}</summary><pre>${escape(config.prompt)}</pre></details><button data-account-action="rebase-ai-prompt" data-task="${task}" ${busy?'disabled':''}>${text('以最新版本继续编辑')}</button><p class="account-help">${text('保留你的草稿，下一次保存将基于此版本。请先核对差异。')}</p>`:''}</section>`:'';
+    return `<section class="account-ai-layout">${navigation}<section class="account-card account-ai-editor" aria-labelledby="account-ai-title"><header class="account-ai-heading"><div><p class="account-eyebrow">${text('AI 提示词')}</p><h2 id="account-ai-title" tabindex="-1">${text(aiTasks[task].title)}</h2></div><span class="account-pill">${text(status)}</span></header><p class="account-ai-description">${text(aiTasks[task].description)}</p><p class="account-ai-effective">${text('保存后，下次调用生效；不会立即运行 AI。')}</p><div class="account-ai-updated">${config.updatedAt?`${text('最近更新')} · ${escape(formatDate(config.updatedAt))}${config.updatedBy?` · ${escape(config.updatedBy.displayName||config.updatedBy.username||'')}`:''}`:text('尚未自定义，当前使用系统默认内容。')}</div>${failure}${conflict}<form data-account-form="ai-prompt" data-task="${task}" novalidate aria-busy="${adminAi.saving===task}"><label for="account-ai-prompt">${text('任务提示词')}</label><textarea id="account-ai-prompt" name="prompt" data-account-ai-editor data-task="${task}" rows="16" spellcheck="true" aria-describedby="account-ai-rule account-ai-count account-ai-feedback" ${adminAi.saving===task?'aria-busy="true"':''}>${escape(draft.text)}</textarea><div class="account-ai-field-meta"><span id="account-ai-rule">${text('1–4000 个字符，可换行。')}</span><span id="account-ai-count" data-ai-count class="${count>4000?'is-invalid':''}">${count} / 4000</span></div><p id="account-ai-feedback" data-ai-feedback class="account-ai-feedback ${draft.error?'is-error':''}" role="${draft.error?'alert':'status'}">${draft.error?escape(translateMessage(draft.error)):draft.notice?escape(translateMessage(draft.notice)):''}</p><div class="account-ai-actions"><span data-ai-dirty aria-live="polite">${text(aiDirty(task)?'未保存':'已与服务器同步')}</span><button class="subtle" type="button" data-account-action="reset-ai-prompt" data-task="${task}" ${busy||draft.conflict||config.isDefault&&!aiDirty(task)?'disabled':''}>${text('恢复默认')}</button><button class="primary" type="submit" data-ai-save ${busy||draft.conflict||!aiDirty(task)?'disabled':''}>${text(adminAi.saving===task?'正在保存…':'保存提示词')}</button></div></form><details class="account-ai-default"><summary>${text('查看系统默认提示词')}</summary><pre>${escape(config.defaultPrompt)}</pre></details><a class="account-ai-try" href="#desk">${text('去工作台试用')} <span aria-hidden="true">↗</span></a></section></section>`;
+  }
+  function updateAiDraft(task,value){
+    const draft=adminAi.drafts[task];if(!draft)return;draft.text=normalizeAiText(value);draft.notice='';draft.error='';
+    const invalid=invalidAiText(draft.text),counter=document.querySelector('[data-ai-count]'),dirty=document.querySelector('[data-ai-dirty]'),save=document.querySelector('[data-ai-save]');
+    if(counter){counter.textContent=Array.from(draft.text).length+' / 4000';counter.classList.toggle('is-invalid',invalid);}
+    if(dirty)dirty.textContent=t(aiDirty(task)?'未保存':'已与服务器同步');
+    if(save)save.disabled=Boolean(adminAi.loading||adminAi.saving||draft.conflict||!aiDirty(task));
+    const feedback=document.querySelector('[data-ai-feedback]');if(feedback){feedback.textContent='';feedback.classList.remove('is-error');feedback.setAttribute('role','status');}
+  }
+  function aiInput(event){
+    const input=event.target.closest('[data-account-ai-editor]');if(!input||state.user?.role!=='admin'||state.user.mustChangePassword)return;
+    event.stopImmediatePropagation?.();if(input.dataset.task===adminAi.selected)updateAiDraft(input.dataset.task,input.value);
+  }
+  async function saveAiPrompt(task,{reset=false}={}){
+    const draft=adminAi.drafts[task];if(state.user?.role!=='admin'||state.user.mustChangePassword||!draft||!adminAi.loaded||adminAi.saving||adminAi.loading||draft.conflict)return;
+    if(!reset&&invalidAiText(draft.text)){draft.error=t('提示词需为 1–4000 个字符，可换行或使用制表符。');redraw();document.querySelector('[data-account-ai-editor]')?.focus();return;}
+    const epoch=identityEpoch,scope=adminAi,submitted=draft.text,revision=draft.revision;adminAi.saving=task;draft.error='';draft.notice='';redraw(false,true);
+    try{
+      const result=await request('/admin/ai-prompts/'+task,{method:'PATCH',body:{prompt:reset?null:submitted,expectedRevision:revision}});if(epoch!==identityEpoch||scope!==adminAi)return;
+      const latestText=adminAi.drafts[task].text;acceptAiConfig(result.prompt,{saved:true});
+      if(latestText!==submitted)adminAi.drafts[task].text=latestText;
+      adminAi.drafts[task].notice=t(reset?'已恢复默认，下次调用生效。':aiDirty(task)?'本次已保存，你还有新的未保存修改。':'提示词已保存，下次调用生效。');state.auditLoaded=false;
+    }catch(error){if(epoch===identityEpoch&&scope===adminAi){if(error.code==='AI_PROMPT_CONFLICT'){draft.conflict=true;draft.reviewed=false;draft.error='';}else draft.error=errorMessage(error);}}
+    finally{if(epoch===identityEpoch&&scope===adminAi){adminAi.saving=null;redraw(false,true);}}
+  }
+  function confirmAiReset(task){return new Promise(resolve=>{
+    const dialog=document.createElement('dialog');dialog.className='confirm-dialog account-ai-confirm';dialog.setAttribute('aria-labelledby','account-ai-confirm-title');
+    dialog.innerHTML=`<h2 id="account-ai-confirm-title">${text('恢复默认提示词？')}</h2><p><strong>${text(aiTasks[task].title)}</strong></p><p>${text('将用系统默认内容替换当前配置与这项功能的未保存草稿。保存后，下次调用生效。')}</p><form method="dialog"><button value="cancel">${text('取消')}</button><button class="primary" value="confirm">${text('确认恢复默认')}</button></form>`;
+    dialog.addEventListener('close',()=>{resolve(dialog.returnValue==='confirm');dialog.remove();},{once:true});document.body.append(dialog);dialog.showModal();
+  });}
+  function focusEditor(field='displayName'){const editor=document.querySelector('.account-editor');if(window.matchMedia?.('(max-width: 850px)').matches)editor?.scrollIntoView({block:'start',behavior:'instant'});(editor?.querySelector('input[name="'+field+'"]')||editor?.querySelector('input'))?.focus({preventScroll:true});}
+
+  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" aria-describedby="account-display-help" value="${escape(user?.displayName||'')}"></label><p class="account-help" id="account-display-help">${text('显示名称留空时使用用户名。')}</p>${affiliationFields(user)}<fieldset class="account-permissions"><legend>${text('账户权限')}</legend><label class="account-field"><span>${text('角色')}</span><select name="role" aria-describedby="account-role-help" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label><p class="account-help" id="account-role-help">${text('管理员可管理账户与 AI 提示词。')}</p></fieldset>`;}
   const editorError=kind=>state.error&&state.errorForm===kind?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.error))}</p>`:'';
   function userEditor() {
     const user=state.selected,draft=user||state.createDraft;
@@ -265,14 +514,15 @@
     const result=state.loading?`<div class="account-list-loading"><p role="status">${text('正在读取账户…')}</p><div aria-hidden="true">${'<span></span>'.repeat(3)}</div></div>`:state.adminError?`<div class="account-empty"><p>${text('账户列表读取失败。')}</p><button data-account-action="reload-users">${text('重新加载')}</button></div>`:filtered.length?`<div class="account-table-scroll"><table class="account-table account-people-table"><thead><tr><th scope="col">${text('用户账户')}</th><th scope="col">${text('角色')}</th><th scope="col">${text('状态')}</th><th scope="col">${text('操作')}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="account-empty"><span class="account-emblem">${symbol('user')}</span><p>${text(state.roleFilter||state.statusFilter?'没有符合本页筛选的账户。':'没有找到匹配的账户。')}</p><small>${text('调整关键词，或清除筛选后重试。')}</small>${filterActive?`<button class="subtle" data-account-action="clear-filters">${text('清除筛选')}</button>`:''}</div>`;
     return `<section class="account-card account-list" aria-busy="${state.loading}"><div class="account-list-heading"><h2>${text('用户账户')}</h2><span>${escape(count)}</span></div><form class="account-search" data-account-form="search-users"><label for="account-search">${text('搜索所有账户')}</label><div><input id="account-search" name="query" type="search" maxlength="60" value="${escape(state.q)}" placeholder="${text('搜索用户名或名称')}"><button type="submit" ${state.loading?'disabled':''}>${text('搜索')}</button></div></form><div class="account-filters"><span>${text('本页筛选')}</span><label class="sr-only" for="account-role-filter">${text('角色')}</label><select id="account-role-filter" data-account-filter="roleFilter"><option value="">${text('全部角色')}</option><option value="member" ${state.roleFilter==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${state.roleFilter==='admin'?'selected':''}>${text('管理员')}</option></select><label class="sr-only" for="account-status-filter">${text('状态')}</label><select id="account-status-filter" data-account-filter="statusFilter"><option value="">${text('全部状态')}</option><option value="active" ${state.statusFilter==='active'?'selected':''}>${text('已启用')}</option><option value="disabled" ${state.statusFilter==='disabled'?'selected':''}>${text('已停用')}</option></select></div>${result}<div class="account-pagination"><span aria-live="polite">${text('本页显示')} ${state.loading?'—':filtered.length} · ${state.page} / ${Math.max(1,Math.ceil(state.total/state.pageSize))}</span><button data-account-action="previous-page" ${state.page<=1||state.loading?'disabled':''} aria-label="${text('上一页')}">←</button><button data-account-action="next-page" ${state.page*state.pageSize>=state.total||state.loading?'disabled':''} aria-label="${text('下一页')}">→</button></div></section>`;
   }
-  const actionName=action=>({ 'initial_password_requirement_removed':'已取消首次改密要求','account.initial_password_requirement_removed':'已取消首次改密要求','system.initial_password_optional':'已取消首次改密要求', 'account.created':'账户已创建','account.updated':'账户已修改','account.password_reset':'密码已重置','auth.password_changed':'密码已修改','user.created':'账户已创建','user.create':'账户已创建','user.updated':'账户已修改','user.update':'账户已修改','user.password_reset':'密码已重置','password.reset':'密码已重置','auth.password_change':'密码已修改','auth.login':'登录成功','auth.logout':'已退出','account_created':'账户已创建','account_updated':'账户已修改','password_reset':'密码已重置','password_changed':'密码已修改','admin_bootstrapped':'管理员已初始化','account.bootstrap':'管理员已初始化','password_reset_started':'开始重置密码','password_change_started':'开始修改密码','password_operation_failed':'密码操作未完成'})[action]||action||'—';
-  function auditList() {return `<section class="account-card"><div class="account-list-heading"><h2>${text('操作记录')}</h2><button class="subtle" data-account-action="reload-audit">${text('重新加载')}</button></div>${state.auditLoading?`<p class="account-empty" role="status">${text('正在处理…')}</p>`:state.events.length?`<div class="account-table-scroll"><table class="account-table"><thead><tr><th>${text('时间')}</th><th>${text('执行人')}</th><th>${text('操作')}</th><th>${text('对象')}</th></tr></thead><tbody>${state.events.map(event=>`<tr><td>${escape(formatDate(event.createdAt||event.created_at))}</td><td>${escape(event.actorUsername||event.actor?.username||event.actorId||'—')}</td><td>${text(actionName(event.action))}</td><td>${escape(event.targetUsername||event.target?.username||event.targetId||'—')}</td></tr>`).join('')}</tbody></table></div>`:`<p class="account-empty">${text('暂无操作记录。')}</p>`}</section>`;}
+  const auditAction=event=>event.action==='ai_prompt.updated'?t(event.details?.reset?'恢复默认 AI 提示词':'更新 AI 提示词')+(aiTasks[event.details?.task]?' · '+t(aiTasks[event.details.task].title):'')+(Number.isInteger(event.details?.revision)?' · r'+event.details.revision:''):t(actionName(event.action));
+  const actionName=action=>({ 'ai_prompt_updated':'AI 提示词已更新','ai_prompt_reset':'AI 提示词已恢复默认','initial_password_requirement_removed':'已取消首次改密要求','account.initial_password_requirement_removed':'已取消首次改密要求','system.initial_password_optional':'已取消首次改密要求', 'account.created':'账户已创建','account.updated':'账户已修改','account.password_reset':'密码已重置','auth.password_changed':'密码已修改','user.created':'账户已创建','user.create':'账户已创建','user.updated':'账户已修改','user.update':'账户已修改','user.password_reset':'密码已重置','password.reset':'密码已重置','auth.password_change':'密码已修改','auth.login':'登录成功','auth.logout':'已退出','account_created':'账户已创建','account_updated':'账户已修改','password_reset':'密码已重置','password_changed':'密码已修改','admin_bootstrapped':'管理员已初始化','account.bootstrap':'管理员已初始化','password_reset_started':'开始重置密码','password_change_started':'开始修改密码','password_operation_failed':'密码操作未完成'})[action]||action||'—';
+  function auditList() {return `<section class="account-card"><div class="account-list-heading"><h2>${text('操作记录')}</h2><button class="subtle" data-account-action="reload-audit">${text('重新加载')}</button></div>${state.auditLoading?`<p class="account-empty" role="status">${text('正在处理…')}</p>`:state.events.length?`<div class="account-table-scroll"><table class="account-table"><thead><tr><th>${text('时间')}</th><th>${text('执行人')}</th><th>${text('操作')}</th><th>${text('对象')}</th></tr></thead><tbody>${state.events.map(event=>`<tr><td>${escape(formatDate(event.createdAt||event.created_at))}</td><td>${escape(event.actorUsername||event.actor?.username||event.actorId||'—')}</td><td>${escape(auditAction(event))}</td><td>${escape(event.targetUsername||event.target?.username||event.targetId||'—')}</td></tr>`).join('')}</tbody></table></div>`:`<p class="account-empty">${text('暂无操作记录。')}</p>`}</section>`;}
   function formatDate(value) {const date=new Date(value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat(language(),{dateStyle:'medium',timeStyle:'short'}).format(date):'—';}
   function admin() {
     if(!state.user)return login();
     if(state.user.mustChangePassword)return account();
     if(state.user.role!=='admin')return `<section class="account-surface account-narrow">${back()}<div class="account-card"><h1>${text('账户管理')}</h1><p>${text('此页面仅供管理员使用。')}</p><a class="btn" href="#account">${text('我的账户')}</a></div></section>`;
-    return `<section class="account-surface account-admin">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ADMINISTRATION</span><h1>${text('账户管理')}</h1><p class="account-lead">${text('管理人员与登录权限。')}</p></div><button class="primary" data-account-action="new-user">${text('新建账户')} <span aria-hidden="true">+</span></button></div><div class="account-tabs" role="group" aria-label="${text('账户管理')}"><button data-account-action="users-tab" aria-pressed="${state.adminTab==='users'}">${text('用户账户')}</button><button data-account-action="audit-tab" aria-pressed="${state.adminTab==='audit'}">${text('操作记录')}</button></div>${messages(state.adminTab!=='users'||!['create-user','edit-user','reset-password'].includes(state.errorForm))}${state.adminError?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.adminError))}</p>`:''}${createdAccountNotice()}${state.adminTab==='users'?`<div class="account-admin-grid">${userList()}${userEditor()}</div>`:auditList()}</section>`;
+    return `<section class="account-surface account-admin">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ADMINISTRATION</span><h1>${text('账户管理')}</h1><p class="account-lead">${text('管理成员与 AI 的工作方式。')}</p></div><button class="primary" data-account-action="new-user">${text('新建账户')} <span aria-hidden="true">+</span></button></div><div class="account-tabs" role="group" aria-label="${text('账户管理')}"><button data-account-action="users-tab" aria-pressed="${state.adminTab==='users'}">${text('账户')}</button><button data-account-action="ai-tab" aria-pressed="${state.adminTab==='ai'}">${text('AI 提示词')}</button><button data-account-action="audit-tab" aria-pressed="${state.adminTab==='audit'}">${text('操作记录')}</button></div>${state.adminTab==='ai'?'':messages(state.adminTab!=='users'||!['create-user','edit-user','reset-password'].includes(state.errorForm))}${state.adminError&&state.adminTab!=='ai'?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.adminError))}</p>`:''}${state.adminTab==='users'?createdAccountNotice():''}${state.adminTab==='users'?`<div class="account-admin-grid">${userList()}${userEditor()}</div>`:state.adminTab==='ai'?aiPromptMarkup():auditList()}</section>`;
   }
   function createdAccountNotice(){
     if(!createdCredentials)return '';
@@ -309,7 +559,9 @@
   async function submit(event) {
     const form=event.target.closest('[data-account-form]');if(!form)return;
     event.preventDefault();event.stopImmediatePropagation();if(state.busy)return;
-    const fields=new FormData(form),kind=form.dataset.accountForm;
+    const kind=form.dataset.accountForm;
+    if(kind==='ai-prompt'){if(state.user?.role==='admin'&&form.dataset.task===adminAi.selected){updateAiDraft(form.dataset.task,form.elements.prompt.value);await saveAiPrompt(form.dataset.task);}return;}
+    const fields=new FormData(form);
     if(kind==='search-users'){state.q=String(fields.get('query')||'').trim();state.page=1;await loadUsers();return;}
     state.errorForm=kind;
     // Validate explicitly: native popovers can hide why creation was blocked.
@@ -397,13 +649,18 @@
     if(action==='retry'){await refreshSession({initial:!state.configured});return;}
     if(action==='logout'){await transaction(async()=>{await rawRequest('/auth/logout',{method:'POST',body:{}});await changeIdentity(null,{reason:'logout',forced:false});notifyTabs();location.hash='discover';},{identity:true});return;}
     if(state.user?.role!=='admin'||state.user.mustChangePassword)return;
+    if(action==='ai-tab'){createdCredentials=null;state.adminTab='ai';redraw();if(!adminAi.loaded)loadAiPrompts();return;}
+    if(action==='ai-task'&&aiTasks[button.dataset.task]){adminAi.selected=button.dataset.task;redraw();if(window.matchMedia?.('(max-width: 850px)').matches)document.querySelector('.account-ai-editor')?.scrollIntoView({block:'start',behavior:'instant'});document.getElementById('account-ai-title')?.focus({preventScroll:true});return;}
+    if(action==='reload-ai-prompts'){await loadAiPrompts();return;}
+    if(action==='rebase-ai-prompt'){const task=button.dataset.task,draft=adminAi.drafts[task];if(draft?.conflict&&draft.reviewed&&!adminAi.loading&&!adminAi.saving){draft.revision=adminAi.configs[task].revision;draft.conflict=false;draft.reviewed=false;draft.notice=t('已保留草稿，请核对后再保存。');redraw();}return;}
+    if(action==='reset-ai-prompt'){const task=button.dataset.task,draft=adminAi.drafts[task],epoch=identityEpoch;if(!draft||draft.conflict||adminAi.loading||adminAi.saving)return;if(await confirmAiReset(task)&&epoch===identityEpoch)await saveAiPrompt(task,{reset:true});return;}
     if(action==='copy-created'&&createdCredentials){try{await navigator.clipboard.writeText(`${t('用户名')}: ${createdCredentials.username}\n${t('初始密码')}: ${createdCredentials.password}`);button.textContent=t('账号信息已复制。');}catch{button.textContent=t('请手动复制用户名和初始密码。');}return;}
     if(action==='dismiss-created'){createdCredentials=null;redraw(false,true);return;}
-    if(action==='close-editor'){createdCredentials=null;state.selected=null;state.editorMode='empty';state.error='';redraw();document.querySelector('.account-list input')?.focus();return;}
+    if(action==='close-editor'){createdCredentials=null;state.selected=null;state.editorMode='empty';state.error='';redraw();document.querySelector('.account-list')?.scrollIntoView({block:'start',behavior:'instant'});document.querySelector('.account-list input')?.focus({preventScroll:true});return;}
     if(action==='clear-filters'){state.q='';state.roleFilter='';state.statusFilter='';state.page=1;await loadUsers();return;}
     if(action==='reload-users'){await loadUsers();return;}
-    if(action==='new-user'){createdCredentials=null;state.editorMode='create';state.selected=null;state.adminTab='users';state.error='';state.notice='';redraw();document.querySelector('.account-editor input')?.focus();return;}
-    if(action==='edit-user'){createdCredentials=null;state.editorMode='edit';state.selected=state.users.find(user=>user.id===button.dataset.userId)||null;state.error='';state.notice='';redraw();document.querySelector('.account-editor input[name="displayName"]')?.focus();return;}
+    if(action==='new-user'){createdCredentials=null;state.editorMode='create';state.selected=null;state.adminTab='users';state.error='';state.notice='';redraw();focusEditor('username');return;}
+    if(action==='edit-user'){createdCredentials=null;state.editorMode='edit';state.selected=state.users.find(user=>user.id===button.dataset.userId)||null;state.error='';state.notice='';redraw();focusEditor();return;}
     if(action==='users-tab'){state.adminTab='users';redraw();if(!state.loaded)loadUsers();return;}
     if(action==='audit-tab'){state.adminTab='audit';redraw();if(!state.auditLoaded)loadAudit();return;}
     if(action==='reload-audit'){loadAudit();return;}
@@ -434,8 +691,8 @@
     const entry=root.querySelector('[data-entry-account]');
     if(entry){window.TashanEntrance?.mountAuth(entry);if(!bound.has(entry)){entry.addEventListener('submit',submit,true);entry.addEventListener('click',click,true);bound.add(entry);}}
     else if(!state.busy)window.TashanEntrance?.dismissAuth();
-    if(!bound.has(root)){root.addEventListener('submit',submit,true);root.addEventListener('click',click,true);root.addEventListener('change',filterChange,true);bound.add(root);}
-    if(location.hash.split('/')[0]==='#admin'&&state.user?.role==='admin'&&!state.user.mustChangePassword){if(state.adminTab==='users'&&!state.loaded&&!state.loading)queueMicrotask(loadUsers);if(state.adminTab==='audit'&&!state.auditLoaded&&!state.auditLoading)queueMicrotask(loadAudit);}
+    if(!bound.has(root)){root.addEventListener('submit',submit,true);root.addEventListener('click',click,true);root.addEventListener('change',filterChange,true);root.addEventListener('input',aiInput,true);bound.add(root);}
+    if(location.hash.split('/')[0]==='#admin'&&state.user?.role==='admin'&&!state.user.mustChangePassword){if(state.adminTab==='users'&&!state.loaded&&!state.loading)queueMicrotask(loadUsers);if(state.adminTab==='audit'&&!state.auditLoaded&&!state.auditLoading)queueMicrotask(loadAudit);if(state.adminTab==='ai'&&!adminAi.loaded&&!adminAi.loading&&!adminAi.error)queueMicrotask(loadAiPrompts);}
   }
   window.TashanAccounts={init,ready,request,header,render,bind,workspaceNotice,guestExportMarkup,refreshSession,get user(){return state.user;},get mode(){return state.mode;},get configured(){return state.configured;},get initialized(){return state.initialized;},get busy(){return state.busy;}};
 })();

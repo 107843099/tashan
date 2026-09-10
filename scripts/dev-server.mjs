@@ -21,7 +21,7 @@ const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=ut
 const useCloud = process.env.TASHAN_ACCOUNT_PROVIDER === 'supabase';
 const provider = useCloud ? createSupabaseProvider(process.env) : new LocalProvider(process.env.TASHAN_LOCAL_DB || resolve(root, '.local/accounts.sqlite'));
 const projectsProvider = useCloud ? createSupabaseProjectsProvider(process.env) : new LocalProjectsProvider(provider, {filesDir:process.env.TASHAN_LOCAL_FILES || resolve(root,'.local/project-files')});
-const aiProvider = createAiProvider(process.env);
+const aiProvider = createAiProvider(process.env,{getPrompt:(task,options)=>provider.getAiPrompt(task,options)});
 const publicEntries = new Set(['index.html', 'project-preview.html', 'teacher-practice-demo-v3.html', 'local-project-preview.html']);
 function allowed(path) {
   if (path.split('/').some(part => part.startsWith('.') || ['node_modules','server','supabase','archive','backups'].includes(part))) return false;

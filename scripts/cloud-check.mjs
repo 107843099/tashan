@@ -13,6 +13,7 @@ export const PROJECT_BUCKET_LIMIT = 10 * 1024 * 1024;
 export const REQUIRED_RPCS = [
   'tashan_require_admin', 'tashan_register_account', 'tashan_register_account_profile', 'tashan_session_account', 'tashan_rate_limit',
   'tashan_begin_password_change', 'tashan_finish_password_change', 'tashan_update_account', 'tashan_list_accounts', 'tashan_list_audit',
+  'tashan_get_ai_prompt', 'tashan_list_ai_prompts', 'tashan_update_ai_prompt',
   'tashan_project_list', 'tashan_project_get', 'tashan_project_versions', 'tashan_project_version', 'tashan_project_prepare',
   'tashan_project_commit', 'tashan_project_publish', 'tashan_project_unpublish', 'tashan_project_published', 'tashan_project_file',
   'tashan_project_reserve_upload', 'tashan_project_prepare_r2', 'tashan_project_upload_file', 'tashan_project_mark_verified', 'tashan_project_commit_r2'
@@ -113,6 +114,11 @@ export async function runCloudChecks(env, options = {}) {
       if (!Array.isArray(rows)) fail('ACCOUNT_SCHEMA', '账号表不可读取，请先执行账号迁移。');
       return '账号及学校／机构归属字段可由服务端读取。';
     }),
+    inspect('ai-prompts-schema', async () => {
+      const rows=await read('/rest/v1/tashan_ai_prompts?select=task,prompt,revision,updated_at,updated_by&limit=0');
+      if(!Array.isArray(rows))fail('AI_PROMPT_SCHEMA','AI 指令配置表不可读取，请执行 AI 指令迁移。');
+      return 'AI 指令配置表已存在；未读取指令内容。';
+    }),
     inspect('administrator', async () => {
       const rows = await read('/rest/v1/tashan_accounts?select=id&role=eq.admin&status=eq.active&must_change_password=eq.false&limit=1');
       if (!Array.isArray(rows) || !rows.length) fail('ADMIN_REQUIRED', '尚无可用云端管理员。空环境先执行管理员引导；处于重置后待改密状态的管理员需先设置新密码。');
@@ -177,6 +183,10 @@ async function selfTest() {
   assert.equal(oldProfile.checks.find(check=>check.id==='migration-functions').code,'MIGRATION_FUNCTIONS');
   const oldColumns = await runCloudChecks(env, { fetch: async (url, options) => url.includes('select=id,affiliation_type,organization_name') ? Response.json({code:'42703'},{status:400}) : healthy(url, options) });
   assert.equal(oldColumns.checks.find(check=>check.id==='accounts-schema').status,'fail');
+  const noPromptSchema=await runCloudChecks(env,{fetch:async(url,options)=>url.includes('/tashan_ai_prompts?')?Response.json({code:'42P01'},{status:404}):healthy(url,options)});
+  assert.equal(noPromptSchema.checks.find(check=>check.id==='ai-prompts-schema').status,'fail');
+  const noPromptRpc=await runCloudChecks(env,{fetch:async(url,options)=>new URL(url).pathname==='/rest/v1/'?Response.json({paths:Object.fromEntries(REQUIRED_RPCS.filter(name=>name!=='tashan_update_ai_prompt').map(name=>['/rpc/'+name,{}]))}):healthy(url,options)});
+  assert.equal(noPromptRpc.checks.find(check=>check.id==='migration-functions').code,'MIGRATION_FUNCTIONS');
   const noAdmin = await runCloudChecks(env, { fetch: async (url, options) => url.includes('role=eq.admin') ? new Response('[]') : healthy(url, options) });
   assert.equal(noAdmin.checks.find(check => check.id === 'administrator').code, 'ADMIN_REQUIRED');
   const failure = await runCloudChecks(env, { fetch: async () => { throw new Error(key); } });

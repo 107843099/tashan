@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { mkdirSync, chmodSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { validateAffiliation } from './api.mjs';
+import { AI_PROMPT_TASKS, validatePromptTask, validatePromptUpdate, resolvePromptConfig, promptStorageError } from './ai-prompts.mjs';
 
 const derive = promisify(scrypt);
 const now = () => new Date().toISOString();
@@ -84,6 +85,11 @@ export class LocalProvider {
         details TEXT NOT NULL DEFAULT '{}', created_at TEXT NOT NULL
       );
       CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, until INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS ai_prompts (
+        task TEXT PRIMARY KEY CHECK(task IN ('upload','teaching','prompt')), prompt TEXT,
+        revision INTEGER NOT NULL CHECK(revision BETWEEN 1 AND 9007199254740991),
+        updated_at TEXT NOT NULL, updated_by TEXT NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT
+      );
     `);
     this.upgradeAffiliation();
     this.upgradeInitialPasswordPolicy();
@@ -277,6 +283,29 @@ export class LocalProvider {
       id: row.id, actorId: row.actor_id, actorUsername: row.actor_username, targetId: row.target_id,
       targetUsername: row.target_username, action: row.action, details: JSON.parse(row.details), createdAt: row.created_at
     })) };
+  }
+  getAiPrompt(task) {
+    validatePromptTask(task);
+    try {
+      const row=this.db.prepare('SELECT p.*,a.username,a.display_name FROM ai_prompts p LEFT JOIN accounts a ON a.id=p.updated_by WHERE p.task=?').get(task);
+      return resolvePromptConfig(task,row?{task:row.task,prompt:row.prompt,revision:row.revision,updatedAt:row.updated_at,updatedBy:{id:row.updated_by,username:row.username,displayName:row.display_name}}:null);
+    }catch{throw promptStorageError();}
+  }
+  async listAiPrompts(actor) {
+    try{this.requireAdmin(actor);return {prompts:AI_PROMPT_TASKS.map(task=>this.getAiPrompt(task))};}
+    catch(error){if(error.status)throw error;throw promptStorageError();}
+  }
+  async updateAiPrompt(actor,task,changes) {
+    validatePromptTask(task);const input=validatePromptUpdate(changes);
+    try{return this.transaction(()=>{
+      this.requireAdmin(actor);
+      const row=this.db.prepare('SELECT revision FROM ai_prompts WHERE task=?').get(task);
+      if((row?.revision||0)!==input.expectedRevision)throw failure(409,'AI_PROMPT_CONFLICT','AI 指令已由另一位管理员更新，请重新读取后再修改。');
+      const revision=input.expectedRevision+1;
+      this.db.prepare('INSERT INTO ai_prompts(task,prompt,revision,updated_at,updated_by) VALUES (?,?,?,?,?) ON CONFLICT(task) DO UPDATE SET prompt=excluded.prompt,revision=excluded.revision,updated_at=excluded.updated_at,updated_by=excluded.updated_by').run(task,input.prompt,revision,now(),actor.id);
+      this.record(actor,'ai_prompt.updated',null,{task,revision,reset:input.prompt===null});
+      return this.getAiPrompt(task);
+    });}catch(error){if(error.status)throw error;throw promptStorageError();}
   }
   async bootstrap({ username, password, displayName: name }) {
     const login = validateUsername(username);

@@ -15,7 +15,7 @@ export default {
         clientIp: request.headers.get('CF-Connecting-IP') || 'unknown',
         projectsProvider: createSupabaseProjectsProvider(env),
         projectUploadPolicy: workerUploadPolicy(env),
-        aiProvider: createAiProvider(env),
+        aiProvider: createAiProvider(env,{getPrompt:(task,options)=>provider.getAiPrompt(task,options)}),
       });
     }
     const response = await env.ASSETS.fetch(request);
