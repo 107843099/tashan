@@ -1,68 +1,174 @@
 # 他山 · Tashan
 
-教学项目展示与创作平台，主入口为 `index.html`，上传作品预览为 `project-preview.html`。保留浅色默认、简繁英文、凿石成玉开场和精选项目轮播。
+**以他山之石，琢教学之玉。**
 
-当前为 **v3.4.0-dev.1 项目保存与发布开发版**。保留原石场景登录、游客浏览和管理员发放账号，新增固定项目编号、不可变版本、来源引用及完整工作台备份。已上传版本可明确发布与撤回；本机使用 SQLite 与私有文件目录，云端账号与版本使用 Supabase Auth / Postgres，新 Worker 上传文件使用私有 R2，旧 Supabase Storage 文件保留可读。本机已完成 Supabase 配置，真实验证范围见 [验证记录](docs/PROJECT_VERSION_QA.md)；克隆仓库不会获得私有配置。
+他山是一个面向教师的教学项目展示、创作与分享平台。你可以发现可视化实验和课堂 Prompt，结合学生的需要继续改编，再把自己的作品整理、保存并分享给其他教师。
 
-## 运行账号开发版
+[在线体验 · tashan.dev](https://tashan.dev) · [账号与使用说明](docs/ACCOUNTS.md) · [最近验收记录](docs/PERFORMANCE_QA.md)
 
-需要 **Node.js 22.13 或更新版本**与 Python 3。本地账号使用 Node 内置 SQLite，无需安装数据库或填写云服务密钥。
+目前已上线账号管理、云端项目上传与发布、版本和来源记录、备份，以及 DeepSeek 教学文字助手。公开注册暂未开放，账号由管理员创建；也可以通过登录页的「游客模式」浏览公开作品。
+
+## 看看平台里的作品
+
+仓库内置 **14 个精选项目：9 个可视化作品、5 个 Prompt / 教案模板**，配有教学建议、原始资料、来源与验证记录。成员发布的云端作品另行展示。
+
+| 可视化实验 | 古诗词海报 Prompt | 项目式学习设计 |
+| --- | --- | --- |
+| [![地球公转交互模拟器](assets/covers/earth.webp)](https://tashan.dev/#project/earth) | [![古诗词海报的 AI 生成示例](assets/covers/poetry-example-640.webp)](https://tashan.dev/#project/poetry) | [![纸桥探究的 AI 生成示例](assets/covers/pbl-example-640.webp)](https://tashan.dev/#project/pbl) |
+| 改变参数，观察四季与昼夜变化 | 从诗文出发，组织画面与课堂提问 | 围绕真实问题，设计探究与反馈活动 |
+
+海报是预先生成的展示素材；平台内的 DeepSeek 接口提供文字分析与 Prompt 优化。生成示例、教学建议和「运行已检查」不代表已经完成真实课堂成效验证。
+
+## 可以做什么
+
+| 功能 | 当前支持 |
+| --- | --- |
+| 发现项目 | 精选轮播、搜索、学科与学段筛选、验证状态、项目详情和原始资料下载 |
+| 我的工作台 | 收藏、创作任务、草稿、本地项目、云端版本，以及备份导入与导出 |
+| 上传与分享 | 上传可视化 HTML 或其他附件、保存 Prompt、添加封面与教学信息，发布或撤回本人作品 |
+| 版本与来源 | 稳定项目编号、不可变版本快照、带版本的来源引用；改编时保留参考项目关系 |
+| AI 教学助手 | 分析上传资料并预填八项信息、生成教学建议、优化继续创作的 Prompt；调用入口显示 AI 标识 |
+| 账号与个人资料 | 管理员创建、编辑、停用及重置账号；支持学校、机构或个人归属；成员可在个人页主动改密 |
+| 管理 AI 提示词 | 按三类功能修改教学指令、恢复默认、查看修改记录，并处理多人编辑冲突 |
+| 界面与体验 | 简体中文、繁體中文、English；默认浅色与深色切换；桌面和手机布局；原石登录与凿石见玉动效 |
+
+新建账号使用管理员分配的密码直接登录，无需首次强制改密；管理员重置密码后按重置流程修改。密码至少 8 位，允许纯数字。学校或机构需填写名称，个人无需填写；归属信息不创建共享工作空间。
+
+管理员负责账号与 AI 配置管理，私有项目仍按所有者隔离。成员自行决定公开哪个版本，无需管理员逐项审批。
+
+## 从发现到分享
+
+1. **发现一件作品。** 浏览项目与教学建议，查看来源；可视化 HTML 在隔离预览中运行，Prompt 可查看和复制。
+2. **带入自己的课堂。** 登录后收藏项目，或基于已有项目继续创作，调整学生背景、学习目标与使用条件。
+3. **整理自己的作品。** 在工作台上传文件或填写 Prompt，添加封面；AI 可以协助补充信息，提交前由本人核对。
+4. **保存版本，再决定公开。** 上传到云端后可在其他设备登录读取该版本；明确发布后游客才能访问。后续草稿或新版本不会自动替换已公开版本。
+
+游客可以浏览与体验公开作品。收藏、创作、上传、AI 调用及个人工作台需要登录。
+
+## 数据保存在哪里
+
+| 内容 | 保存位置 |
+| --- | --- |
+| 草稿、收藏、创作任务、尚未上传的项目及本地历史 | 当前浏览器，按账号隔离 |
+| 本机开发账号、服务端项目记录和附件 | `.local/` 中的 SQLite 数据库与私有文件目录 |
+| 线上账号、归属资料、项目版本、发布状态、AI 提示词与操作记录 | Supabase Auth / Postgres |
+| 线上新上传的附件与封面 | 私有 Cloudflare R2，通过平台 API 授权访问 |
+| 界面、服务端代码、迁移脚本、精选项目及展示素材 | 本 Git 仓库 |
+
+**登录不会自动同步整个工作台，明确上传的版本才进入服务端。** 更换浏览器、域名或开发环境前，请先导出尚未上传的资料。旧版 Supabase Storage 文件保留读取兼容，新的 R2 文件按版本记录访问。
+
+### 文件与备份限制
+
+| 项目 | 当前业务上限 |
+| --- | ---: |
+| 单个项目附件 | 10 MiB |
+| 单张封面 | 5 MiB |
+| 每账号服务端项目数 | 100 个 |
+| 每项目版本数 | 100 个 |
+| 每账号服务端用量，含版本资料 | 200 MiB |
+| 单份便携备份，按去重后的内容计 | 50 MiB |
+
+这里 `1 MiB = 1,048,576` 字节。实际上传能力由当前服务端配置决定，页面会读取并显示限制。
+
+工作台备份包含导出范围内的项目、文件、草稿、版本、收藏和任务；「备份此项目全部版本」用于本人已上传的单个项目。个人备份不包含账号、密码或会话，也不能代替全站数据库和对象存储备份。完整范围见 [存储与备份](docs/LOCAL_STORAGE.md) 和 [云端配置](docs/CLOUD_SETUP.md)。
+
+### AI 的使用范围
+
+上传分析默认开启，也可在选文件前关闭。当前可以提取 HTML、Markdown、TXT 和 JSON 的教学文字，自动补充空字段；教学建议与 Prompt 优化可以核对后采用。封面、许可、课堂记录与验证确认由本人提供，AI 不会自动保存或公开项目。
+
+ZIP、PDF、Word 和 PowerPoint 可作为附件保存下载，当前不自动解析其中内容；ZIP 不解包运行。AI 不直接生成图片或执行项目代码。调用次数、文字长度与额度等说明见 [DeepSeek 教学助手](docs/AI_ASSISTANT.md)，管理方式见 [AI 提示词配置](docs/AI_PROMPTS.md)。
+
+## 本地运行
+
+需要 **Node.js 22.13 或更新版本、Python 3 和 Git**。
 
 ```sh
+git clone https://github.com/107843099/tashan.git
+cd tashan
+npm ci
 npm run dev:setup
 npm run dev
 ```
 
-首次运行 `dev:setup`，按终端提示建立管理员，密码通过隐藏输入设置，没有默认密码。之后打开 [本地平台](http://127.0.0.1:4173/)，由管理员登录并创建成员账号。新账号使用分配的密码直接登录，需要时可在「我的账户」主动修改密码。账号数据库及本地私有配置保存在 `.local/`，开发服务不提供这些文件的下载。
+打开 [http://127.0.0.1:4173/](http://127.0.0.1:4173/)。首次 `dev:setup` 按终端提示创建管理员，密码通过隐藏输入设置，仓库没有默认登录凭据。之后运行 `npm run dev` 即可。
 
-开发服务默认只监听 `127.0.0.1:4173`。切换前停止占用同一端口的旧静态服务；保留这个地址可沿用原浏览器存储。修改源资料后运行 `npm run catalog` 并刷新。详见 [账号使用与配置](docs/ACCOUNTS.md)。
+本机模式使用 Node 内置 SQLite，无需配置 Supabase 即可测试账号和项目流程。`npm start` 与 `npm run dev` 等效；服务默认仅监听本机。AI 功能需要另行配置服务端密钥，详见 [AI 配置说明](docs/AI_ASSISTANT.md)。
 
-## 静态展示与发布
+### 使用云端开发配置
+
+按 [云端配置与迁移](docs/CLOUD_SETUP.md) 准备自己的环境，再将 `.dev.vars.example` 复制为 `.dev.vars` 并填写服务端配置：
+
+```sh
+npm run cloud:check
+npm run dev:cloud
+```
+
+`.dev.vars`、`.local/` 与真实用户数据不随 Git 克隆或同步。Node 的云开发模式使用 Supabase，但不具备 R2 binding；读取已保存到 R2 的版本应使用配置正确 binding 的 Worker 环境。连接真实云环境时，账号与项目操作会写入该环境。
+
+## 构建与部署
 
 ```sh
 npm run build
-npm test
 npm run preview
 ```
 
-构建生成 `dist/` 和 `releases/tashan-site.zip`。在 [发布预览](http://127.0.0.1:4174/) 检查展示、原作品与下载。ZIP 根目录直接包含 `index.html`，不包含账号服务器、密钥、SQLite 数据库或历史归档。
+构建生成 `dist/` 和 `releases/tashan-site.zip`，ZIP 根目录为 `index.html`。打开 [http://127.0.0.1:4174/](http://127.0.0.1:4174/) 可检查静态发布内容；这个预览没有账号 API。日常修改源码后重新构建，不直接编辑生成目录。
 
-`npm start` 与 `npm run dev` 均启动账号开发服务；`npm run preview` 仅预览发布目录，不提供账号 API。部署线上账号版需要 Cloudflare Worker 和已配置的 Supabase，上传静态 ZIP 本身不会开通账号服务。配置步骤见 [部署说明](docs/DEPLOYMENT.md)。
+完整线上平台使用 **Cloudflare Workers + Supabase + 私有 R2**。部署到自己的环境时：
 
-## 当前内容与资料范围
+1. 按顺序应用 `supabase/migrations/` 中的迁移，当前到 **007**；已有环境只执行尚未应用的增量。
+2. 配置 Supabase Auth、私有存储、首次管理员，以及 `wrangler.jsonc` 中的项目地址、R2 binding、上传限制与域名。
+3. 将 `SUPABASE_SECRET_KEY`、`DEEPSEEK_API_KEY` 等服务端密钥配置为 Workers Secrets，完成云端预检。
+4. 构建后运行 `npx wrangler deploy`，再在目标域名检查登录、上传、下载和发布流程。
 
-- 14 个精选本地项目：9 个可视化作品、5 个 Prompt / 教案模板。
-- 5 张生成示例、三语教学建议、来源与验证记录、原文及下载。
-- 访客可筛选、查看详情和体验公开作品；收藏、保存创作、工作台与上传需要登录。
-- 稳定项目编号、版本记录、带版本的来源引用、去重备份与冲突导入。
-- 版本上传、发布与撤回；游客预览固定公开版本，成员继续创作保留来源。
-- 项目附件最大 10 MiB；上传文字自动分析八项必填资料，支持 DeepSeek 教学建议和 Prompt 优化。
-- 管理员创建、修改、停用及重置账号；表单就近反馈，可生成初始密码。创建成功后清除列表筛选并选中新账号。
+单独上传静态 ZIP 只提供展示文件，不会创建账号数据库或开通云端上传。密钥不写入前端和公开仓库。完整操作见 [构建与部署](docs/DEPLOYMENT.md)。
 
-浏览器里的草稿、收藏、任务和项目历史按账号保存；上传到服务端的版本可在其他设备登录读取。工作台会明确显示当前为“本机服务存储”或“云端项目”。登录不会自动上传全部浏览器资料，发布也不会随保存草稿自动发生。
+## 验证与近期优化
 
-完整 JSON 备份包含当前工作台的项目、文件、草稿、收藏、任务和历史版本；本人服务端项目另有“备份此项目全部版本”。备份上限为附件去重后 50 MB，云端独有资料需要单独备份。旧访客资料可从工作台显式导出，不自动归给首个登录的人。账户数据库、密码和登录会话不进入个人项目备份；完整系统灾备范围见 [云端配置与备份](docs/CLOUD_SETUP.md)。
+当前版本已验证账号与权限、上传和固定版本发布、撤回、备份、AI 自动分析，以及三语、明暗和移动端布局。正式域名最近一轮公开验收 **121/121 通过**，实际 DeepSeek 调用和云端文件完整性另行验证。
 
-准备云端时运行 `npm run cloud:check`，按 [云配置步骤](docs/CLOUD_SETUP.md) 配好 Supabase 后使用 `npm run dev:cloud`。本地账号迁移先运行 `npm run accounts:migrate -- --dry-run` 生成计划，核对后才执行创建；不会覆盖云端已有账号。更换域名、端口或浏览器前先导出工作台资料，不要删除 `.local/` 或清理站点数据作为升级步骤。
+- 登录表单优先显示；已有账号或游客会话刷新不重复加载三维入口。
+- 玉璧保持正圆，场景分阶段初始化、支持取消清理；闲置降低绘制频率，隐藏页面停止动画。
+- 5 张示例图提供 320 / 640 / 960 尺寸预览，默认预览总量减少约 **97%**，原 PNG 与来源哈希保留。
+- 深浅色切换保留正在填写的内容；资源版本随构建更新。
 
-## 维护文档
+测试条件、结果与性能样本见 [加载优化验收](docs/PERFORMANCE_QA.md)。这些记录描述已执行的测试范围，不代表所有设备或课堂环境。
 
-- [首屏加载、预览图片与浏览器验收](docs/PERFORMANCE_QA.md)
+```sh
+npm test
+npm run test:worker-storage
+npm run test:browser
+npm run verify:live -- --origin https://tashan.dev
+```
 
-- [AI 助手、自动分析与真实验证](docs/AI_ASSISTANT.md)
-- [2026-09-11 上线与示例验收](docs/RELEASE_QA_2026-09-11.md)
-- [账户页面、8 位密码与上线复测](docs/ACCOUNT_SETTINGS_QA.md)
-- [账号使用与配置](docs/ACCOUNTS.md)
-- [v3.4 验证记录](docs/PROJECT_VERSION_QA.md)
-- [云端配置与迁移](docs/CLOUD_SETUP.md)
-- [本轮边界与下一版本](docs/NEXT_VERSION.md)
-- [构建与部署](docs/DEPLOYMENT.md)
-- [项目结构与命名](docs/PROJECT_STRUCTURE.md)
-- [本地内容与目录维护](docs/LOCAL_LIBRARY.md)
-- [本地存储与备份](docs/LOCAL_STORAGE.md)
-- [示例图与生成记录](docs/PROMPT_IMAGE_EXAMPLES.md)
-- [教学建议与参考资料](docs/TEACHING_REFERENCES.md)
-- [开场动效](docs/TASHAN_ENTRANCE.md)
-- [历史原型与文档](archive/README.md)
+完整数据库测试需准备 PGlite，浏览器测试需准备 Playwright 和浏览器；可通过 `PGLITE_MODULE`、`PLAYWRIGHT_MODULE` 指定模块路径，使用已安装的 Chrome 时设置 `BROWSER_CHANNEL=chrome`。缺少可选依赖而跳过的测试不计为完整验收。`verify:live` 只检查公开资源与匿名访问，不登录、上传或调用 AI 生成。
 
-平台已通过 Cloudflare 上线到 [tashan.dev](https://tashan.dev)，正式域名的 HTTPS 与只读检查已通过；R2 上传、两个公开示例、真实 DeepSeek 调用及备份范围见 [本轮发布验收](docs/RELEASE_QA_2026-09-11.md)。Worker 的新版本上传限制已显式配置，不能直接沿用 Node 本机上限；生产样本不代表长期容量保证。浏览器视觉与全流程操作验收仍单独记录，教学建议、生成示例和运行检查不代表真实课堂成效。
+## 项目结构与文档
+
+```text
+index.html              主界面入口
+project-preview.html    上传项目的隔离预览入口
+assets/                 样式、脚本、图标、展示图与浏览器资源
+data/                   精选目录、翻译、来源与图片变体记录
+server/                 账号、项目与 AI API；本机和 Worker 运行入口
+supabase/migrations/    云端数据库迁移
+scripts/                开发、构建、云配置与验收工具
+tests/                  数据、接口、浏览器与运行环境测试
+docs/                   使用、部署、设计及验收说明
+vibe coding库/          精选项目的原始资料
+archive/                历史原型与说明
+```
+
+`dist/`、`releases/`、`.local/` 和私有配置不纳入 Git。旧版 HTML 地址保留兼容跳转，新链接统一使用主入口。
+
+| 需要了解 | 文档 |
+| --- | --- |
+| 账号、个人资料与管理员操作 | [账号使用与配置](docs/ACCOUNTS.md) |
+| AI 分析与管理员提示词 | [AI 助手](docs/AI_ASSISTANT.md) · [提示词管理](docs/AI_PROMPTS.md) |
+| 云端配置、迁移与系统备份 | [云配置](docs/CLOUD_SETUP.md) · [部署说明](docs/DEPLOYMENT.md) |
+| 本地项目与资料维护 | [内容目录](docs/LOCAL_LIBRARY.md) · [存储备份](docs/LOCAL_STORAGE.md) |
+| 来源、教学建议与生成示例 | [教学参考](docs/TEACHING_REFERENCES.md) · [示例记录](docs/PROMPT_IMAGE_EXAMPLES.md) |
+| 页面体验与近期验收 | [入场动效](docs/TASHAN_ENTRANCE.md) · [性能验收](docs/PERFORMANCE_QA.md) · [AI 管理验收](docs/ADMIN_AI_QA.md) |
+| 目录设计与后续规划 | [项目结构](docs/PROJECT_STRUCTURE.md) · [下一版本](docs/NEXT_VERSION.md) |
+
+原始作品保留来源记录与作者信息，素材的使用许可按各项目说明核对；第三方依赖保留其随附许可。

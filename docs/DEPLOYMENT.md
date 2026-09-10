@@ -25,7 +25,7 @@ npm run preview
 
 构建生成 `dist/` 和 `releases/tashan-site.zip`。在 `http://127.0.0.1:4174/` 检查静态成果；这个预览没有账号后端。
 
-发布包收集界面资源、14 个精选项目、配套文件、Prompt 与下载包。光学项目共享运行目录和 ZIP；生成示例复用封面。`assets/js/accounts.js` 和 `assets/css/accounts.css` 随界面发布，但 `server/`、`supabase/`、`.local/`、SQLite 数据库、SQL 迁移、`.dev.vars` 和其他私有配置不进入静态目录。
+发布包收集界面资源、14 个精选项目、配套文件、Prompt 与下载包。光学项目共享运行目录和 ZIP；生成示例使用轻量 WebP 展示图，另保留原 PNG 供大图查看与下载。`assets/js/accounts.js` 和 `assets/css/accounts.css` 随界面发布，但 `server/`、`supabase/`、`.local/`、SQLite 数据库、SQL 迁移、`.dev.vars` 和其他私有配置不进入静态目录。
 
 构建不改写原始 `vibe coding库/`。不要直接修改 `dist/`：脚本会识别生成清单，拒绝覆盖新增文件或人工改动过的发布结果。更新源码后重新构建。
 
@@ -33,7 +33,7 @@ npm run preview
 
 `wrangler.jsonc` 指定 `server/worker.mjs` 为服务端入口，`./dist` 为静态资源目录，绑定名为 `ASSETS`。`/api` 与 `/api/*` 先进入账号与项目 API；项目运行目录也先经过 Worker，以添加与本地一致的 HTML 隔离策略。其他匹配资源直接作为静态文件提供。路由配置依据 [Cloudflare Worker-first 文档](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/)。
 
-正式部署前完成 [云端配置](CLOUD_SETUP.md)：按顺序执行 001–005 迁移（已有环境只执行未登记的增量）、关闭公开注册与匿名登录、建立首次管理员，并运行只读预检。005 为 `202609110005_stream_uploads.sql`，增加版本后端与已验证文件回执，不搬迁旧文件。Supabase `tashan-projects` 和 R2 `tashan-project-files` 均保持私有，文件访问统一通过项目 API。线上配置如下：
+正式部署前完成 [云端配置](CLOUD_SETUP.md)：按顺序执行 001–007 迁移（已有环境只执行未登记的增量）、关闭公开注册与匿名登录、建立首次管理员，并运行只读预检。005 为 `202609110005_stream_uploads.sql`，增加版本后端与已验证文件回执，不搬迁旧文件；006 增加账号归属资料，007 增加管理员 AI 提示词配置。Supabase `tashan-projects` 和 R2 `tashan-project-files` 均保持私有，文件访问统一通过项目 API。线上配置如下：
 
 | 配置 | 存放位置 | 用途 |
 | --- | --- | --- |
