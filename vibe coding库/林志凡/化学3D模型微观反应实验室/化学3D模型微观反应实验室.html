@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>甲烷与氯气 · 3D 微观反应实验室</title>
+<style>
+/* ===== 3D 有机化学反应类型 · 教学演示 ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: #ffffff;
+  color: #1f2733;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+.wrap { max-width: 1760px; margin: 0 auto; padding: 14px 22px 26px; }
+
+/* ---------- header ---------- */
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+  padding: 10px 4px 14px; border-bottom: 1px solid #e8ecf1; }
+header .title h1 { font-size: 21px; letter-spacing: .5px; }
+header .title .sub { margin-top: 3px; font-size: 12.5px; color: #66707e; }
+.legend { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.portal-actions { display:flex; gap:8px; margin-left:auto; }
+.portal-actions button,.portal-actions a { border:1px solid #cdd9e8; background:#f4f8ff; color:#24558f; border-radius:8px; padding:8px 11px; text-decoration:none; cursor:pointer; font-weight:700; font-size:12.5px; }
+.portal-actions button:hover,.portal-actions a:hover { background:#e7f0ff; border-color:#75a0d7; }
+.legend .leg { display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid #e3e8ee; border-radius: 14px; padding: 3px 9px; background: #fafbfc; font-size: 12px; }
+.legend .dot { width: 13px; height: 13px; border-radius: 50%; box-shadow: inset 0 -1px 2px rgba(0,0,0,.18); }
+.hint { margin-top: 6px; font-size: 12px; color: #3f6fd1; }
+.hint b { color: #263238; }
+
+/* ---------- type buttons ---------- */
+.nav { display: grid; grid-template-columns: minmax(260px, 420px); gap: 10px; margin: 14px 0; }
+.tbtn {
+  border: 1.5px solid #d9e0e8; background: #ffffff; border-radius: 10px;
+  padding: 9px 6px 7px; cursor: pointer; text-align: center; transition: all .15s ease;
+  box-shadow: 0 1px 2px rgba(20,40,80,.05);
+}
+.tbtn:hover { border-color: #8fb4e8; background: #f4f8ff; }
+.tbtn .t1 { font-size: 15.5px; font-weight: 700; color: #2b3c52; }
+.tbtn .t2 { font-size: 11.5px; color: #8a94a2; margin-top: 2px; }
+.tbtn.active { border-color: #2f6fd6; background: #eaf2ff; box-shadow: 0 3px 8px rgba(47,111,214,.18); }
+.tbtn.active .t1 { color: #1758b8; }
+
+/* ---------- work area ---------- */
+.area { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
+@media (max-width: 1080px) { .area { grid-template-columns: 1fr; } }
+.card { border: 1px solid #e2e7ee; border-radius: 12px; background: #ffffff;
+  box-shadow: 0 2px 10px rgba(30,50,90,.05); overflow: hidden; }
+.card > h3 { font-size: 13px; color: #41506a; padding: 10px 14px; border-bottom: 1px solid #eef1f6;
+  background: linear-gradient(#fbfcfe, #f6f8fb); }
+.card > h3 .en { color: #98a2b2; font-weight: 400; }
+.card .body { padding: 12px 14px; }
+
+/* 2D equation column */
+.eqbox .rtag { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.chip { padding: 3px 10px; border-radius: 20px; font-size: 12.5px; }
+.chip.type { background: #2f6fd6; color: #fff; font-weight: 600; }
+.chip.ex { background: #eef3fb; color: #2b3c52; }
+.eqline { margin: 6px 0 2px; font-size: 16.5px; line-height: 1.9; text-align: center; white-space: normal; }
+.eqline .at { font-weight: 700; }
+.eqline .sp { font-weight: 600; color: #4c5a6e; }
+.eqline .C { color: #22262c; } .eqline .H { color: #6b7076; } .eqline .O { color: #e0322e; }
+.eqline .Cl { color: #1f9d55; } .eqline .Br { color: #a0522d; } .eqline .Cu { color: #c97a1e; }
+.eqline .fghl { background: #fff3c4; border: 1px solid #ffe08a; border-radius: 5px; padding: 0 2px; }
+.eqline .fghl2 { background: #ffe2de; border: 1px solid #ffb3ac; border-radius: 5px; padding: 0 2px; }
+.arrowcol { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle;
+  margin: 0 10px; font-size: 12.5px; color: #d35400; font-weight: 600; }
+.arrowcol svg { display: block; margin-top: 1px; }
+.eqnote { font-size: 12px; color: #7a8594; line-height: 1.75; margin-top: 4px; }
+.eqnote b { color: #41506a; }
+ul.note { list-style: none; margin: 8px 0 0; font-size: 12.5px; color: #41506a; line-height: 1.8; }
+ul.note li { padding-left: 16px; position: relative; }
+ul.note li::before { content: "▪"; position: absolute; left: 2px; color: #5d8fdc; }
+.atomstat { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e7ee; font-size: 12px; color: #66707e; }
+.atomstat b { color: #2b3c52; }
+.okline { color: #1e9e50; font-weight: 600; }
+
+/* 3D column */
+.viewport { position: relative; }
+.light-condition { position:absolute; bottom:14px; left:14px; pointer-events:none; padding:9px 13px; border:1px solid #e8bf54; border-radius:10px; background:rgba(255,249,224,.94); color:#815509; font-weight:700; box-shadow:0 2px 12px #c8951920; }
+.light-condition span { display:block; margin-top:3px; font-size:11px; font-weight:400; }
+#gl { width: 100%; height: min(68vh, 760px); min-height: 590px; display: block; background: #E5EFFB; touch-action: none; cursor: grab; }
+#gl.drag { cursor: grabbing; }
+@media (max-width: 1080px) { #gl { height: 480px; } }
+.vhud { position: absolute; pointer-events: none; user-select: none; }
+#phase { left: 12px; top: 10px; max-width: 76%; }
+#phase .stepchip { display: inline-block; background: rgba(30,60,110,.82); color: #fff; font-size: 12px;
+  padding: 3px 10px; border-radius: 12px; margin-bottom: 6px; }
+#phase .ptxt { background: rgba(255,255,255,.92); border: 1px solid #dde5ee; color: #26364c;
+  font-size: 13px; line-height: 1.5; padding: 8px 12px; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,.07);
+  display: inline-block; max-width: 100%; }
+#rtitle { right: 12px; top: 10px; text-align: right;
+  background: rgba(30, 55, 95, .72); padding: 8px 14px; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+#rtitle .rn { font-size: 15.5px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+#rtitle .rm { font-size: 12px; color: #dbe6f5; opacity: .95; }
+#rtitle .rm + .rm { margin-top: 2px; }
+#tooltip { position: absolute; background: rgba(25,38,60,.88); color: #fff; font-size: 12px;
+  padding: 3px 8px; border-radius: 5px; display: none; white-space: nowrap; z-index: 6; }
+#errbox { display: none; position: absolute; left: 10px; right: 10px; bottom: 56px; z-index: 8;
+  background: #c62828; color: #fff; font-size: 13px; line-height: 1.6; padding: 8px 12px;
+  border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.25); word-break: break-all; white-space: pre-wrap; }
+#dbgbox { position: absolute; right: 8px; bottom: 8px; z-index: 7; display: none; gap: 5px; }
+#dbgbox i { width: 15px; height: 15px; display: inline-block; border-radius: 3px;
+  background: #d5d5d5; border: 1px solid #bbb; }
+#dbgbox.show { display: flex; }
+#warn { display: none; position: absolute; inset: 0; place-items: center; text-align: center;
+  background: #fff; color: #b03030; font-size: 15px; padding: 40px; line-height: 2; }
+#warn.show { display: grid; }
+#webglmsg { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%);
+  background: #fff8ec; border: 1px solid #f0d27e; color: #7a5a10; padding: 14px 18px; border-radius: 10px;
+  font-size: 14px; line-height: 1.8; text-align: center; display: none; z-index: 5; }
+#webglmsg.show { display: block; }
+
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  padding: 10px 14px; border-top: 1px solid #eef1f6; background: #fafbfd; }
+.controls button, .controls label.lbl { display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid #d5dde7; background: #fff; border-radius: 8px; padding: 6px 12px;
+  font-size: 13px; color: #33415a; cursor: pointer; }
+.controls button:hover { background: #eef3fb; }
+.zoomctl { display:inline-flex; align-items:center; gap:6px; padding:3px 7px; border:1px solid #d5dde7; border-radius:8px; background:#fff; }
+.zoomctl button { width:30px; height:28px; padding:0; display:grid; place-items:center; font-size:18px; }
+.zoomctl input { width:120px; accent-color:#2f6fd6; }
+.zoomctl output { min-width:38px; color:#31547c; font:700 12px Consolas,monospace; }
+
+/* ---------- 能量释放类比剧场 ---------- */
+.energy-lab { display:none; min-height:100vh; padding:24px clamp(18px,4vw,60px) 34px; color:#eff8ff; background:radial-gradient(circle at 50% 42%,#152c45 0,#08121f 55%,#050a10 100%); overflow:hidden; }
+body.energy-mode .wrap { display:none; }
+body.energy-mode .energy-lab { display:block; }
+.energy-head { display:flex; align-items:center; gap:28px; max-width:1500px; margin:0 auto 18px; }
+.energy-head button { border:1px solid #35506b; background:#0d1d2d; color:#b9d6ed; padding:9px 13px; border-radius:8px; cursor:pointer; }
+.energy-head span { color:#53d8ff; font:700 11px Consolas; letter-spacing:.18em; }.energy-head h2 { margin:4px 0 0; font-size:clamp(22px,3vw,38px); }
+.energy-stage { position:relative; max-width:1500px; height:min(62vh,650px); min-height:460px; margin:auto; overflow:hidden; border:1px solid #29445d; background:#081522; box-shadow:inset 0 0 90px #000,0 22px 70px #0008; }
+.energy-grid { position:absolute; inset:0; opacity:.13; background-image:linear-gradient(#70cfff 1px,transparent 1px),linear-gradient(90deg,#70cfff 1px,transparent 1px); background-size:44px 44px; }
+.nucleus { position:absolute; left:50%; top:47%; width:210px; height:210px; transform:translate(-50%,-50%); border-radius:50%; filter:drop-shadow(0 0 25px #ff7b3d88); }
+.nucleus i { position:absolute; width:58px; height:58px; border-radius:50%; background:radial-gradient(circle at 32% 28%,#ffe18b,#f2582f 63%,#831f20); box-shadow:inset -8px -10px 14px #4c0e1c99,0 0 12px #ff693b66; }
+.nucleus i:nth-child(1){left:27px;top:28px}.nucleus i:nth-child(2){left:78px;top:18px}.nucleus i:nth-child(3){left:124px;top:36px}.nucleus i:nth-child(4){left:18px;top:79px}.nucleus i:nth-child(5){left:69px;top:70px}.nucleus i:nth-child(6){left:120px;top:87px}.nucleus i:nth-child(7){left:34px;top:130px}.nucleus i:nth-child(8){left:87px;top:126px}.nucleus i:nth-child(9){left:139px;top:132px}.nucleus i:nth-child(10){left:75px;top:170px}.nucleus i:nth-child(11){left:151px;top:75px}.nucleus i:nth-child(12){left:11px;top:126px}
+.neutron { position:absolute; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:#062034; font:bold 14px Consolas; background:radial-gradient(circle at 32% 28%,#f8ffff,#4ed7ff 65%,#1476a7); box-shadow:0 0 22px #45d8ff; opacity:0; }.n-in{left:5%;top:45%;opacity:1}.n-one,.n-two,.n-three{left:50%;top:47%}
+.fragment { position:absolute; left:50%; top:47%; width:105px; height:135px; border-radius:48%; opacity:0; background:radial-gradient(circle at 30% 25%,#ffe796,#ff6c35 58%,#711825); box-shadow:0 0 35px #ff793d; }.energy-ring{position:absolute;left:50%;top:47%;width:100px;height:100px;border:3px solid #fff7ac;border-radius:50%;transform:translate(-50%,-50%) scale(.2);opacity:0}.stage-caption{position:absolute;left:24px;bottom:22px;right:24px;padding:14px 17px;border-left:3px solid #4bd9ff;background:#08131fd9}.stage-caption b{display:block;font-size:18px}.stage-caption span{display:block;color:#9db3c4;margin-top:4px}.energy-stage.run .n-in{animation:neutronIn 1.25s ease-in forwards}.energy-stage.run .nucleus{animation:nucleusSplit 2.2s 1s ease-in forwards}.energy-stage.run .f-one{animation:fragOne 2s 2.1s ease-out forwards}.energy-stage.run .f-two{animation:fragTwo 2s 2.1s ease-out forwards}.energy-stage.run .n-one{animation:nOut1 1.6s 2.2s ease-out forwards}.energy-stage.run .n-two{animation:nOut2 1.6s 2.2s ease-out forwards}.energy-stage.run .n-three{animation:nOut3 1.6s 2.2s ease-out forwards}.energy-stage.run .energy-ring{animation:ringOut 1.8s 2s ease-out forwards}.energy-stage.run .r-two{animation-delay:2.35s}
+@keyframes neutronIn{to{left:47%;opacity:1}}@keyframes nucleusSplit{0%,35%{transform:translate(-50%,-50%) scale(1)}60%{transform:translate(-50%,-50%) scale(1.2);filter:brightness(2) drop-shadow(0 0 60px #fff)}100%{transform:translate(-50%,-50%) scale(.2);opacity:0}}@keyframes fragOne{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}100%{opacity:1;transform:translate(-230%,-55%) rotate(-24deg)}}@keyframes fragTwo{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}100%{opacity:1;transform:translate(145%,-35%) rotate(31deg)}}@keyframes nOut1{0%{opacity:1}100%{opacity:1;left:12%;top:15%}}@keyframes nOut2{0%{opacity:1}100%{opacity:1;left:84%;top:20%}}@keyframes nOut3{0%{opacity:1}100%{opacity:1;left:77%;top:74%}}@keyframes ringOut{0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(8)}}
+.energy-copy { max-width:1500px; margin:18px auto; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }.energy-copy>div{display:flex;gap:12px;padding:14px;border:1px solid #213c54;background:#0b1a28}.energy-copy span{color:#4ed7ff;font:700 18px Consolas}.energy-copy p{line-height:1.6;color:#a9bdcc}.energy-copy b{display:block;color:#fff}.energy-play{display:block;margin:18px auto 0;border:0;border-radius:8px;padding:12px 20px;background:#ff6b35;color:#fff;font-weight:800;cursor:pointer;box-shadow:0 8px 28px #ff5d3338}
+@media(max-width:800px){.portal-actions{width:100%;margin-left:0}.legend{display:none}.energy-copy{grid-template-columns:1fr}.energy-stage{min-height:430px}.energy-head{align-items:flex-start;flex-direction:column;gap:12px}}
+
+/* ---------- 分支式碰撞链条与提问式教学 ---------- */
+.question-gate{max-width:980px;margin:7vh auto 0;text-align:center;padding:clamp(30px,6vw,74px);border:1px solid #29465f;background:radial-gradient(circle at 50% 0,#163856,#091826 72%);box-shadow:0 25px 80px #0008}.question-gate>span,.answer-card>span{color:#54d9ff;font:700 12px Consolas;letter-spacing:.18em}.question-gate h3{font-size:clamp(25px,4vw,48px);line-height:1.3;margin:18px auto 30px;max-width:800px}.question-gate button{border:0;border-radius:8px;padding:13px 20px;background:#ff7038;color:#fff;font-weight:800;cursor:pointer;box-shadow:0 10px 34px #ff60394c}.analogy-wrap{display:none;max-width:1500px;margin:auto}.energy-lab.revealed .question-gate{display:none}.energy-lab.revealed .analogy-wrap{display:block}.marble-note{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:11px 14px;border-left:3px solid #50d7ff;background:#0d2133;color:#a8c4d6}.marble-note b{color:#fff}.answer-card{display:none;max-width:1100px;margin:20px auto 0;padding:22px 26px;border:1px solid #2e526b;background:linear-gradient(135deg,#0d2437,#102c3d);box-shadow:0 16px 55px #0006}.answer-card.show{display:block;animation:answerIn .55s ease both}.answer-card h3{margin:7px 0 8px;font-size:24px}.answer-card p{color:#b7cad7;line-height:1.85;font-size:15px}.answer-card p b{color:#fff}.energy-stage{height:min(66vh,680px)}
+.chain-line{position:absolute;height:2px;transform-origin:left center;border-top:2px dashed #46cbff55;opacity:.6}.line-a{left:8%;top:49%;width:22%}.line-b{left:32%;top:49%;width:39%;transform:rotate(-26deg)}.line-c{left:32%;top:50%;width:39%;transform:rotate(26deg)}
+.micro-model{position:absolute;width:116px;height:100px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 18px #ff804f55);z-index:2}.source-a{left:30%;top:50%}.source-b{left:70%;top:27%}.source-c{left:70%;top:73%}.micro-model i{position:absolute;width:37px;height:37px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffe69a,#ef6039 62%,#721a24);box-shadow:inset -6px -8px 10px #54122188,0 4px 9px #0006}.micro-model i:nth-child(1){left:8px;top:32px}.micro-model i:nth-child(2){left:35px;top:10px}.micro-model i:nth-child(3){left:67px;top:14px}.micro-model i:nth-child(4){left:76px;top:48px}.micro-model i:nth-child(5){left:42px;top:55px}.micro-model i:nth-child(6){left:14px;top:65px}.micro-model i:nth-child(7){left:45px;top:31px}.micro-model b{position:absolute;width:48px;height:7px;background:#d7e8ed;border-radius:5px;z-index:-1;transform-origin:left center}.micro-model b:nth-of-type(1){left:25px;top:47px;transform:rotate(-27deg)}.micro-model b:nth-of-type(2){left:50px;top:25px;transform:rotate(41deg)}.micro-model b:nth-of-type(3){left:32px;top:73px;transform:rotate(-13deg)}
+.product{position:absolute;width:92px;height:56px;transform:translate(-50%,-50%);opacity:0;z-index:3}.pair-a{left:30%;top:50%}.pair-b{left:70%;top:27%}.pair-c{left:70%;top:73%}.product i{position:absolute;width:43px;height:43px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffe3a1,#f07c40 62%,#762033);box-shadow:inset -6px -8px 10px #54122177,0 0 16px #ff7b4255}.product i:first-child{left:0;top:4px}.product i:nth-child(2){right:0;top:4px}.product b{position:absolute;left:35px;top:24px;width:24px;height:7px;background:#dceaf0;border-radius:5px;z-index:-1}.product span{position:absolute;top:52px;left:50%;transform:translateX(-50%);white-space:nowrap;color:#89a9bc;font-size:10px}.n-ab,.n-ac,.n-b1,.n-b2,.n-c1,.n-c2{left:30%;top:50%}
+.energy-stage.run .source-a{animation:sourceBreak .35s 1.45s ease-in forwards}.energy-stage.run .pair-a{animation:productStay .45s 1.55s ease-out forwards}.energy-stage.run .n-ab{animation:branchAB 1.35s 1.75s ease-in forwards}.energy-stage.run .n-ac{animation:branchAC 1.35s 1.75s ease-in forwards}.energy-stage.run .source-b,.energy-stage.run .source-c{animation:sourceBreak .35s 3.05s ease-in forwards}.energy-stage.run .pair-b,.energy-stage.run .pair-c{animation:productStay .45s 3.15s ease-out forwards}.energy-stage.run .n-b1{animation:outB1 1.2s 3.25s ease-out forwards}.energy-stage.run .n-b2{animation:outB2 1.2s 3.25s ease-out forwards}.energy-stage.run .n-c1{animation:outC1 1.2s 3.25s ease-out forwards}.energy-stage.run .n-c2{animation:outC2 1.2s 3.25s ease-out forwards}.energy-stage.run .r-one{left:30%;top:50%;animation:ringOut 1.3s 1.35s ease-out forwards}.energy-stage.run .r-two{left:70%;top:27%;animation:ringOut 1.3s 3s ease-out forwards}.energy-stage.run .r-three{left:70%;top:73%;animation:ringOut 1.3s 3s ease-out forwards}
+@keyframes sourceBreak{to{opacity:0;transform:translate(-50%,-50%) scale(.45)}}@keyframes productStay{from{opacity:0;transform:translate(-50%,-50%) scale(.35)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}@keyframes branchAB{0%{left:30%;top:50%;opacity:0}10%{opacity:1}100%{left:67%;top:28%;opacity:1}}@keyframes branchAC{0%{left:30%;top:50%;opacity:0}10%{opacity:1}100%{left:67%;top:72%;opacity:1}}@keyframes outB1{0%{left:70%;top:27%;opacity:1}100%{left:94%;top:9%;opacity:1}}@keyframes outB2{0%{left:70%;top:27%;opacity:1}100%{left:92%;top:43%;opacity:1}}@keyframes outC1{0%{left:70%;top:73%;opacity:1}100%{left:94%;top:58%;opacity:1}}@keyframes outC2{0%{left:70%;top:73%;opacity:1}100%{left:91%;top:91%;opacity:1}}@keyframes answerIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(max-width:800px){.micro-model{transform:translate(-50%,-50%) scale(.72)}.product{transform:translate(-50%,-50%) scale(.78)}.energy-stage{min-height:500px}.question-gate{margin-top:3vh}.stage-caption{font-size:12px}}
+.energy-stage.run .n-in{animation:neutronFirst 1.4s ease-in forwards}
+@keyframes neutronFirst{0%{left:5%;top:45%;opacity:1}100%{left:27%;top:49%;opacity:1}}
+
+/* ---------- 取代反应识别训练 ---------- */
+.substitution-guide{margin-top:16px;padding-top:15px;border-top:2px solid #e3edfb}.guide-kicker{color:#2f6fd6;font-size:12px;font-weight:800;letter-spacing:.12em}.substitution-guide h4{margin:5px 0 8px;color:#24364d;font-size:16px;line-height:1.45}.substitution-guide>p:not(.guide-kicker){color:#526174;font-size:13px;line-height:1.75}.substitution-guide>p b{color:#174f9f}.replace-pattern{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:12px 0;padding:12px 8px;border-radius:9px;background:#f2f7ff;color:#25496f}.replace-pattern span{padding:5px 7px;border:1px solid #b9cfea;border-radius:6px;background:#fff;font:700 14px Consolas,monospace}.replace-pattern i{font-style:normal;color:#8293a8}.replace-pattern b{color:#e15a27;font-size:18px}.judge-steps{margin:0 0 13px 20px;color:#45566c;font-size:12.5px;line-height:1.7}.judge-steps li{padding-left:2px}.example-grid{display:grid;gap:7px}.example-grid>div{padding:9px 10px;border:1px solid #dfe7f1;border-radius:8px;background:#fbfcfe}.example-grid strong,.example-grid code,.example-grid small{display:block}.example-grid strong{color:#263b55;font-size:12.5px}.example-grid code{margin:5px 0;color:#235b99;font:600 12px Consolas,monospace;white-space:normal}.example-grid small{color:#68788b}.reaction-quiz{margin-top:13px;padding:12px;border-radius:10px;background:#132b47;color:#eef7ff}.quiz-head{display:flex;justify-content:space-between;align-items:center}.quiz-head span{color:#75dfff;font-size:12px;font-weight:800}.quiz-head b{font:700 12px Consolas}.reaction-quiz>p#quizEquation{min-height:44px;margin:12px 0 8px;font:700 14px/1.55 Consolas,monospace}.quiz-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.quiz-actions button,.quiz-next{border:1px solid #4e7093;border-radius:7px;background:#1c3b5d;color:#fff;padding:8px;cursor:pointer;font-weight:700}.quiz-actions button:hover,.quiz-next:hover{background:#24517d}.quiz-actions button:disabled{opacity:.55;cursor:default}.quiz-feedback{min-height:42px;margin-top:9px;color:#b9cbda;font-size:12px;line-height:1.55}.quiz-feedback.correct{color:#7de6b2}.quiz-feedback.wrong{color:#ffb38f}.quiz-next{width:100%;margin-top:7px;background:#df622f;border-color:#ef7d4d}.quiz-next[hidden]{display:none}
+
+/* ---------- ATP 能量释放剧场 ---------- */
+.energy-lab{background:radial-gradient(circle at 52% 40%,#123a49 0,#071923 58%,#040b10 100%)}.energy-head{margin-bottom:10px}.atp-intro{max-width:1500px;margin:0 auto 13px;padding:10px 14px;border-left:3px solid #52ddc5;background:#0d2631;color:#b4cfda}.atp-intro span{display:block;color:#54dfc5;font:700 11px Consolas;letter-spacing:.15em}.atp-intro p{margin-top:4px;line-height:1.5}.analogy-wrap{display:block}.energy-stage{height:min(65vh,650px);min-height:470px;background:radial-gradient(circle at 48% 44%,#123447,#071521 68%)}.atp-molecule{position:absolute;left:50%;top:43%;display:flex;align-items:center;transform:translate(-50%,-50%);filter:drop-shadow(0 14px 20px #0008)}.atp-molecule>i{width:58px;height:8px;background:#b9d9e3;box-shadow:0 0 10px #7cd9eb88}.atp-molecule>i.high-energy{background:linear-gradient(90deg,#f4cd61,#ff7654);box-shadow:0 0 18px #ffb43d}.adenosine{display:grid;place-items:center;width:150px;height:105px;border:3px solid #57d1ee;border-radius:54% 46% 44% 56%;background:radial-gradient(circle at 35% 30%,#276f8b,#11374e);font-size:22px;font-weight:800}.phosphate{display:grid;place-items:center;width:86px;height:86px;border:3px solid #f5c95a;border-radius:50%;background:radial-gradient(circle at 32% 28%,#ffed8b,#d47b27 72%);box-shadow:inset -9px -11px 18px #77321388,0 0 22px #ffa73566;color:#2a1a0a;font:900 25px Consolas}.atp-water{position:absolute;left:48%;top:10%;padding:8px 11px;border:1px solid #65d4f0;border-radius:50%;color:#dffaff;background:#15799866;font-weight:800;opacity:0}.energy-burst{position:absolute;left:50%;top:43%;width:180px;height:180px;transform:translate(-50%,-50%) scale(.2);opacity:0}.energy-burst i{position:absolute;left:50%;top:50%;width:6px;height:85px;transform-origin:50% 0;background:linear-gradient(#fff59e,transparent)}.energy-burst i:nth-child(2){transform:rotate(72deg)}.energy-burst i:nth-child(3){transform:rotate(144deg)}.energy-burst i:nth-child(4){transform:rotate(216deg)}.energy-burst i:nth-child(5){transform:rotate(288deg)}.energy-burst b{position:absolute;left:50%;top:50%;width:250px;transform:translate(-50%,120px);text-align:center;color:#ffe981;font-size:17px}.product-label{position:absolute;top:25%;padding:7px 12px;border:1px solid #64dbc6;border-radius:7px;background:#103f43;color:#a8ffea;font-weight:900;font-size:18px;opacity:0}.adp-label{left:35%}.pi-label{right:24%}.energy-stage.run .atp-water{animation:waterDrop 1.2s ease-in forwards}.energy-stage.run .p-three{animation:phosphateLeave 2s 1.25s ease-out forwards}.energy-stage.run .high-energy{animation:bondBreak .5s 1.25s ease-in forwards}.energy-stage.run .energy-burst{animation:atpBurst 1.5s 1.6s ease-out forwards}.energy-stage.run .adp-label{animation:labelIn .45s 2.65s ease-out forwards}.energy-stage.run .pi-label{animation:labelIn .45s 2.75s ease-out forwards}.energy-stage.run .atp-molecule{animation:adpShift .8s 2.35s ease-out forwards}@keyframes waterDrop{0%{top:10%;opacity:0}25%{opacity:1}100%{top:31%;opacity:1}}@keyframes phosphateLeave{0%{transform:none}35%{transform:translateX(15px) scale(1.12);filter:brightness(1.8)}100%{transform:translate(165px,70px) scale(.88)}}@keyframes bondBreak{to{opacity:0;transform:scaleX(.05)}}@keyframes atpBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(3)}}@keyframes labelIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}@keyframes adpShift{to{transform:translate(-58%,-50%)}}.energy-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:17px}.energy-controls button{margin:0;border-radius:8px;padding:12px 20px;color:#fff;font-weight:800;cursor:pointer}.energy-replay{border:1px solid #3d7184;background:#102d3a}.energy-next{border:0;background:#1ca783}.energy-next[hidden]{display:none}.answer-card{border-color:#2d6e68;background:linear-gradient(135deg,#0b2b31,#123a3b)}.answer-card>span{color:#55e3c8}.answer-card p b{color:#fff2a9}
+@media(max-width:800px){.substitution-guide h4{font-size:15px}.atp-molecule{transform:translate(-50%,-50%) scale(.65)}.energy-stage.run .atp-molecule{animation:none}.product-label{top:18%}.adp-label{left:20%}.pi-label{right:16%}.energy-burst b{font-size:14px}.energy-stage{min-height:470px}}
+.controls button:disabled { opacity: .45; cursor: default; }
+.controls .seg { display: inline-flex; gap: 4px; }
+.controls input[type=range] { width: 110px; }
+.controls .grow { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 220px; }
+#scrub { flex: 1; width: auto; }
+.seglbl { font-size: 12px; color: #7a8594; min-width: 58px; }
+#statlbl { font-size: 12px; color: #7a8594; }
+select#spd { border: 1px solid #d5dde7; border-radius: 6px; padding: 3px 4px; font-size: 12px; color: #33415a; }
+.ico { display: inline-block; width: 22px; text-align: center; font-size: 15px; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="title">
+      <h1>🧪 甲烷与氯气 · 3D 微观反应实验室</h1>
+      <div class="sub">聚焦光照取代反应 —— 观察断键、成键与原子守恒</div>
+    </div>
+    <div class="portal-actions">
+      <button id="openEnergy" type="button">⚡ 能量释放（以 ATP 为例）</button>
+    </div>
+    <div class="legend">
+      <span class="leg"><span class="dot" style="background:#23262b"></span>碳 C（黑）</span>
+      <span class="leg"><span class="dot" style="background:#b8c0c9"></span>氢 H（浅灰）</span>
+      <span class="leg"><span class="dot" style="background:#e63830"></span>氧 O（红）</span>
+      <span class="leg"><span class="dot" style="background:#299e4f"></span>氯 Cl（绿）</span>
+      <span class="leg"><span class="dot" style="background:#a15226"></span>溴 Br（棕）</span>
+      <span class="leg"><span class="dot" style="background:#d9881a"></span>铜 Cu（黄铜）</span>
+      <span class="leg"><span style="width:auto;padding:0 7px;background:#fff3c4;border:1px solid #ffd97a;border-radius:4px;font-weight:700;color:#8a6d00">官能团</span>见左侧结构式高亮，3D 均为普通实体球棍</span>
+    </div>
+  </header>
+
+  <nav class="nav" id="btnGrp">
+    <!-- 当前仅保留甲烷与氯气反应 -->
+  </nav>
+
+  <div class="area">
+    <section class="card">
+      <h3>① 反应方程式 · 官能团彩色标记</h3>
+      <div class="body eqbox">
+        <p id="eqDef" style="font-size:13px;color:#41506a;line-height:1.75"></p>
+        <div class="eqline" id="eqLine" style="margin:16px 0 10px"></div>
+        <div style="font-size:12px;color:#7a8594;margin-bottom:2px"><b style="color:#41506a">说明：</b></div>
+        <ul class="note" id="eqNotes"></ul>
+        <div class="atomstat" id="atomstat"></div>
+        <section class="substitution-guide" aria-labelledby="subGuideTitle">
+          <p class="guide-kicker">判断方法</p>
+          <h4 id="subGuideTitle">看“谁被谁换走”，不要只看是否有两种产物</h4>
+          <p>取代反应的核心是：<b>有机物中的一个原子或原子团，被另一个原子或原子团替换</b>。碳骨架通常保留，被换下来的部分常与另一反应物结合。</p>
+          <div class="replace-pattern" aria-label="取代反应通式"><span>R—A</span><i>＋</i><span>B—X</span><b>→</b><span>R—B</span><i>＋</i><span>A—X</span></div>
+          <ol class="judge-steps">
+            <li><b>圈有机物：</b>比较反应前后的碳骨架。</li>
+            <li><b>找变化：</b>原来的 A 离开，同一位置接上 B。</li>
+            <li><b>排除：</b>若双键变单键并接入两个原子，通常是加成；若脱去小分子并生成双键，通常是消去。</li>
+          </ol>
+          <div class="example-grid" aria-label="其他有机物中的取代反应示例">
+            <div><strong>乙烷卤代</strong><code>C₂H₆ + Cl₂ → C₂H₅Cl + HCl</code><small>H 被 Cl 替换</small></div>
+            <div><strong>溴乙烷水解</strong><code>C₂H₅Br + NaOH → C₂H₅OH + NaBr</code><small>Br 被 OH 替换</small></div>
+            <div><strong>苯的溴代</strong><code>C₆H₆ + Br₂ → C₆H₅Br + HBr</code><small>苯环上的 H 被 Br 替换</small></div>
+          </div>
+          <div class="reaction-quiz" id="reactionQuiz">
+            <div class="quiz-head"><span>轮到你判断</span><b id="quizScore">0 / 3</b></div>
+            <p id="quizEquation"></p>
+            <div class="quiz-actions"><button type="button" data-answer="yes">是取代反应</button><button type="button" data-answer="no">不是取代反应</button></div>
+            <p class="quiz-feedback" id="quizFeedback" aria-live="polite">先寻找：有机物中是否发生“一换一”。</p>
+            <button class="quiz-next" id="quizNext" type="button" hidden>下一题 →</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>② 3D 球棍模型 · 动态演示反应过程</h3>
+      <div class="viewport">
+        <canvas id="gl"></canvas>
+        <div class="light-condition">☀ 光照 · hν <span>黄色波形表示入射光</span></div>
+        <div class="vhud" id="phase"></div>
+        <div class="vhud" id="rtitle">
+          <div class="rn" id="rtName"></div>
+          <div class="rm" id="rtEx"></div>
+          <div class="rm" id="rtCond" style="margin-top:2px"></div>
+        </div>
+        <div id="tooltip"></div>
+        <div id="errbox"></div>
+        <div id="dbgbox"><i id="db1"></i><i id="db2"></i><i id="db3"></i></div>
+        <div id="webglmsg">⚠️ 当前浏览器无法创建 WebGL 上下文。<br>请更换现代浏览器（Chrome / Edge / Firefox），并确认未禁用硬件加速。</div>
+      </div>
+      <div class="controls">
+        <button id="btnPlay" type="button"><span class="ico">▶</span><span id="btnPlayTxt">播放</span></button>
+        <button id="btnBack" type="button"><span class="ico">↺</span>重置</button>
+        <label class="lbl"><input type="checkbox" id="rot" checked> 自动旋转</label>
+        <span class="zoomctl" aria-label="模型缩放">
+          <button id="zoomOut" type="button" title="缩小模型">−</button>
+          <input id="zoomRange" type="range" min="26" max="100" value="70" aria-label="模型大小">
+          <button id="zoomIn" type="button" title="放大模型">＋</button>
+          <output id="zoomValue">70%</output>
+        </span>
+        <label style="font-size:12.5px;color:#41506a">速度
+          <select id="spd">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.2">2.2×</option>
+          </select>
+        </label>
+        <span class="grow">
+          <span class="seglbl" id="seglbl">第 0 步</span>
+          <input type="range" id="scrub" min="0" max="100" value="0" step="0.1">
+        </span>
+      </div>
+    </section>
+  </div>
+
+  <p style="margin-top:12px;font-size:12px;color:#98a2b2">
+    使用提示：拖动画面旋转视角，滚轮或缩放控制条可局部放大模型。
+    浅蓝画布 + 白色化学键，便于投影与录屏；同一颜色原子在反应前后始终是同一个原子（一一对应），可沿动画轨迹追踪。
+  </p>
+</div>
+
+<section class="energy-lab" id="energyLab" aria-hidden="true">
+  <div class="energy-head">
+    <button id="closeEnergy" type="button">← 返回甲烷取代反应</button>
+    <div><span>ATP ENERGY THEATER</span><h2>ATP 怎样为细胞释放可用能量？</h2></div>
+  </div>
+  <div class="atp-intro">
+    <span>先观察，再解释</span>
+    <p>留意最外侧磷酸基团的变化。动画结束后，点击“下一步”查看讲解。</p>
+  </div>
+  <div class="analogy-wrap">
+    <div class="energy-stage" id="energyStage">
+      <div class="energy-grid"></div>
+      <div class="atp-water">H₂O</div>
+      <div class="atp-molecule" aria-label="ATP 分子示意图">
+        <div class="adenosine">腺苷</div><i></i>
+        <div class="phosphate p-one">P</div><i></i>
+        <div class="phosphate p-two">P</div><i class="high-energy"></i>
+        <div class="phosphate p-three">P</div>
+      </div>
+      <div class="energy-burst"><i></i><i></i><i></i><i></i><i></i><b>释放可用于生命活动的能量</b></div>
+      <div class="product-label adp-label">ADP</div><div class="product-label pi-label">Pi</div>
+      <div class="stage-caption"><b id="energyTitle">ATP：腺苷连接三个磷酸基团</b><span id="energyCaption">点击播放，观察 ATP 水解时最外侧磷酸基团的变化。</span></div>
+    </div>
+    <div class="energy-controls">
+      <button class="energy-play" id="playEnergy" type="button">▶ 播放</button>
+      <button class="energy-replay" id="replayEnergy" type="button">↻ 重复播放</button>
+      <button class="energy-next" id="energyNext" type="button" hidden>下一步：查看讲解 →</button>
+    </div>
+  </div>
+  <div class="answer-card" id="answerCard"><span>讲解</span><h3>ATP 水解为什么能为细胞供能？</h3><p>ATP 与水反应，生成 ADP 和无机磷酸（Pi）：<b>ATP + H₂O → ADP + Pi + 能量</b>。水解后形成的新化学键和产物与周围水分子的相互作用更稳定，使体系的自由能降低。释放出的能量可与肌肉收缩、主动运输和物质合成等吸能过程偶联。<b>“高能磷酸键”不是断裂时直接放能；断键本身需要能量，整个反应的净能量变化才是释放。</b></p></div>
+</section>
+
+<script>
+/* ============================================================
+   六类有机反应数据：2D 方程式 + 3D 球棍模型关键帧（原子一一对应）
+   atoms  : 每个全局原子（元素 + fg 反应中心标识）
+   frames : 每个关键帧的原子坐标（长度恒等于 atoms.length —— 原子守恒）
+   bonds  : {a,b, off, s[]} off 为双键错位(0 单键 / ±0.13 双键), s[] 逐帧强度
+   ============================================================ */
+window.__RX = (function () {
+  'use strict';
+
+  /* ---------- 向量小工具 ---------- */
+  function P(x, y, z) { return [x, y, z]; }
+  function add(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+  function sub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+  function mul(a, s) { return [a[0] * s, a[1] * s, a[2] * s]; }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+  function len(a) { return Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]); }
+  function norm(a) { var l = len(a) || 1e-9; return [a[0] / l, a[1] / l, a[2] / l]; }
+  var X = P(1, 0, 0), Y = P(0, 1, 0), Z = P(0, 0, 1);
+  var TAU = Math.PI * 2;
+  function rotZ(v, ang) { var c = Math.cos(ang), s = Math.sin(ang); return [v[0] * c - v[1] * s, v[0] * s + v[1] * c, v[2]]; }
+  var DIR2 = 2.09439510239; /* 120° */
+
+  /* 以 axis 为“远离方向”的三个 sp3 氢方向（109.47°） */
+  function threeHDirs(axis) {
+    var ax = norm(axis);
+    var e = Math.abs(ax[1]) < 0.9 ? norm(cross(ax, Y)) : norm(cross(ax, X));
+    var f = norm(cross(ax, e));
+    var ca = -1 / 3, sa = 2 * Math.SQRT2 / 3, out = [];
+    for (var k = 0; k < 3; k++) {
+      var t = k * DIR2;
+      out.push(add(mul(ax, ca), add(mul(e, Math.cos(t) * sa), mul(f, Math.sin(t) * sa))));
+    }
+    return out;
+  }
+  /* 甲基（3 个氢） */
+  function h3(C, axis, L) { return threeHDirs(axis).map(function (d) { return add(C, mul(d, L)); }); }
+  /* 亚甲基（2 个氢）：给出两个相邻基团方向 */
+  function h2dirs(a, b) {
+    var m = norm(add(a, b));
+    if (len(m) < 0.25) {
+      var e2 = Math.abs(a[1]) < 0.9 ? norm(cross(a, Y)) : norm(cross(a, X));
+      var ca2 = -1 / 3, sa2 = 2 * Math.SQRT2 / 3;
+      return [add(mul(a, ca2), mul(e2, sa2)), add(mul(a, ca2), mul(e2, -sa2))];
+    }
+    var n = norm(cross(a, b));
+    var cf = (-1 / 3) / dot(m, a);
+    if (cf > 1) cf = 1; else if (cf < -1) cf = -1;
+    var sf = Math.sqrt(Math.max(0, 1 - cf * cf));
+    return [add(mul(m, cf), mul(n, sf)), add(mul(m, cf), mul(n, -sf))];
+  }
+  function h2(C, a, b, L) { return h2dirs(a, b).map(function (d) { return add(C, mul(d, L)); }); }
+
+  /* ---------- 2D 方程式排版助手 ---------- */
+  function W(el, subd) {
+    return '<span class="at ' + el + '">' + el + '</span>' + (subd ? '<sub>' + subd + '</sub>' : '');
+  }
+  function FG(html) { return '<span class="fghl">' + html + '</span>'; }
+  function FGR(html) { return '<span class="fghl2">' + html + '</span>'; }
+  var PLUS = ' <span class="sp">+</span> ';
+  var TO = '→';
+
+  /* ============================================================
+     1. 取代反应   CH4 + Cl2 → CH3Cl + HCl （光照）
+     ============================================================ */
+  var mh = h3(P(0, 0, 0), X, 1.09); /* 3 个“背面”氢 (sp3, 沿 -x 方向) */
+  var R1 = {
+    id: 'sub', name: '取代反应', ex: '甲烷 + 氯气（光照）',
+    cond: '光照', condb: '',
+    lhs: W('C') + W('H', 4) + PLUS + W('Cl', 2),
+    rhs: W('C') + W('H', 3) + W('Cl') + PLUS + W('H') + W('Cl'),
+    def: '有机物分子中的原子或原子团被其他原子或原子团“替代”的反应，叫取代反应。',
+    notes: [
+      '甲烷与氯气在光照下发生连锁取代，可逐步得到 CH<sub>3</sub>Cl、CH<sub>2</sub>Cl<sub>2</sub>…CCl<sub>4</sub>；本动画演示第一步生成一氯甲烷。',
+      '动画按断键、半键旋转、对接三个阶段展示净变化；实际反应是自由基链式取代过程。',
+      '实验中氯气的黄绿色逐渐变浅，瓶壁出现油状液滴。'
+    ],
+    atoms: [
+      { el: 'C' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'Cl' }, { el: 'Cl' }
+    ],
+    fg: [],
+    frames: [
+      {
+        pts: [P(0, 0, 0), P(1.09, 0, 0), mh[0], mh[1], mh[2], P(3.05, 0.9, 0.4), P(4.75, 0.9, 0.4)]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.09, 0, 0), mh[0], mh[1], mh[2], P(3.05, 0.9, 0.4), P(4.75, 0.9, 0.4)]
+      },
+      {
+        pts: [P(0, 0, 0), P(2.9, 1.35, 0.35), mh[0], mh[1], mh[2], P(1.78, 0, 0), P(4.05, 1.8, 0.68)]
+      },
+      {
+        pts: [P(0, 0, 0), P(2.9, 1.35, 0.35), mh[0], mh[1], mh[2], P(1.78, 0, 0), P(4.05, 1.8, 0.68)]
+      }
+    ],
+    caps: [
+      '断键：甲烷的 C–H 键与氯气的 Cl–Cl 键从中间分开，保留两端半键。',
+      '断键后：四段半键保留在所属原子上，准备旋转。',
+      '旋转到位：半键绕各自原子转向，分别对准 C–Cl 与 H–Cl 的对接方向。',
+      '成键：C–Cl 键与 H–Cl 键形成 → 产物 一氯甲烷 CH₃Cl 和 HCl。'
+    ],
+    bonds: [
+      { a: 0, b: 1, off: 0, s: [1, 1, 0.4, 0] },
+      { a: 0, b: 2, off: 0, s: [1, 1, 1, 1] },
+      { a: 0, b: 3, off: 0, s: [1, 1, 1, 1] },
+      { a: 0, b: 4, off: 0, s: [1, 1, 1, 1] },
+      { a: 5, b: 6, off: 0, s: [1, 0.9, 0, 0] },
+      { a: 0, b: 5, off: 0, s: [0, 0, 0.6, 1] },
+      { a: 1, b: 6, off: 0, s: [0, 0, 0.5, 1] }
+    ]
+  };
+
+  /* ============================================================
+     2. 加成反应   CH2=CH2 + Br2 → CH2Br–CH2Br （溴水）
+     ============================================================ */
+  var R2 = {
+    id: 'add', name: '加成反应', ex: '乙烯 + 溴（溴水）',
+    cond: '常温', condb: '溴水 / CCl₄ 溶液',
+    lhs: W('C') + W('H', 2) + '=' + W('C') + W('H', 2) + PLUS + W('Br', 2),
+    rhs: FGR(W('C') + W('H', 2) + W('Br')) + '–' + FGR(W('C') + W('H', 2) + W('Br')),
+    def: '不饱和碳上的原子与其他原子或原子团直接结合、生成饱和程度更高的产物，叫加成反应（不饱和键 π 键断裂）。',
+    notes: [
+      '溴水 / 溴的 CCl₄ 溶液因 Br₂ 被消耗而褪色——常用于检验 C=C 键。',
+      'π 键断裂后，两个 Br 原子分别加到双键的两个碳原子上（一上一下），产物为 1,2-二溴乙烷。',
+      '反应中心（C=C 双键与 Br₂）均为普通球棍模型，官能团标记请看左侧结构式高亮。'
+    ],
+    atoms: [
+      { el: 'C' }, { el: 'C' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'Br' }, { el: 'Br' }
+    ],
+    fg: [0, 1],
+    frames: [
+      {
+        pts: [P(0, 0, 0), P(1.34, 0, 0), P(-0.545, 0.944, 0), P(-0.545, -0.944, 0), P(1.885, 0.944, 0), P(1.885, -0.944, 0), P(3.7, 2.3, 0.5), P(5.6, 1.0, 0.2)]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.34, 0, 0), P(-0.545, 0.944, 0), P(-0.545, -0.944, 0), P(1.885, 0.944, 0), P(1.885, -0.944, 0), P(0.55, 2.4, 0.3), P(2.7, 2.0, 0.3)]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.4, 0, 0), P(-0.545, 0.944, 0), P(-0.545, -0.944, 0), P(1.945, 0.944, 0), P(1.945, -0.944, 0), P(0.7, 2.3, 1.3), P(3.1, 2.2, 1.1)]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.5, 0, 0), P(-0.545, 0.944, 0), P(-0.545, -0.944, 0), P(2.045, 0.944, 0), P(2.045, -0.944, 0), P(0.25, 0, 1.86), P(1.75, 0, -1.86)]
+      }
+    ],
+    caps: [
+      '反应物：乙烯 CH₂=CH₂（C=C 双键）与溴 Br₂——两者都完整。',
+      'C=C 的 π 键断开：两段半键绕各自碳旋转到预备方向（此时 Br₂ 仍完整，无新键）。',
+      '溴之间断开（Br–Br 断裂），溴带半键与已就位的碳半键对接。',
+      '产物：1,2-二溴乙烷（C–C 单键 + 两个 C–Br，Br 一上一下）。'
+    ],
+    bonds: [
+      /* C=C 双键：一根保持不动(最终成为产物 C–C 单键)；另一根断开,两端半键各绕碳旋转去接 Br */
+      { a: 0, b: 1, off: -0.13, s: [1, 1, 1, 1] },
+      { a: 0, b: 1, off: 0.13, s: [1, 1, 0.3, 0], pivot: true },
+      { a: 0, b: 2, off: 0, s: [1, 1, 1, 1] },
+      { a: 0, b: 3, off: 0, s: [1, 1, 1, 1] },
+      { a: 1, b: 4, off: 0, s: [1, 1, 1, 1] },
+      { a: 1, b: 5, off: 0, s: [1, 1, 1, 1] },
+      { a: 6, b: 7, off: 0, s: [1, 1, 1, 0] },
+      { a: 0, b: 6, off: 0, s: [0, 0, 0.45, 1] },
+      { a: 1, b: 7, off: 0, s: [0, 0, 0.45, 1] }
+    ]
+  };
+
+  /* ============================================================
+     3. 消去反应   CH3CH2Br → CH2=CH2 + HBr （NaOH 醇溶液、加热）
+     （3D 按“溴乙烷 → 乙烯 + HBr”演示，HBr 随即被 NaOH 中和）
+     ============================================================ */
+  /* C2 的两个 H：相邻基团方向 (-x) 与 (Br 方向) */
+  var brDir = norm(P(0.35, 1.9, 0));
+  var c2h = h2(P(1.5, 0, 0), mul(X, -1), brDir, 1.09);
+  var R3 = {
+    id: 'elim', name: '消去反应', ex: '溴乙烷 → 乙烯',
+    cond: 'NaOH 醇溶液、加热',
+    lhs: W('C') + W('H', 3) + W('C') + W('H', 2) + W('Br'),
+    rhs: W('C') + W('H', 2) + '=' + W('C') + W('H', 2) + '↑' + PLUS + W('H') + W('Br'),
+    def: '有机物在一定条件下从分子中脱去一个小分子（H₂O、HBr 等）生成不饱和化合物的反应，叫消去反应。',
+    notes: [
+      '主方程式：CH₃CH₂Br + NaOH —(醇,Δ)→ CH₂=CH₂↑ + NaBr + H₂O。',
+      '机理：β-碳上的 C–H 键与 C–Br 键同时断裂，两个碳之间形成双键。',
+      '3D 动画按溴乙烷 → 乙烯 + HBr 演示（HBr 随即被 NaOH 中和）。'
+    ],
+    atoms: [
+      { el: 'C' }, { el: 'C' }, { el: 'Br' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'H' }
+    ],
+    fg: [2, 3],
+    frames: [
+      {
+        pts: [P(0, 0, 0), P(1.5, 0, 0), P(1.85, 1.9, 0),
+          P(-0.3633, -0.8901, -0.5138), mh[0], mh[2], c2h[0], c2h[1]]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.5, 0, 0), P(2.2, 1.7, 0.3),
+          P(-0.75, 0.7, 0.45), P(-0.7, 0.2, 1.0), P(-0.5, -0.85, -0.35), c2h[0], c2h[1]]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.44, 0, 0), P(2.9, 2.0, 0.5),
+          P(0.7, 1.5, 0.5), P(-0.5, 0.75, 0.5), P(-0.52, -0.94, -0.1), P(1.8, -0.3, -0.55), P(1.8, 0.25, 0.6)]
+      },
+      {
+        pts: [P(0, 0, 0), P(1.34, 0, 0), P(3.9, 2.06, 0.76),
+          P(2.55, 1.55, 0.4), P(-0.545, 0.944, 0), P(-0.545, -0.944, 0), P(1.885, -0.944, 0), P(1.885, 0.944, 0)]
+      }
+    ],
+    caps: [
+      '反应物：溴乙烷 CH₃CH₂Br（Br 在右侧碳上），NaOH 醇溶液加热。',
+      'C–Br 键拉长，β-碳（左侧碳）上的 C–H 键也开始断裂。',
+      '消去：β-H 与 Br 一起脱去，C–C 键收缩形成 C=C 双键。',
+      '产物：乙烯 CH₂=CH₂（↑）和 HBr；HBr 随后被 NaOH 中和。'
+    ],
+    bonds: [
+      /* C–C σ 单键始终保留；第二根键由两端断键(C–H、C–Br)的半键旋转合拢成 C=C */
+      { a: 0, b: 1, off: 0, s: [1, 1, 1, 1] },
+      { a: 0, b: 1, off: 0.2, s: [0, 0, 0.4, 1], swing: true },
+      { a: 1, b: 2, off: 0, s: [1, 0.65, 0.15, 0] },
+      { a: 0, b: 3, off: 0, s: [1, 0.55, 0, 0] },
+      { a: 0, b: 4, off: 0, s: [1, 1, 1, 1] },
+      { a: 0, b: 5, off: 0, s: [1, 1, 1, 1] },
+      { a: 1, b: 6, off: 0, s: [1, 1, 1, 1] },
+      { a: 1, b: 7, off: 0, s: [1, 1, 1, 1] },
+      { a: 3, b: 2, off: 0, s: [0, 0, 0.5, 1], waitDetach: true }
+    ]
+  };
+
+  /* ============================================================
+     4. 氧化反应   乙醇 + CuO → 乙醛 + H2O + Cu  （催化循环）
+        总反应：2CH3CH2OH + O2 -(Cu,Δ)-> 2CH3CHO + 2H2O
+     ============================================================ */
+  var OX = -1.4; /* 分子整体左移 */
+  var oDir = P(0.6428, 0.7660, 0);
+  var c1hOx = h2(P(1.5 + OX, 0, 0), mul(X, -1), oDir, 1.09);
+  var R4 = {
+    id: 'ox', name: '氧化反应', ex: '乙醇 → 乙醛（Cu 催化）',
+    cond: 'Cu / Ag 催化、加热',
+    lhs: W('C') + W('H', 3) + W('C') + W('H', 2) + FG(W('O') + W('H')) + PLUS + W('Cu') + W('O'),
+    rhs: W('C') + W('H', 3) + FGR(W('C') + W('H') + W('O')) + PLUS + W('H', 2) + W('O') + PLUS + W('Cu'),
+    def: '有机物分子中“加氧或去氢”的反应叫氧化反应（本动画：伯醇被催化氧化为醛）。',
+    notes: [
+      '总反应：2CH₃CH₂OH + O₂ —(Cu/Ag, Δ)→ 2CH₃CHO + 2H₂O。',
+      '动画按教材机理演示“半个”循环：铜丝受热变黑（Cu + ½O₂ = CuO），CuO 夺取醇的 2 个 H 变回铜（红→黑→红），Cu 为催化剂循环使用。',
+      '实验中可闻到刺激性气味的乙醛，铜丝又变回光亮的红色。'
+    ],
+    atoms: [
+      { el: 'C' }, { el: 'C' }, { el: 'O' }, { el: 'H' }, { el: 'H' }, { el: 'H' },
+      { el: 'H' }, { el: 'H' }, { el: 'H' }, { el: 'Cu' }, { el: 'O' }
+    ],
+    fg: [2, 8, 10],
+    frames: [
+      {
+        pts: [
+          P(OX, 0, 0), P(OX + 1.5, 0, 0), P(OX + 2.4192, 1.0954, 0),
+          P(OX - 0.3633, 0, 1.0277), P(OX - 0.3633, -0.8901, -0.5138), P(OX - 0.3633, 0.8901, -0.5138),
+          c1hOx[0], c1hOx[1],
+          P(OX + 1.6838, 1.7125, 0),
+          P(3.6, 0.45, 0), P(2.15, 1.0, 0.2)
+        ]
+      },
+      {
+        pts: [
+          P(OX, 0, 0), P(OX + 1.5, 0, 0), P(OX + 2.35, 1.05, 0),
+          P(OX - 0.3633, 0, 1.0277), P(OX - 0.3633, -0.8901, -0.5138), P(OX - 0.3633, 0.8901, -0.5138),
+          P(OX + 1.86, -0.72, -0.55), P(OX + 2.35, -0.2, 0.55),
+          P(OX + 1.9, 1.6, 0.1),
+          P(3.5, 0.8, 0.1), P(2.2, 1.25, 0.1)
+        ]
+      },
+      {
+        pts: [
+          P(OX, 0, 0), P(OX + 1.5, 0, 0), P(OX + 2.2842, 0.9345, 0),
+          P(OX - 0.3633, 0, 1.0277), P(OX - 0.3633, -0.8901, -0.5138), P(OX - 0.3633, 0.8901, -0.5138),
+          P(OX + 1.873, -1.025, 0),
+          P(3.85, 1.4, 0), P(2.45, 1.4, 0),
+          P(4.6, 1.1, 0), P(3.15, 2.0, 0)
+        ]
+      }
+    ],
+    caps: [
+      '反应物：乙醇 CH₃CH₂OH + 氧化铜 CuO（铜在空气中受热生成）。',
+      'CuO 靠近羟基：O 夺取醇分子中的 2 个 H（脱氢），C–O 键变短为 C=O。',
+      '产物：乙醛 CH₃CHO + 水 H₂O，同时 Cu 再生（催化剂循环使用）。'
+    ],
+    bonds: [
+      { a: 0, b: 1, off: 0, s: [1, 1, 1] },
+      /* C–O 单键始终保留；第二条键以氧为支点摆动、缓慢伸长连到碳（swing 动画） */
+      { a: 1, b: 2, off: 0, s: [1, 1, 1] },
+      { a: 1, b: 2, off: 0.2, s: [0, 0.2, 1], swing: true },
+      { a: 0, b: 3, off: 0, s: [1, 1, 1] },
+      { a: 0, b: 4, off: 0, s: [1, 1, 1] },
+      { a: 0, b: 5, off: 0, s: [1, 1, 1] },
+      { a: 1, b: 6, off: 0, s: [1, 1, 1] },
+      { a: 1, b: 7, off: 0, s: [1, 0.55, 0] },
+      { a: 2, b: 8, off: 0, s: [1, 0.55, 0] },
+      { a: 9, b: 10, off: 0, s: [1, 0.6, 0] },
+      { a: 10, b: 7, off: 0, s: [0, 0.3, 1], rotH: true },
+      { a: 10, b: 8, off: 0, s: [0, 0.3, 1], rotH: true }
+    ]
+  };
+
+  /* ============================================================
+     5. 还原反应   CH3CHO + H2 → CH3CH2OH （Ni、加热）
+     ============================================================ */
+  var aldC1 = P(1.5, 0, 0);
+  var R5 = {
+    id: 'red', name: '还原反应', ex: '乙醛 + 氢气 → 乙醇',
+    cond: 'Ni 催化、加热',
+    lhs: W('C') + W('H', 3) + FGR(W('C') + W('H') + W('O')) + PLUS + W('H', 2),
+    rhs: W('C') + W('H', 3) + W('C') + W('H', 2) + FG(W('O') + W('H')),
+    def: '有机物分子中“加氢或去氧”的反应叫还原反应（本动画：醛加氢还原为醇）。',
+    notes: [
+      'H₂ 分子断裂后，一个 H 加到羰基氧上（—OH），另一个 H 加到羰基碳上（—CH₂—）。',
+      'C=O 双键被还原为 C–OH 单键（羰基 → 羟基），Ni 作催化剂。',
+      '该反应也是“加成反应”，故醛、酮的催化加氢属于“还原”。'
+    ],
+    atoms: [
+      { el: 'C' }, { el: 'C' }, { el: 'O' }, { el: 'H' }, { el: 'H' }, { el: 'H' },
+      { el: 'H' }, { el: 'H' }, { el: 'H' }
+    ],
+    fg: [2, 7, 8],
+    frames: [
+      {
+        pts: [
+          P(0, 0, 0), aldC1, P(2.2842, 0.9345, 0),
+          mh[0], mh[1], mh[2],
+          P(1.873, -1.025, 0),
+          P(3.6, 1.1, 0.25), P(4.3, 1.1, 0.25)
+        ]
+      },
+      {
+        pts: [
+          P(0, 0, 0), aldC1, P(2.3, 0.95, 0),
+          mh[0], mh[1], mh[2],
+          P(1.85, -0.95, 0.25),
+          P(3.5, 1.9, 0.3), P(3.45, 0.0, -0.3)
+        ]
+      },
+      {
+        pts: [
+          P(0, 0, 0), P(1.5, 0, 0), P(2.4192, 1.0954, 0),
+          mh[0], mh[1], mh[2],
+          P(1.8633, -0.7793, 0.6694),
+          P(1.6838, 1.7125, 0), P(1.8633, -0.7793, -0.6694)
+        ]
+      }
+    ],
+    caps: [
+      '反应物：乙醛 CH₃CHO（C=O 双键）+ 氢气 H₂（Ni 催化、加热）。',
+      'H–H 键断裂，两个 H 分别接近羰基的 O 和 C（亲电/亲核加成还原）。',
+      '产物：乙醇 CH₃CH₂OH —— C=O 被还原为 C–OH（加氢）。'
+    ],
+    bonds: [
+      { a: 0, b: 1, off: 0, s: [1, 1, 1] },
+      /* C=O 双键:一根保持不动(pivot:false, 最终成为 C–O 单键) */
+      { a: 1, b: 2, off: -0.13, s: [1, 1, 1] },
+      /* 另一根先行断裂(pivot:true):碳侧半键收缩,氧侧半键先旋转到位,之后才与 H 连接 */
+      { a: 1, b: 2, off: 0.13, s: [1, 0.35, 0], pivot: true },
+      { a: 0, b: 3, off: 0, s: [1, 1, 1] },
+      { a: 0, b: 4, off: 0, s: [1, 1, 1] },
+      { a: 0, b: 5, off: 0, s: [1, 1, 1] },
+      { a: 1, b: 6, off: 0, s: [1, 1, 1] },
+      { a: 7, b: 8, off: 0, s: [1, 0.55, 0] },
+      /* O–H 的连接在旋转到位之后才进行:前段只保留很小强度 */
+      { a: 2, b: 7, off: 0, s: [0, 0.15, 1] },
+      { a: 1, b: 8, off: 0, s: [0, 0.4, 1] }
+    ]
+  };
+
+  /* ============================================================
+     6. 加聚反应   3 CH2=CH2 → -[CH2-CH2]3- 链段
+     ============================================================ */
+  function R6() {
+    var startX = [0, 1.34, 3.6, 4.94, 7.2, 8.54];
+    var endX = [0, 1.5, 3.0, 4.5, 6.0, 7.5];
+    /* 每个碳的两个氢：初始在上下(y=±0.944)，终点也上下(y=±0.85) */
+    var startH = [], endH = [];
+    for (var i = 0; i < 6; i++) {
+      var c0 = i % 2 === 0;
+      var sx = startX[i] + (c0 ? -0.545 : 0.545); /* 偶=单体左C(氢向左), 奇=右C(氢向右) */
+      startH.push(P(sx, c0 ? 0.944 : -0.944, 0));
+      startH.push(P(sx, c0 ? -0.944 : 0.944, 0));
+      endH.push(P(endX[i] - 0.45, c0 ? 0.85 : -0.85, 0));
+      endH.push(P(endX[i] - 0.45, c0 ? -0.85 : 0.85, 0));
+    }
+    function carbonPos(i, u) { return P(startX[i] + (endX[i] - startX[i]) * u, 0, 0); }
+    function frame(u) {
+      var pts = [];
+      for (var i = 0; i < 6; i++) {
+        pts.push(carbonPos(i, u));
+        var h0 = startH[i * 2], h1 = startH[i * 2 + 1], e0 = endH[i * 2], e1 = endH[i * 2 + 1];
+        pts.push(P(h0[0] + (e0[0] - h0[0]) * u, h0[1] + (e0[1] - h0[1]) * u, h0[2] + (e0[2] - h0[2]) * u));
+        pts.push(P(h1[0] + (e1[0] - h1[0]) * u, h1[1] + (e1[1] - h1[1]) * u, h1[2] + (e1[2] - h1[2]) * u));
+      }
+      return pts;
+    }
+    var atoms = [];
+    for (var j = 0; j < 6; j++) { atoms.push({ el: 'C' }); atoms.push({ el: 'H' }); atoms.push({ el: 'H' }); }
+    return {
+      id: 'poly', name: '加聚反应', ex: '乙烯 → 聚乙烯',
+      cond: '催化剂 / 高压', condb: '',
+      lhs: 'n&nbsp;' + W('C') + W('H', 2) + '=' + W('C') + W('H', 2),
+      rhs: '…–' + FGR(W('C') + W('H', 2)) + '–' + W('C') + W('H', 2) + '–…<sub><small>（聚乙烯链段）</small></sub>',
+      def: '许多小分子（单体）通过加成反应连成高分子（聚合物）的反应叫加成聚合反应，简称“加聚”。',
+      notes: [
+        '聚合物的每个结构单元都与单体组成相同：-CH₂-CH₂-（聚乙烯）。',
+        '动画用 3 个乙烯分子演示“双键打开 → 单体相连”的成链过程，实际链很长（n 很大）。',
+        '条件通常为：催化剂（如 TiCl₄-Al(C₂H₅)₃）或高压、加热。'
+      ],
+      atoms: atoms,
+      fg: [],
+      frames: [frame(0), frame(0.45), frame(1)].map(function (p) { return { pts: p }; }),
+      caps: [
+        '反应物：3 个乙烯分子（含 C=C 双键，可继续加长：n CH₂=CH₂）。',
+        '双键打开（π 键断裂），相邻单体逐步靠近并相连。',
+        '产物：聚乙烯链段 …–CH₂–CH₂–CH₂–CH₂–CH₂–CH₂–…（链可继续增长）。'
+      ],
+      bonds: (function () {
+        var B = [];
+        /* 每个单体 C=C 双键：C 原子编号 0,3 / 6,9 / 12,15 */
+        var pairs = [[0, 3], [6, 9], [12, 15]];
+        pairs.forEach(function (p) {
+          B.push({ a: p[0], b: p[1], off: 0.13, s: [1, 0.7, 0] });
+          B.push({ a: p[0], b: p[1], off: -0.13, s: [1, 0.7, 0] });
+          B.push({ a: p[0], b: p[1], off: 0, s: [0, 0.25, 1] });
+        });
+        /* 单体之间成键：C1-C2、C3-C4 */
+        B.push({ a: 3, b: 6, off: 0, s: [0, 0.4, 1] });
+        B.push({ a: 9, b: 12, off: 0, s: [0, 0.4, 1] });
+        for (var i = 0; i < 6; i++) {
+          var base = i * 3; /* C + 2H */
+          B.push({ a: base, b: base + 1, off: 0, s: [1, 1, 1] });
+          B.push({ a: base, b: base + 2, off: 0, s: [1, 1, 1] });
+        }
+        return B;
+      })()
+    };
+  }
+  var R6o = R6();
+
+  /* ============================================================
+     自检
+     ============================================================ */
+  [R1, R2, R3, R4, R5, R6o].forEach(function (R, idx) {
+    var n = R.atoms.length;
+    R.frames.forEach(function (f, fi) {
+      if (f.pts.length !== n) {
+        console.warn('反应 ' + R.name + ' 帧' + fi + ' 原子数不符: ' + f.pts.length + '/' + n);
+      }
+      f.pts.forEach(function (pt) {
+        if (isNaN(pt[0]) || isNaN(pt[1]) || isNaN(pt[2])) console.warn('反应 ' + R.name + ' 含 NaN');
+      });
+    });
+    R.bonds.forEach(function (bd) {
+      if (bd.s.length !== R.frames.length) {
+        console.warn('反应 ' + R.name + ' 键长不符 ' + bd.a + '-' + bd.b);
+      }
+    });
+    R.fg.forEach(function (f) {
+      if (f < 0 || f >= n) console.warn('fg 越界 ' + R.name);
+    });
+  });
+
+  return [R1];
+})();
+
+</script>
+<script>
+/* ============================================================
+   3D 有机反应演示 — 自包含 WebGL 球棍引擎 + 交互界面
+   （无外部依赖：微型渲染器仅绘制球体与圆柱，单文件可离线运行）
+   ============================================================ */
+(function () {
+  'use strict';
+  var RX = window.__RX || [];
+
+  /* ---------------- 元素视觉常量 ---------------- */
+  var ELEM = {
+    C:  { c: [0.13, 0.14, 0.16], r: 0.42, n: '碳' },
+    H:  { c: [0.72, 0.75, 0.79], r: 0.26, n: '氢' },
+    O:  { c: [0.90, 0.22, 0.19], r: 0.36, n: '氧' },
+    Cl: { c: [0.16, 0.62, 0.31], r: 0.47, n: '氯' },
+    Br: { c: [0.63, 0.32, 0.15], r: 0.52, n: '溴' },
+    Cu: { c: [0.85, 0.53, 0.10], r: 0.46, n: '铜' }
+  };
+  var BOND_R = 0.11;
+  var BOND_C = [1, 1, 1];          /* 化学键：白色（用户指定，浅蓝底上清晰） */
+  var STUB_LEN = 0.5;              /* 断键后每端保留“半键”的可见长度 */
+  var BG_R = 0.898, BG_G = 0.937, BG_B = 0.984; /* 画布浅蓝 #E5EFFB */
+
+  /* ---------------- DOM ---------------- */
+  function $(id) { return document.getElementById(id); }
+  var btnGrp = $('btnGrp'), eqDef = $('eqDef'), eqLine = $('eqLine'),
+    eqNotes = $('eqNotes'), atomStat = $('atomstat'), rtName = $('rtName'), rtEx = $('rtEx'),
+    rtCond = $('rtCond'), phase = $('phase'), scrb = $('scrub'), seglbl = $('seglbl'),
+    btnPlay = $('btnPlay'), btnBack = $('btnBack'), spd = $('spd'), rotChk = $('rot'),
+    zoomIn = $('zoomIn'), zoomOut = $('zoomOut'), zoomRange = $('zoomRange'), zoomValue = $('zoomValue'),
+    statlbl = $('statlbl'), tip = $('tooltip'), webglmsg = $('webglmsg');
+  var glCanvas = $('gl');
+
+  /* ---------------- 页内错误提示（便于诊断，绝不静默） ---------------- */
+  function showErr(msg) {
+    try {
+      var e = $('errbox');
+      if (e) {
+        e.style.display = 'block';
+        e.innerHTML = '⚠️ ' + (msg || '未知错误');
+      }
+    } catch (err2) { console.error(err2); }
+    console.error('[3D 化学演示] ' + msg);
+  }
+  function hideErr() {
+    var e = $('errbox');
+    if (e) e.style.display = 'none';
+  }
+  window.addEventListener('error', function (ev) {
+    showErr('脚本运行错误：' + (ev && ev.message ? ev.message : '未知错误'));
+  });
+
+  /* ---- 诊断信号（?dbg=1 或 #dbg=1 时显示三个色块） ----
+     色块1：绿=GL无错误，红=出现GL错误
+     色块2：蓝=画布内确有像素被绘制，灰=画布空白
+     色块3：绿=渲染循环正常执行  */
+  var dbgOn = false, dbgDone = false, frameN = 0;
+  function diagReport() {
+    var d1 = $('db1'), d2 = $('db2'), d3 = $('db3'), box = $('dbgbox');
+    if (!d1 || !d2 || !d3 || !box) return;
+    box.classList.add('show');
+    d3.style.background = '#00c000';
+    var errs = 0, e;
+    while ((e = gl.getError()) !== gl.NO_ERROR) errs++;
+    d1.style.background = errs === 0 ? '#00c000' : '#e00000';
+    try {
+      var bw = gl.drawingBufferWidth, bh = gl.drawingBufferHeight;
+      var px = new Uint8Array(bw * bh * 4);
+      gl.readPixels(0, 0, bw, bh, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      var cnt = 0;
+      var br = Math.round(BG_R * 255), bgc = Math.round(BG_G * 255), bb = Math.round(BG_B * 255);
+      for (var i = 0; i < px.length; i += 8) {
+        if (Math.abs(px[i] - br) > 14 || Math.abs(px[i + 1] - bgc) > 14 || Math.abs(px[i + 2] - bb) > 14) cnt++;
+      }
+      d2.style.background = cnt > 200 ? '#0044cc' : '#d5d5d5';
+    } catch (err2) {
+      d2.style.background = '#e00000';
+    }
+  }
+
+  /* ---------------- 画布与上下文 ---------------- */
+  var gl = null;
+  try {
+    gl = glCanvas.getContext('webgl', { antialias: true, alpha: false, depth: true })
+      || glCanvas.getContext('experimental-webgl', { antialias: true, alpha: false });
+  } catch (e) { gl = null; }
+  if (!gl) webglmsg.classList.add('show');
+
+  /* 球/棍网格：全局只创建一次并共享（避免逐反应重建对象造成空引用） */
+  var sphMesh = null, cylMesh = null;
+
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 10, H = 10, cw = 0, ch = 0;
+  function ensureSize() {
+    var r = glCanvas.getBoundingClientRect();
+    var nw = Math.max(2, Math.round(r.width)), nh = Math.max(2, Math.round(r.height));
+    if (nw !== cw || nh !== ch) {
+      cw = nw; ch = nh;
+      glCanvas.width = cw * DPR; glCanvas.height = ch * DPR;
+      W = cw; H = ch;
+      if (gl) gl.viewport(0, 0, cw * DPR, ch * DPR);
+    }
+  }
+
+  /* ---------------- 矩阵小工具（列主序） ---------------- */
+  function m4mul(a, b) {
+    var o = new Float32Array(16), i, j, k;
+    for (j = 0; j < 4; j++) for (i = 0; i < 4; i++) {
+      var s = 0;
+      for (k = 0; k < 4; k++) s += a[k * 4 + i] * b[j * 4 + k];
+      o[j * 4 + i] = s;
+    }
+    return o;
+  }
+  function m4persp(fovy, aspect, near, far) {
+    var f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+    return new Float32Array([
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, 2 * far * near * nf, 0
+    ]);
+  }
+  function m4lookAt(eye, c, up) {
+    var fx = c[0] - eye[0], fy = c[1] - eye[1], fz = c[2] - eye[2];
+    var fl = Math.sqrt(fx * fx + fy * fy + fz * fz) || 1;
+    fx /= fl; fy /= fl; fz /= fl;
+    var sx = fy * up[2] - fz * up[1], sy = fz * up[0] - fx * up[2], sz = fx * up[1] - fy * up[0];
+    var sl = Math.sqrt(sx * sx + sy * sy + sz * sz) || 1;
+    sx /= sl; sy /= sl; sz /= sl;
+    var ux = sy * fz - sz * fy, uy = sz * fx - sx * fz, uz = sx * fy - sy * fx;
+    return new Float32Array([
+      sx, ux, -fx, 0,
+      sy, uy, -fy, 0,
+      sz, uz, -fz, 0,
+      -(sx * eye[0] + sy * eye[1] + sz * eye[2]),
+      -(ux * eye[0] + uy * eye[1] + uz * eye[2]),
+      (fx * eye[0] + fy * eye[1] + fz * eye[2]), 1
+    ]);
+  }
+  function m4scaleT(c0, c1, c2, pos) {
+    return new Float32Array([
+      c0[0], c0[1], c0[2], 0,
+      c1[0], c1[1], c1[2], 0,
+      c2[0], c2[1], c2[2], 0,
+      pos[0], pos[1], pos[2], 1
+    ]);
+  }
+  function nm3x3(c0, c1, c2) {
+    return new Float32Array([c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]]);
+  }
+  function perpOf(u) {
+    var e = (Math.abs(u[1]) < 0.95) ? [0, 1, 0] : [1, 0, 0];
+    var x = [u[1] * e[2] - u[2] * e[1], u[2] * e[0] - u[0] * e[2], u[0] * e[1] - u[1] * e[0]];
+    var l = Math.sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]) || 1;
+    return [x[0] / l, x[1] / l, x[2] / l];
+  }
+
+  /* ---------------- Shader ---------------- */
+  var VS = [
+    'attribute vec3 aPos;', 'attribute vec3 aNrm;',
+    'uniform mat4 uMVP;', 'uniform mat4 uModel;', 'uniform mat3 uNM;',
+    'varying vec3 vN;', 'varying vec3 vP;',
+    'void main(){',
+    '  vec4 wp = uModel * vec4(aPos,1.0);',
+    '  vP = wp.xyz; vN = uNM * aNrm;',
+    '  gl_Position = uMVP * vec4(aPos,1.0);',
+    '}'
+  ].join('\n');
+  var FS = [
+    'precision mediump float;',
+    'uniform vec3 uColor;', 'uniform vec3 uCam;', 'uniform vec3 uLdir;',
+    'varying vec3 vN;', 'varying vec3 vP;',
+    'void main(){',
+    '  vec3 n = normalize(vN);',
+    '  vec3 L = uLdir;',
+    '  vec3 V = normalize(uCam - vP);',
+    '  vec3 H = normalize(L + V);',
+    '  float dif = max(dot(n, L), 0.0);',
+    '  float ndh = max(dot(n, H), 0.0);',
+    '  float spec = dif > 0.001 ? pow(ndh, 32.0) : 0.0;',
+    '  vec3 col = uColor * (0.42 + 0.90 * dif) + vec3(spec) * 0.28;',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+
+  var prog = null, locA = { pos: 0, nrm: 1 }, loc = {}, shaderFail = false;
+  function compile() {
+    function mk(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        var log = gl.getShaderInfoLog(s) || '未知错误';
+        console.error('着色器编译失败:', log);
+        showErr('着色器编译失败：' + log);
+        return null;
+      }
+      return s;
+    }
+    var v = mk(gl.VERTEX_SHADER, VS), f = mk(gl.FRAGMENT_SHADER, FS);
+    if (!v || !f) { prog = null; shaderFail = true; return; }
+    prog = gl.createProgram();
+    gl.attachShader(prog, v);
+    gl.attachShader(prog, f);
+    gl.bindAttribLocation(prog, 0, 'aPos');
+    gl.bindAttribLocation(prog, 1, 'aNrm');
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      showErr('着色器链接失败：' + (gl.getProgramInfoLog(prog) || '未知错误'));
+      prog = null; shaderFail = true; return;
+    }
+    locA.pos = 0; locA.nrm = 1;
+    loc = {};
+    ['uMVP', 'uModel', 'uNM', 'uColor', 'uCam', 'uLdir'].forEach(function (n) {
+      loc[n] = gl.getUniformLocation(prog, n);
+    });
+    hideErr();
+  }
+
+  /* ---------------- 几何 ---------------- */
+  function makeMesh(verts, nrms, idx) {
+    var vb = gl.createBuffer(), nb = gl.createBuffer(), ib = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vb);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, nb);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(nrms), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+    return { vb: vb, nb: nb, ib: ib, count: idx.length };
+  }
+  function buildSphere() {
+    var segV = 14, segH = 24, verts = [], nrms = [], idx = [], i, j;
+    for (i = 0; i <= segV; i++) {
+      var phi = i * Math.PI / segV;
+      for (j = 0; j <= segH; j++) {
+        var th = j * Math.PI * 2 / segH;
+        var x = Math.sin(phi) * Math.cos(th), y = Math.cos(phi), z = Math.sin(phi) * Math.sin(th);
+        verts.push(x, y, z); nrms.push(x, y, z);
+      }
+    }
+    function A(i, j) { return i * (segH + 1) + j; }
+    for (i = 0; i < segV; i++) for (j = 0; j < segH; j++) {
+      var a = A(i, j), b = A(i, j + 1), c = A(i + 1, j), d = A(i + 1, j + 1);
+      idx.push(a, b, d, a, d, c);
+    }
+    return makeMesh(verts, nrms, idx);
+  }
+  function buildCylinder() {
+    var seg = 22, verts = [], nrms = [], idx = [], i;
+    for (i = 0; i <= seg; i++) {
+      var th = i * Math.PI * 2 / seg;
+      var x = Math.cos(th), z = Math.sin(th);
+      verts.push(x, -0.5, z, x, 0.5, z);
+      nrms.push(x, 0, z, x, 0, z);
+    }
+    for (i = 0; i < seg; i++) {
+      var b0 = i * 2, b1 = i * 2 + 1, c0 = b0 + 2, c1 = b0 + 3;
+      idx.push(b0, c1, b1, b0, c0, c1);
+    }
+    return makeMesh(verts, nrms, idx);
+  }
+  function bindMesh(mesh) {
+    if (!mesh || !mesh.vb) { showErr('内部错误：网格未初始化'); return false; }
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vb);
+    gl.enableVertexAttribArray(locA.pos);
+    gl.vertexAttribPointer(locA.pos, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.nb);
+    gl.enableVertexAttribArray(locA.nrm);
+    gl.vertexAttribPointer(locA.nrm, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.ib);
+    return true;
+  }
+  function drawMesh(mesh, MVP, M, NM, color, eye) {
+    gl.uniformMatrix4fv(loc.uMVP, false, MVP);
+    gl.uniformMatrix4fv(loc.uModel, false, M);
+    gl.uniformMatrix3fv(loc.uNM, false, NM);
+    gl.uniform3fv(loc.uColor, color);
+    gl.uniform3fv(loc.uCam, eye);
+    if (bindMesh(mesh)) gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
+  }
+  /* 画一根圆柱（任意两端点） */
+  function stickDraw(x1, y1, z1, x2, y2, z2, pv2, eye, color, radius) {
+    if (!cylMesh) return;
+    var rodRadius = radius === undefined ? BOND_R : radius;
+    var gx = x2 - x1, gy = y2 - y1, gz = z2 - z1;
+    var L = Math.sqrt(gx * gx + gy * gy + gz * gz);
+    if (L < 0.03) return;
+    var uu = [gx / L, gy / L, gz / L];
+    var pp = perpOf(uu);
+    var qq = [uu[1] * pp[2] - uu[2] * pp[1], uu[2] * pp[0] - uu[0] * pp[2], uu[0] * pp[1] - uu[1] * pp[0]];
+    var M2 = m4scaleT(
+      [pp[0] * rodRadius, pp[1] * rodRadius, pp[2] * rodRadius],
+      [uu[0] * L, uu[1] * L, uu[2] * L],
+      [qq[0] * rodRadius, qq[1] * rodRadius, qq[2] * rodRadius],
+      [(x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2]);
+    drawMesh(cylMesh, m4mul(pv2, M2), M2, nm3x3(pp, uu, qq), color || BOND_C, eye);
+  }
+
+  /* ---------------- 相机状态 ---------------- */
+  var cam = { az: 0.72, el: 0.5, dist: 9, tgt: [0, 0, 0] }, baseDist = 12;
+  var eyeArr = [0, 0, 12];
+  var lightDir = norm3([0.42, 0.72, 0.5]);
+  function norm3(v) {
+    var l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) || 1;
+    return [v[0] / l, v[1] / l, v[2] / l];
+  }
+  var dragging = false, lastX = 0, lastY = 0, autoRot = true;
+  var aspect = 1.6;
+
+  /* ---------------- 当前反应对象 ---------------- */
+  var cur = null; /* {R, ao, bonds, tgt, rad, segments} */
+  var time = 0, playing = true;
+  var tempPts = [];
+  function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+  function buildReaction(R) {
+    var n = R.atoms.length, ao = [], i;
+    for (i = 0; i < n; i++) {
+      var el = ELEM[R.atoms[i].el] || ELEM.C;
+      ao.push({ r: el.r, col: el.c, name: el.n, el: R.atoms[i].el });
+    }
+    var mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9];
+    R.frames.forEach(function (f) {
+      f.pts.forEach(function (p) {
+        for (var k = 0; k < 3; k++) {
+          if (p[k] < mn[k]) mn[k] = p[k];
+          if (p[k] > mx[k]) mx[k] = p[k];
+        }
+      });
+    });
+    var tgt = [(mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2, (mn[2] + mx[2]) / 2];
+    var rad = 0;
+    for (var d = 0; d < 3; d++) rad = Math.max(rad, (mx[d] - mn[d]) / 2);
+    rad = Math.max(rad, 1.3);
+    /* 键的元信息：区分“完全断裂成两半” / “纯新生成” / “键级变化或稳定” */
+    var nb = R.bonds.length, bmeta = [], mm, bi, qi, j2;
+    for (bi = 0; bi < nb; bi++) {
+      var bb = R.bonds[bi], mx2 = -9, mn2 = 9;
+      for (qi = 0; qi < bb.s.length; qi++) {
+        if (bb.s[qi] > mx2) mx2 = bb.s[qi];
+        if (bb.s[qi] < mn2) mn2 = bb.s[qi];
+      }
+      bmeta.push({ maxS: mx2, minS: mn2, s0: bb.s[0], sL: bb.s[bb.s.length - 1] });
+    }
+    for (bi = 0; bi < nb; bi++) {
+      mm = bmeta[bi]; mm.rising = mm.s0 < 0.5 && mm.sL > 0.5;
+      mm.falling = mm.s0 > 0.5 && mm.sL < 0.5;
+      mm.siblingFull = false;
+      var bb2 = R.bonds[bi];
+      for (j2 = 0; j2 < nb; j2++) {
+        if (j2 === bi) continue;
+        var bd2 = R.bonds[j2];
+        if ((bd2.a === bb2.a && bd2.b === bb2.b) || (bd2.a === bb2.b && bd2.b === bb2.a)) {
+          if (bmeta[j2].maxS >= 0.5) { mm.siblingFull = true; break; }
+        }
+      }
+      mm.cleave = mm.falling && !mm.siblingFull && mm.maxS >= 0.8;
+      mm.pureRising = mm.rising && !mm.siblingFull && mm.maxS >= 0.5;
+      if (mm.cleave) {
+        /* 断键后保留的半键：取完整键平均键长；可见半长按“键条表面间隔的一半”估计(避免两半过长重叠) */
+        var sum2 = 0, nf2 = 0;
+        for (var fi = 0; fi < R.frames.length; fi++) {
+          if (bb2.s[fi] >= 0.9) {
+            var pta = R.frames[fi].pts[bb2.a], ptb = R.frames[fi].pts[bb2.b];
+            sum2 += Math.sqrt((pta[0] - ptb[0]) * (pta[0] - ptb[0]) +
+              (pta[1] - ptb[1]) * (pta[1] - ptb[1]) + (pta[2] - ptb[2]) * (pta[2] - ptb[2]));
+            nf2++;
+          }
+        }
+        mm.full = nf2 ? sum2 / nf2 : 1.1;
+        mm.half = mm.full / 2;
+        var rI = ao[bb2.a].r * 0.92, rJ = ao[bb2.b].r * 0.92;
+        var vis = ((mm.full - rI - rJ) / 2) * 1.15;
+        mm.visHalf = Math.max(0.24, Math.min(0.62, vis));
+      } else {
+        mm.half = 0;
+        mm.visHalf = 0;
+      }
+      if (!mm.cleave) { mm.full = 0; }
+    }
+    return { R: R, ao: ao, bonds: R.bonds, bmeta: bmeta, tgt: tgt, rad: rad, segments: R.frames.length - 1 };
+  }
+
+  function selectReaction(i) {
+    if (!RX[i]) return;
+    cur = buildReaction(RX[i]);
+    cam.tgt = cur.tgt.slice();
+    baseDist = cur.rad * 2.9 + 3.2;
+    setZoom(parseInt(zoomRange.value, 10) || 70);
+    cam.az = 0.72; cam.el = 0.5;
+    tempPts = [];
+    time = 0; playing = true;
+    updateSidePanel();
+    syncUI();
+  }
+
+  /* ---------------- 主渲染 ---------------- */
+  var lastPV = null;
+  function render(now, dt) {
+    if (!cur) return;
+    var R = cur.R, frm = R.frames, segs = cur.segments;
+
+    if (playing && segs > 0) {
+      time += dt / (segDur() / speedMul());
+      if (time >= segs) time = time % segs;
+    }
+    var tt = Math.max(0, Math.min(segs - 1e-9, time));
+    var k = Math.floor(tt), u = ease(tt - k);
+    var p0 = frm[k].pts, p1 = frm[k + 1].pts;
+    if (!tempPts.length) tempPts = p0.map(function (p) { return p.slice(); });
+    for (var i = 0; i < p0.length; i++) {
+      tempPts[i][0] = p0[i][0] + (p1[i][0] - p0[i][0]) * u;
+      tempPts[i][1] = p0[i][1] + (p1[i][1] - p0[i][1]) * u;
+      tempPts[i][2] = p0[i][2] + (p1[i][2] - p0[i][2]) * u;
+    }
+
+    if (autoRot) cam.az += dt * 0.06;
+    var ce = Math.cos(cam.el), se = Math.sin(cam.el);
+    var eye = [
+      cam.tgt[0] + cam.dist * ce * Math.sin(cam.az),
+      cam.tgt[1] + cam.dist * se,
+      cam.tgt[2] + cam.dist * ce * Math.cos(cam.az)
+    ];
+    eyeArr = eye;
+    var view = m4lookAt(eye, cam.tgt, [0, 1, 0]);
+    var PV = m4persp(Math.PI / 4, aspect, 0.1, 400);
+    var pv2 = m4mul(PV, view);
+    lastPV = pv2;
+
+    gl.useProgram(prog);
+    gl.clearColor(BG_R, BG_G, BG_B, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    /* 实体遮挡：开启深度测试，前面的原子/键会挡住后面的，杜绝“透视” */
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.disable(gl.BLEND);
+    gl.depthMask(true);
+    gl.uniform3fv(loc.uLdir, lightDir);
+
+    var I3 = nm3x3([1, 0, 0], [0, 1, 0], [0, 0, 1]);
+
+    /* 黄色波形表示入射光，使用模型坐标，随视角旋转；时间与播放/暂停一致。 */
+    if (R.id === 'sub') {
+      var lightTarget = tempPts[5];
+      for (var ray = 0; ray < 3; ray++) {
+        var previous = null;
+        for (var sample = 0; sample <= 28; sample++) {
+          var along = sample / 28;
+          var point = [lightTarget[0] + (ray-1)*0.32 + 0.12*Math.sin(along*14-tt*12),
+            lightTarget[1] + 0.7 + (1-along)*1.45, lightTarget[2]];
+          if (previous) stickDraw(previous[0],previous[1],previous[2],point[0],point[1],point[2],pv2,eye,[1,0.68,0.08],0.018);
+          previous = point;
+        }
+        stickDraw(previous[0]-0.09,previous[1]+0.16,previous[2],previous[0],previous[1],previous[2],pv2,eye,[1,0.68,0.08],0.022);
+        stickDraw(previous[0]+0.09,previous[1]+0.16,previous[2],previous[0],previous[1],previous[2],pv2,eye,[1,0.68,0.08],0.022);
+      }
+    }
+
+    /* 原子 */
+    for (i = 0; i < cur.ao.length; i++) {
+      var A = cur.ao[i], p = tempPts[i];
+      var M = m4scaleT([A.r, 0, 0], [0, A.r, 0], [0, 0, A.r], p);
+      drawMesh(sphMesh, m4mul(pv2, M), M, I3, A.col, eye);
+    }
+
+    /* 键：断键从中间断开、两端各保留半键随原子移动；新键由两端半键向中间合拢 */
+    var raws = [];
+    for (var bx = 0; bx < cur.bonds.length; bx++) {
+      var bdx = cur.bonds[bx];
+      raws[bx] = bdx.s[k] + (bdx.s[k + 1] - bdx.s[k]) * (tt - k);
+    }
+    function engR(aIdx) { /* 该原子当前正在“长出”的新键强度（含键级升高） */
+      var best = 0;
+      for (var q2 = 0; q2 < cur.bonds.length; q2++) {
+        var eb2 = cur.bonds[q2];
+        if (eb2.a !== aIdx && eb2.b !== aIdx) continue;
+        if (cur.bmeta[q2].rising && raws[q2] > best) best = raws[q2];
+      }
+      return best;
+    }
+    function stubOK(aIdx, bIdx, dN) { /* 半键是否仍应保留在 aIdx 原子上 */
+      if (swingActive(aIdx) && hBroken(aIdx)) return false; /* swing 合拢已接管该半键(其自身可见) */
+      if (engR(aIdx) >= 0.3) return false;        /* 自身已开始成新键 */
+      if (dN > 3.4) return false;                 /* 两半已完全分开 */
+      if (engR(bIdx) >= 0.3 && engR(aIdx) < 0.3) return false; /* 对方已结合新键而自身不会有新键 → 彻底脱离(如铜/氧) */
+      return true;
+    }
+    function swingActive(aIdx) {
+      for (var qs = 0; qs < cur.bonds.length; qs++) {
+        var bs = cur.bonds[qs];
+        if (!bs.swing) continue;
+        if ((bs.a === aIdx || bs.b === aIdx) && raws[qs] > 0.02) return true;
+      }
+      return false;
+    }
+    function hBroken(aIdx) { /* 该原子参与的“供体键”(断掉的 H/Br…)是否已断开过半：断键半键才交给 swing 旋转合拢 */
+      for (var qh = 0; qh < cur.bonds.length; qh++) {
+        var bh = cur.bonds[qh];
+        if (!cur.bmeta[qh].cleave) continue;
+        var otherH = -1;
+        if (bh.a === aIdx) otherH = bh.b;
+        else if (bh.b === aIdx) otherH = bh.a;
+        if (otherH >= 0) return raws[qh] < 0.5;
+      }
+      return false;
+    }
+    function riseTarget(aIdx) { /* 该原子“下一个将成键”的伙伴（无则 -1） */
+      var best = -1, bestR = 0;
+      for (var q3 = 0; q3 < cur.bonds.length; q3++) {
+        var eb3 = cur.bonds[q3];
+        if (eb3.a !== aIdx && eb3.b !== aIdx) continue;
+        if (!cur.bmeta[q3].pureRising) continue;
+        var oIdx = eb3.a === aIdx ? eb3.b : eb3.a;
+        var rr = raws[q3];
+        if (rr > bestR || (best < 0 && rr === bestR)) { best = oIdx; bestR = rr; }
+      }
+      return best;
+    }
+    function dirUnit(fromPt, toPt) {
+      var dx = toPt[0] - fromPt[0], dy = toPt[1] - fromPt[1], dz = toPt[2] - fromPt[2];
+      var l = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (l < 1e-6) return null;
+      return [dx / l, dy / l, dz / l];
+    }
+    function activePivot() { /* 处于“从碳氧双键转给两个 H”过程的摆动键(无则 null) */
+      for (var qp2 = 0; qp2 < cur.bonds.length; qp2++) {
+        var bp2 = cur.bonds[qp2];
+        if (!bp2.pivot || raws[qp2] <= 0.02) continue;
+        var oA = cur.ao[bp2.a].el === 'O' ? bp2.a : (cur.ao[bp2.b].el === 'O' ? bp2.b : -1);
+        return { O: oA, a: bp2.a, b: bp2.b };
+      }
+      return null;
+    }
+    function pivotTargetBond(aa, bb) { /* 是否为 pivot 端点(碳等)与“新伙伴”之间的键、由 pivot 半键绘制(避免双棒) */
+      var p = activePivot();
+      if (!p || p.O < 0) return false;
+      var oAt = -1;
+      if (aa === p.a || aa === p.b) oAt = bb;
+      else if (bb === p.a || bb === p.b) oAt = aa;
+      else return false;
+      if (oAt === p.a || oAt === p.b) return false; /* 双键两原子之间的键(固定/σ)不属此列 */
+      return true;
+    }
+    function waterRot(Hidx) { /* H 是否属于“先断原键、绕氢旋转、后连氧”的成水氢(氧化)；返回目标氧原子或 -1 */
+      for (var qw = 0; qw < cur.bonds.length; qw++) {
+        var bw = cur.bonds[qw];
+        if (!bw.rotH) continue;
+        var oIdx = -1;
+        if (bw.a === Hidx && cur.ao[bw.b].el === 'O') oIdx = bw.b;
+        else if (bw.b === Hidx && cur.ao[bw.a].el === 'O') oIdx = bw.a;
+        if (oIdx >= 0) return oIdx;
+      }
+      return -1;
+    }
+    /* 离开的氢：原键(C–H/O–H)断开前不与氧连接；断开后所带半键绕氢旋转到与氧对齐的位置再伸长连接 */
+    function drawWaterHalfH(hIdx, donorIdx, oIdx, hHalf, donRaw, pv2, eye) {
+      if (donRaw >= 0.5) return;                      /* 原键未断: 绝不与氧连接 */
+      var HP = tempPts[hIdx], OP = tempPts[oIdx];
+      var dT = dirUnit(HP, OP);
+      if (!dT) return;
+      var dp = Math.max(0, Math.min(1, (0.75 - donRaw) / 0.75));
+      var rawW = 0;
+      for (var qw2 = 0; qw2 < cur.bonds.length; qw2++) {
+        var bw2 = cur.bonds[qw2];
+        if (!cur.bmeta[qw2].pureRising) continue;
+        if ((bw2.a === hIdx && bw2.b === oIdx) || (bw2.a === oIdx && bw2.b === hIdx)) { rawW = raws[qw2]; break; }
+      }
+      var aRot = Math.min(1, dp * 1.4 + (rawW / 0.5) * 0.8);
+      var d0 = donorIdx >= 0 ? dirUnit(HP, tempPts[donorIdx]) : null;
+      var dx = dT[0], dy = dT[1], dz = dT[2];
+      if (d0) {
+        var dotV = d0[0] * dT[0] + d0[1] * dT[1] + d0[2] * dT[2];
+        dotV = Math.max(-1, Math.min(1, dotV));
+        if (dotV < 0.9995) {
+          var thW = Math.acos(dotV), snW = Math.sin(thW);
+          if (snW > 1e-6) {
+            var wA = Math.sin((1 - aRot) * thW) / snW;
+            var wB = Math.sin(aRot * thW) / snW;
+            dx = wA * d0[0] + wB * dT[0]; dy = wA * d0[1] + wB * dT[1]; dz = wA * d0[2] + wB * dT[2];
+          }
+        }
+      }
+      var rHin = cur.ao[hIdx].r * 0.92;
+      var hOx = OP[0] - HP[0], hOy = OP[1] - HP[1], hOz = OP[2] - HP[2];
+      var distO = Math.sqrt(hOx * hOx + hOy * hOy + hOz * hOz) || 1e-6;
+      var oIn = cur.ao[oIdx].r * 0.92;
+      /* 氧脱离铜的进度 */
+      var cuRaw = 1;
+      for (var qc2 = 0; qc2 < cur.bonds.length; qc2++) {
+        var bc2 = cur.bonds[qc2];
+        if (!cur.bmeta[qc2].cleave) continue;
+        var oOther = (bc2.a === oIdx) ? bc2.b : ((bc2.b === oIdx) ? bc2.a : -1);
+        if (oOther >= 0 && cur.ao[oOther].el === 'Cu') { cuRaw = raws[qc2]; break; }
+      }
+      /* 氢完全离开 + 氧已脱离铜 → 完整 O–H 键由 pureRising 整根绘制，此处不再重复 */
+      if (donRaw < 0.3 && cuRaw < 0.2) return;
+      var maxL = Math.max(0.1, distO - rHin - oIn);
+      var ext0 = Math.max(0, Math.min(1, (rawW / 0.5) * (1.6 * aRot - 0.3)));
+      /* 氧还连着铜时氢侧不宜提前伸得太长：随铜-氧断开逐步放行 */
+      var cuG = Math.max(0, Math.min(1, 1 - cuRaw / 0.7));
+      var ext = ext0 * cuG;
+      var len = Math.max(0.05, hHalf + (maxL - hHalf) * ext);
+      var ax = HP[0] + dx * rHin, ay = HP[1] + dy * rHin, az = HP[2] + dz * rHin;
+      if (hSafe(ax, ay, az, ax + dx * len, ay + dy * len, az + dz * len)) {
+        stickDraw(ax, ay, az, ax + dx * len, ay + dy * len, az + dz * len, pv2, eye);
+      }
+    }
+    /* 避让检测：半键/断键棒若会穿过其它氢原子球则跳过该帧(消除氢移动时的穿模) */
+    function hSafe(x1, y1, z1, x2, y2, z2) {
+      var dx2 = x2 - x1, dy2 = y2 - y1, dz2 = z2 - z1;
+      var L2 = dx2 * dx2 + dy2 * dy2 + dz2 * dz2;
+      if (L2 < 1e-9) return true;
+      for (var hs = 0; hs < cur.ao.length; hs++) {
+        if (cur.ao[hs].el !== 'H') continue;
+        var C2 = tempPts[hs];
+        var sx2 = C2[0] - x1, sy2 = C2[1] - y1, sz2 = C2[2] - z1;
+        var sd2 = Math.sqrt(sx2 * sx2 + sy2 * sy2 + sz2 * sz2);
+        if (sd2 < cur.ao[hs].r * 0.92 + 0.06) continue;   /* 该棒正是从这颗氢上伸出 */
+        var t2 = (sx2 * dx2 + sy2 * dy2 + sz2 * dz2) / L2;
+        if (t2 < 0) t2 = 0;
+        else if (t2 > 1) t2 = 1;
+        var px2 = x1 + dx2 * t2 - C2[0], py2 = y1 + dy2 * t2 - C2[1], pz2 = z1 + dz2 * t2 - C2[2];
+        var d2 = Math.sqrt(px2 * px2 + py2 * py2 + pz2 * pz2);
+        if (d2 < cur.ao[hs].r * 0.55) return false;   /* 仅“深插”才隐藏，避免浅擦导致闪烁 */
+      }
+      return true;
+    }
+    /* 卤素(溴/氯)侧半键：溴-卤键断开后绕卤素旋转,与碳侧旋转来的半键对齐,在中点对接成 C–X */
+    function dockHalide(Xidx, donorIdx, oIdx, hVis, donRaw, pv2, eye) {
+      if (donRaw >= 0.75) return;                       /* 卤键尚未断开不旋转 */
+      var PX = tempPts[Xidx], PO = tempPts[oIdx];
+      var dT = dirUnit(PX, PO);
+      if (!dT) return;
+      var rawT = 0;
+      for (var qd = 0; qd < cur.bonds.length; qd++) {
+        var bd4 = cur.bonds[qd];
+        if (!cur.bmeta[qd].pureRising) continue;
+        if ((bd4.a === Xidx && bd4.b === oIdx) || (bd4.a === oIdx && bd4.b === Xidx)) { rawT = raws[qd]; break; }
+      }
+      var d0 = donorIdx >= 0 ? dirUnit(PX, tempPts[donorIdx]) : dT;
+      var dp = Math.max(0, Math.min(1, (0.5 - donRaw) / 0.5));
+      var aR = Math.min(1, dp * 1.3 + (rawT / 0.5) * 0.8);
+      var dx3 = dT[0], dy3 = dT[1], dz3 = dT[2];
+      if (d0) {
+        var dV = d0[0] * dT[0] + d0[1] * dT[1] + d0[2] * dT[2];
+        dV = Math.max(-1, Math.min(1, dV));
+        if (dV < 0.9995) {
+          var thD = Math.acos(dV), snD = Math.sin(thD);
+          if (snD > 1e-6) {
+            var wA = Math.sin((1 - aR) * thD) / snD;
+            var wB = Math.sin(aR * thD) / snD;
+            dx3 = wA * d0[0] + wB * dT[0]; dy3 = wA * d0[1] + wB * dT[1]; dz3 = wA * d0[2] + wB * dT[2];
+          }
+        }
+      }
+      var rXin = cur.ao[Xidx].r * 0.92, rTin = cur.ao[oIdx].r * 0.92;
+      var qX = PO[0] - PX[0], qY = PO[1] - PX[1], qZ = PO[2] - PX[2];
+      var qL = Math.sqrt(qX * qX + qY * qY + qZ * qZ) || 1e-6;
+      var maxMid = Math.max(0.1, (qL - rXin - rTin) / 2);
+      var extX = Math.max(0, Math.min(1, (rawT / 0.5) * (aR - 0.5) * 2.6 * (donRaw < 0.15 ? 1 : 0)));
+      var lenX = Math.max(0.05, hVis + (maxMid - hVis) * extX);
+      var aX3 = PX[0] + dx3 * rXin, aY3 = PX[1] + dy3 * rXin, aZ3 = PX[2] + dz3 * rXin;
+      stickDraw(aX3, aY3, aZ3, aX3 + dx3 * lenX, aY3 + dy3 * lenX, aZ3 + dz3 * lenX, pv2, eye);
+    }
+    /* 取代反应专用时间线：先开缝，再携半键移动/旋转，最后对接。
+       每个反应端点只绘制一次，避免旧半键消失、新键突然出现。 */
+    if (R.id === 'sub') {
+      var cut = ease(Math.max(0, Math.min(1, tt / 0.55)));
+      var turn = ease(Math.max(0, Math.min(1, (tt - 1) / 1)));
+      var join = ease(Math.max(0, Math.min(1, (tt - 2.15) / 0.65)));
+      var endpoints = [[0, 1, 5], [1, 0, 6], [5, 6, 0], [6, 5, 1]];
+      endpoints.forEach(function (end) {
+        var a = end[0], donor = end[1], target = end[2];
+        var origin = frm[0].pts[a], old = frm[0].pts[donor];
+        var d0 = dirUnit(origin, old), d1 = dirUnit(tempPts[a], tempPts[target]);
+        var dot = Math.max(-1, Math.min(1, d0[0]*d1[0]+d0[1]*d1[1]+d0[2]*d1[2]));
+        var angle = Math.acos(dot), tangent = d1.map(function (v, j) { return v-dot*d0[j]; });
+        var tl = Math.hypot.apply(null, tangent);
+        if (tl < 1e-6) {
+          tangent = Math.abs(d0[1]) < 0.9 ? [-d0[2], 0, d0[0]] : [0, -d0[2], d0[1]];
+          tl = Math.hypot.apply(null, tangent);
+        }
+        var direction = d0.map(function (v, j) {
+          return v*Math.cos(angle*turn)+tangent[j]/tl*Math.sin(angle*turn);
+        });
+        var radius = cur.ao[a].r * 0.92;
+        var oldLength = Math.hypot(old[0]-origin[0], old[1]-origin[1], old[2]-origin[2]);
+        var half = (oldLength-radius-cur.ao[donor].r*0.92)/2;
+        var retained = Math.max(0.04, half-0.06*cut);
+        var dest = tempPts[target], here = tempPts[a];
+        var distance = Math.hypot(dest[0]-here[0], dest[1]-here[1], dest[2]-here[2]);
+        var dock = (distance-radius-cur.ao[target].r*0.92)/2;
+        var length = retained+(dock-retained)*join;
+        var start = here.map(function (v,j) { return v+direction[j]*radius; });
+        var finish = start.map(function (v,j) { return v+direction[j]*length; });
+        stickDraw(start[0],start[1],start[2],finish[0],finish[1],finish[2],pv2,eye);
+      });
+    }
+    for (var b = 0; b < cur.bonds.length; b++) {
+      var bd = cur.bonds[b], bm = cur.bmeta[b];
+      if (R.id === 'sub' && (bm.cleave || bm.pureRising)) continue;
+      var raw = raws[b];
+      var pa = tempPts[bd.a], pb = tempPts[bd.b];
+      var dvx = pb[0] - pa[0], dvy = pb[1] - pa[1], dvz = pb[2] - pa[2];
+      var Ld = Math.sqrt(dvx * dvx + dvy * dvy + dvz * dvz) || 1e-6;
+      var ux = dvx / Ld, uy = dvy / Ld, uz = dvz / Ld;
+      var rA = cur.ao[bd.a].r * 0.92, rB = cur.ao[bd.b].r * 0.92;
+      var a1x = pa[0] + ux * rA, a1y = pa[1] + uy * rA, a1z = pa[2] + uz * rA;
+      var b1x = pb[0] - ux * rB, b1y = pb[1] - uy * rB, b1z = pb[2] - uz * rB;
+      var dSurf = Math.sqrt((b1x - a1x) * (b1x - a1x) + (b1y - a1y) * (b1y - a1y) + (b1z - a1z) * (b1z - a1z));
+
+      if (bm.cleave) {
+        /* —— 断键：瞬间断开不拉长——键一旦被拉长超过原长容忍即消失；断后每端保留半键 —— */
+        var fullOK = raw >= 0.75 && !(bm.full > 0 && Ld > bm.full * 1.06);
+        if (fullOK) {
+          stickDraw(a1x, a1y, a1z, b1x, b1y, b1z, pv2, eye);
+        } else {
+          /* Cu–O(氧化铜)断开后铜/氧都不保留残棒:铜将完全脱离,氧的半键待氢离开后由成水逻辑伸出 */
+          var isCuO = (cur.ao[bd.a].el === 'Cu' && cur.ao[bd.b].el === 'O') || (cur.ao[bd.a].el === 'O' && cur.ao[bd.b].el === 'Cu');
+          if (isCuO) { continue; }
+          var halfL = bm.visHalf > 0 ? bm.visHalf : (bm.half > 0 ? bm.half : STUB_LEN);
+          var dN = Ld;
+          var hROa = (cur.ao[bd.a].el === 'H') ? waterRot(bd.a) : -1;
+          if (hROa >= 0) {
+            drawWaterHalfH(bd.a, bd.b, hROa, halfL, raw, pv2, eye);
+          } else {
+            /* 分离未完成前,半键只朝原供体方向(不提前伸向下一个伙伴) */
+            var dirDonA = dirUnit(pa, tempPts[bd.b]) || [ux, uy, uz];
+            var tA = riseTarget(bd.a);
+            var pivA = activePivot();
+            var dockA = (cur.ao[bd.a].el === 'Br' || cur.ao[bd.a].el === 'Cl') && tA >= 0 && pivA &&
+              (tA === pivA.a || tA === pivA.b);
+            if (dockA) {
+              dockHalide(bd.a, bd.b, tA, halfL, raw, pv2, eye);
+            } else {
+              var tgtA = raw >= 0.3 ? bd.b : (tA >= 0 ? tA : bd.b);
+              var da = raw >= 0.3 ? dirDonA : (tA >= 0 ? dirUnit(pa, tempPts[tA]) : dirDonA);
+              if (da && stubOK(bd.a, bd.b, dN)) {
+                var dgx = tempPts[tgtA][0] - pa[0], dgy = tempPts[tgtA][1] - pa[1], dgz = tempPts[tgtA][2] - pa[2];
+                var dgL = Math.sqrt(dgx * dgx + dgy * dgy + dgz * dgz);
+                var capA = dgL - rA - cur.ao[tgtA].r * 0.9;
+                var lenA = Math.max(0.1, Math.min(halfL, capA));
+                var sa = pa[0] + da[0] * rA, say = pa[1] + da[1] * rA, saz = pa[2] + da[2] * rA;
+                if (hSafe(sa, say, saz, sa + da[0] * lenA, say + da[1] * lenA, saz + da[2] * lenA)) {
+                  stickDraw(sa, say, saz, sa + da[0] * lenA, say + da[1] * lenA, saz + da[2] * lenA, pv2, eye);
+                }
+              }
+            }
+          }
+          var hROb = (cur.ao[bd.b].el === 'H') ? waterRot(bd.b) : -1;
+          if (hROb >= 0) {
+            drawWaterHalfH(bd.b, bd.a, hROb, halfL, raw, pv2, eye);
+          } else {
+            var dirDonB = dirUnit(pb, tempPts[bd.a]) || [-ux, -uy, -uz];
+            var tB = riseTarget(bd.b);
+            var pivB = activePivot();
+            var dockB = (cur.ao[bd.b].el === 'Br' || cur.ao[bd.b].el === 'Cl') && tB >= 0 && pivB &&
+              (tB === pivB.a || tB === pivB.b);
+            if (dockB) {
+              dockHalide(bd.b, bd.a, tB, halfL, raw, pv2, eye);
+            } else {
+              var tgtB = raw >= 0.3 ? bd.a : (tB >= 0 ? tB : bd.a);
+              var db = raw >= 0.3 ? dirDonB : (tB >= 0 ? dirUnit(pb, tempPts[tB]) : dirDonB);
+              if (db && stubOK(bd.b, bd.a, dN)) {
+                var dgx2 = tempPts[tgtB][0] - pb[0], dgy2 = tempPts[tgtB][1] - pb[1], dgz2 = tempPts[tgtB][2] - pb[2];
+                var dgL2 = Math.sqrt(dgx2 * dgx2 + dgy2 * dgy2 + dgz2 * dgz2);
+                var capB = dgL2 - rB - cur.ao[tgtB].r * 0.9;
+                var lenB = Math.max(0.1, Math.min(halfL, capB));
+                var sb = pb[0] + db[0] * rB, sby = pb[1] + db[1] * rB, sbz = pb[2] + db[2] * rB;
+                if (hSafe(sb, sby, sbz, sb + db[0] * lenB, sby + db[1] * lenB, sbz + db[2] * lenB)) {
+                  stickDraw(sb, sby, sbz, sb + db[0] * lenB, sby + db[1] * lenB, sbz + db[2] * lenB, pv2, eye);
+                }
+              }
+            }
+          }
+        }
+        continue;
+      }
+      if (bd.swing) {
+        /* —— 氧化：C–H 断裂留在碳上的半键、O–H 断裂留在氧上的半键，各自绕原子旋转向中间合拢成 C=O 的第二根键 —— */
+        var qF = Math.max(0, Math.min(1, raw));
+        if (qF <= 0.01) { continue; }
+        /* 找出两端各自断裂的供体键(如 C–H 的 H、O–H 的 H、C–Br 的 Br…),记录供体原子与断键进度 */
+        var hC2 = -1, hO2 = -1, rawCH2 = 1, rawOH2 = 1, halfCH = 0.5, halfOH = 0.5;
+        for (var qx = 0; qx < cur.bonds.length; qx++) {
+          var bx = cur.bonds[qx];
+          if (!cur.bmeta[qx].cleave) continue;
+          var o1a = (bx.a === bd.a) ? bx.b : ((bx.b === bd.a) ? bx.a : -1);
+          var o1b = (bx.a === bd.b) ? bx.b : ((bx.b === bd.b) ? bx.a : -1);
+          if (o1a >= 0 && o1a !== bd.b && hC2 < 0) { hC2 = o1a; rawCH2 = raws[qx]; halfCH = cur.bmeta[qx].visHalf || cur.bmeta[qx].half; }
+          if (o1b >= 0 && o1b !== bd.a && hO2 < 0) { hO2 = o1b; rawOH2 = raws[qx]; halfOH = cur.bmeta[qx].visHalf || cur.bmeta[qx].half; }
+        }
+        /* 每侧供体键(C–H / O–H / C–Br…)一断开,该侧保留的半键即可出现并参与旋转合拢(对半分、逐侧保留) */
+        var readyA2 = hC2 >= 0 && rawCH2 < 0.5;
+        var readyB2 = hO2 >= 0 && rawOH2 < 0.5;
+        if (!readyA2 && !readyB2) { continue; }
+        var eo2 = perpOf([ux, uy, uz]);
+        var fcx = pa[0] + eo2[0] * bd.off, fcy = pa[1] + eo2[1] * bd.off, fcz = pa[2] + eo2[2] * bd.off;
+        var fox = pb[0] + eo2[0] * bd.off, foy = pb[1] + eo2[1] * bd.off, foz = pb[2] + eo2[2] * bd.off;
+        var cIx = fcx + ux * rA, cIy = fcy + uy * rA, cIz = fcz + uz * rA;   /* 碳侧第二键端点 */
+        var oIx = fox - ux * rB, oIy = foy - uy * rB, oIz = foz - uz * rB;   /* 氧侧第二键端点 */
+        var Mx = (cIx + oIx) / 2, My = (cIy + oIy) / 2, Mz = (cIz + oIz) / 2;
+        var qe = qF * qF * (3 - 2 * qF);
+        /* 碳侧半键：从断键方向旋转到“指向中间”，长度从保留半键增至中点 */
+        if (hC2 >= 0 && readyA2 && qF <= 0.8) {
+          var dcx = tempPts[hC2][0] - pa[0], dcy = tempPts[hC2][1] - pa[1], dcz = tempPts[hC2][2] - pa[2];
+          var dcl = Math.sqrt(dcx * dcx + dcy * dcy + dcz * dcz) || 1;
+          var u0x = dcx / dcl, u0y = dcy / dcl, u0z = dcz / dcl;
+          var mxC = Mx - pa[0], myC = My - pa[1], mzC = Mz - pa[2];
+          var mlC = Math.sqrt(mxC * mxC + myC * myC + mzC * mzC) || 1;
+          var u1x = mxC / mlC, u1y = myC / mlC, u1z = mzC / mlC;
+          var cdot = u0x * u1x + u0y * u1y + u0z * u1z;
+          cdot = Math.max(-1, Math.min(1, cdot));
+          var cxA = u0x, cyA = u0y, czA = u0z;
+          if (cdot < 0.9995) {
+            var cTh = Math.acos(cdot), cSn = Math.sin(cTh);
+            if (cSn > 1e-6) {
+              var cW0 = Math.sin((1 - qe) * cTh) / cSn;
+              var cW1 = Math.sin(qe * cTh) / cSn;
+              cxA = cW0 * u0x + cW1 * u1x; cyA = cW0 * u0y + cW1 * u1y; czA = cW0 * u0z + cW1 * u1z;
+            }
+          } else { cxA = u1x; cyA = u1y; czA = u1z; }
+          var lenMaxC = Math.max(0.1, mlC - rA);
+          var lenC2 = halfCH + (lenMaxC - halfCH) * qe;
+          var aX = pa[0] + cxA * rA, aY = pa[1] + cyA * rA, aZ = pa[2] + czA * rA;
+          if (hSafe(aX, aY, aZ, aX + cxA * lenC2, aY + cyA * lenC2, aZ + czA * lenC2)) {
+            stickDraw(aX, aY, aZ, aX + cxA * lenC2, aY + cyA * lenC2, aZ + czA * lenC2, pv2, eye);
+          }
+        }
+        /* 氧侧半键：从断键方向旋转到“指向中间”，长度从保留半键增至中点 */
+        if (hO2 >= 0 && readyB2 && qF <= 0.8) {
+          var odx = tempPts[hO2][0] - pb[0], ody = tempPts[hO2][1] - pb[1], odz = tempPts[hO2][2] - pb[2];
+          var odl = Math.sqrt(odx * odx + ody * ody + odz * odz) || 1;
+          var v0x = odx / odl, v0y = ody / odl, v0z = odz / odl;
+          var mxO = Mx - pb[0], myO = My - pb[1], mzO = Mz - pb[2];
+          var mlO = Math.sqrt(mxO * mxO + myO * myO + mzO * mzO) || 1;
+          var v1x = mxO / mlO, v1y = myO / mlO, v1z = mzO / mlO;
+          var odot = v0x * v1x + v0y * v1y + v0z * v1z;
+          odot = Math.max(-1, Math.min(1, odot));
+          var oAx = v0x, oAy = v0y, oAz = v0z;
+          if (odot < 0.9995) {
+            var oTh = Math.acos(odot), oSn = Math.sin(oTh);
+            if (oSn > 1e-6) {
+              var oW0 = Math.sin((1 - qe) * oTh) / oSn;
+              var oW1 = Math.sin(qe * oTh) / oSn;
+              oAx = oW0 * v0x + oW1 * v1x; oAy = oW0 * v0y + oW1 * v1y; oAz = oW0 * v0z + oW1 * v1z;
+            }
+          } else { oAx = v1x; oAy = v1y; oAz = v1z; }
+          var lenMaxO = Math.max(0.1, mlO - rB);
+          var lenO2 = halfOH + (lenMaxO - halfOH) * qe;
+          var bX = pb[0] + oAx * rB, bY = pb[1] + oAy * rB, bZ = pb[2] + oAz * rB;
+          if (hSafe(bX, bY, bZ, bX + oAx * lenO2, bY + oAy * lenO2, bZ + oAz * lenO2)) {
+            stickDraw(bX, bY, bZ, bX + oAx * lenO2, bY + oAy * lenO2, bZ + oAz * lenO2, pv2, eye);
+          }
+        }
+        /* 合拢后期:直接呈现与 σ 平行、清晰分开的第二根键(两条平行化学键) */
+        if (qF > 0.8) {
+          stickDraw(cIx, cIy, cIz, oIx, oIy, oIz, pv2, eye);
+        }
+        continue;
+      }
+      if (bd.pivot) {
+        /* —— C=O 的 π 键断开后两个半键都不消失:
+             碳侧半键绕碳旋转→与氢连接(新 C–H)；氧侧半键绕氧旋转→与氢连接(新 O–H)；固定键不动 —— */
+        var eoP = perpOf([ux, uy, uz]);
+        var cAx = pa[0] + eoP[0] * bd.off, cAy = pa[1] + eoP[1] * bd.off, cAz = pa[2] + eoP[2] * bd.off;
+        var oBx = pb[0] + eoP[0] * bd.off, oBy = pb[1] + eoP[1] * bd.off, oBz = pb[2] + eoP[2] * bd.off;
+        var cIx = cAx + ux * rA, cIy = cAy + uy * rA, cIz = cAz + uz * rA;    /* 碳侧端点 */
+        var oIx = oBx - ux * rB, oIy = oBy - uy * rB, oIz = oBz - uz * rB;    /* 氧侧端点 */
+        /* C=C(加成)在双键真正断开(raw<0.5)后才出现半键;C=O(还原)沿用 0.85 起裂 */
+        var brThr = (cur.ao[bd.a].el === 'C' && cur.ao[bd.b].el === 'C') ? 0.5 : 0.85;
+        if (raw >= brThr) {
+          stickDraw(cIx, cIy, cIz, oIx, oIy, oIz, pv2, eye);
+          continue;
+        }
+        var gProg = Math.max(0, Math.min(1, (brThr - raw) / brThr));
+        if (gProg < 0.02) continue;
+        /* 找两侧的目标氢：碳侧的 H(加在碳上) 与氧侧的 H(加在氧上) */
+        var tC = -1, tO = -1, rCB = 0, rOH = 0;
+        for (var qp = 0; qp < cur.bonds.length; qp++) {
+          var bp = cur.bonds[qp];
+          if (!cur.bmeta[qp].pureRising) continue;
+          var oT = -1;
+          if (bp.a === bd.a) oT = bp.b;
+          else if (bp.b === bd.a) oT = bp.a;
+          else if (bp.a === bd.b) oT = bp.b;
+          else if (bp.b === bd.b) oT = bp.a;
+          if (oT >= 0) {
+            if ((bp.a === bd.a || bp.b === bd.a) && tC < 0) { tC = oT; rCB = raws[qp]; }
+            else if ((bp.a === bd.b || bp.b === bd.b) && tO < 0) { tO = oT; rOH = raws[qp]; }
+          }
+        }
+        /* 卤-卤(如 Br–Br)键的剩余强度:碳与溴对接前必须已断裂 */
+        var br2R = 1;
+        for (var qb2 = 0; qb2 < cur.bonds.length; qb2++) {
+          var bb2x = cur.bonds[qb2];
+          if (!cur.bmeta[qb2].cleave) continue;
+          var eX = cur.ao[bb2x.a].el, eY = cur.ao[bb2x.b].el;
+          if ((eX === 'Br' && eY === 'Br') || (eX === 'Cl' && eY === 'Cl')) { br2R = raws[qb2]; break; }
+        }
+        /* 碳侧半键：以碳为支点，从断键方向旋转到伙伴方向，到位后伸长连接 */
+        var halC = tC >= 0 && (cur.ao[tC].el === 'Br' || cur.ao[tC].el === 'Cl');
+        var nearC = tC >= 0 && Math.sqrt(
+          (tempPts[tC][0] - pa[0]) * (tempPts[tC][0] - pa[0]) +
+          (tempPts[tC][1] - pa[1]) * (tempPts[tC][1] - pa[1]) +
+          (tempPts[tC][2] - pa[2]) * (tempPts[tC][2] - pa[2])) < 3.2 && rCB > 0.02;
+        if (tC >= 0 && (!halC || nearC)) {
+          var cdx = tempPts[tC][0] - pa[0], cdy = tempPts[tC][1] - pa[1], cdz = tempPts[tC][2] - pa[2];
+          var cdL = Math.sqrt(cdx * cdx + cdy * cdy + cdz * cdz) || 1e-6;
+          var uCx = cdx / cdL, uCy = cdy / cdL, uCz = cdz / cdL;
+          var aC = Math.min(1, gProg * 1.3 + (rCB / 0.5) * 0.7);
+          var cV = ux * uCx + uy * uCy + uz * uCz;
+          cV = Math.max(-1, Math.min(1, cV));
+          var dCx = ux, dCy = uy, dCz = uz;
+          if (cV < 0.9995) {
+            var thC = Math.acos(cV), sinC = Math.sin(thC);
+            if (sinC > 1e-6) {
+              var wC0 = Math.sin((1 - aC) * thC) / sinC;
+              var wC1 = Math.sin(aC * thC) / sinC;
+              dCx = wC0 * ux + wC1 * uCx; dCy = wC0 * uy + wC1 * uCy; dCz = wC0 * uz + wC1 * uCz;
+            }
+          } else { dCx = uCx; dCy = uCy; dCz = uCz; }
+          var hInC = cur.ao[tC].r * 0.92;
+          var maxC = Math.max(0.1, cdL - rA - hInC);
+          if (cur.ao[tC].el === 'Br' || cur.ao[tC].el === 'Cl') maxC = Math.max(0.1, maxC / 2); /* 与溴半键在中点对接 */
+          var extC = Math.max(0, Math.min(1, (rCB / 0.5) * Math.max(0, aC - 0.8) * 12 * (cdL < 2.05 ? 1 : 0) * (br2R < 0.15 ? 1 : 0)));
+          /* 旋转期长度=原线一半(可见的半键),仅对接时才伸长(与还原一致) */
+          var baseC0 = 0.30;
+          if (cur.ao[tC].el === 'Br' || cur.ao[tC].el === 'Cl') {
+            baseC0 = Math.max(0.3, Math.min(0.55, (Ld - rA - rB) / 2));
+          }
+          var lenC = baseC0 + (maxC - baseC0) * extC;
+          var aX = pa[0] + dCx * rA, aY = pa[1] + dCy * rA, aZ = pa[2] + dCz * rA;
+          stickDraw(aX, aY, aZ, aX + dCx * lenC, aY + dCy * lenC, aZ + dCz * lenC, pv2, eye);
+        }
+        /* 氧侧半键：以氧为支点，从断键方向旋转到伙伴方向，到位后伸长连接 */
+        var halO = tO >= 0 && (cur.ao[tO].el === 'Br' || cur.ao[tO].el === 'Cl');
+        var nearO = tO >= 0 && Math.sqrt(
+          (tempPts[tO][0] - pb[0]) * (tempPts[tO][0] - pb[0]) +
+          (tempPts[tO][1] - pb[1]) * (tempPts[tO][1] - pb[1]) +
+          (tempPts[tO][2] - pb[2]) * (tempPts[tO][2] - pb[2])) < 3.2 && rOH > 0.02;
+        if (tO >= 0 && (!halO || nearO)) {
+          var odx = tempPts[tO][0] - pb[0], ody = tempPts[tO][1] - pb[1], odz = tempPts[tO][2] - pb[2];
+          var odL = Math.sqrt(odx * odx + ody * ody + odz * odz) || 1e-6;
+          var uOx = odx / odL, uOy = ody / odL, uOz = odz / odL;
+          var aO = Math.min(1, gProg * 1.3 + (rOH / 0.5) * 0.7);
+          var oV = (-ux) * uOx + (-uy) * uOy + (-uz) * uOz;
+          oV = Math.max(-1, Math.min(1, oV));
+          var dOx = -ux, dOy = -uy, dOz = -uz;
+          if (oV < 0.9995) {
+            var thO = Math.acos(oV), sinO = Math.sin(thO);
+            if (sinO > 1e-6) {
+              var wO0 = Math.sin((1 - aO) * thO) / sinO;
+              var wO1 = Math.sin(aO * thO) / sinO;
+              dOx = wO0 * (-ux) + wO1 * uOx; dOy = wO0 * (-uy) + wO1 * uOy; dOz = wO0 * (-uz) + wO1 * uOz;
+            }
+          } else { dOx = uOx; dOy = uOy; dOz = uOz; }
+          var hInO = cur.ao[tO].r * 0.92;
+          var maxO = Math.max(0.1, odL - rB - hInO);
+          if (cur.ao[tO].el === 'Br' || cur.ao[tO].el === 'Cl') maxO = Math.max(0.1, maxO / 2); /* 与溴半键在中点对接 */
+          var extO = Math.max(0, Math.min(1, (rOH / 0.5) * Math.max(0, aO - 0.8) * 12 * (odL < 2.05 ? 1 : 0) * (br2R < 0.15 ? 1 : 0)));
+          var baseO0 = 0.30;
+          if (cur.ao[tO].el === 'Br' || cur.ao[tO].el === 'Cl') {
+            baseO0 = Math.max(0.3, Math.min(0.55, (Ld - rA - rB) / 2));
+          }
+          var lenO = baseO0 + (maxO - baseO0) * extO;
+          var bX = pb[0] + dOx * rB, bY = pb[1] + dOy * rB, bZ = pb[2] + dOz * rB;
+          stickDraw(bX, bY, bZ, bX + dOx * lenO, bY + dOy * lenO, bZ + dOz * lenO, pv2, eye);
+        }
+        continue;
+      }
+      if (bm.pureRising) {
+        if (bd.waitDetach) {
+          /* 消去中形成的 H–Br：必须等两端原键(C–H 与 C–Br)都断开后才开始连接 */
+          var rwA = 1, rwB = 1;
+          for (var qw3 = 0; qw3 < cur.bonds.length; qw3++) {
+            var bw3 = cur.bonds[qw3];
+            if (!cur.bmeta[qw3].cleave) continue;
+            var owA = bw3.a === bd.a ? bw3.b : (bw3.b === bd.a ? bw3.a : -1);
+            if (owA >= 0 && owA !== bd.b) rwA = raws[qw3];
+            var owB = bw3.a === bd.b ? bw3.b : (bw3.b === bd.b ? bw3.a : -1);
+            if (owB >= 0 && owB !== bd.a) rwB = raws[qw3];
+          }
+          if (rwA >= 0.3 || rwB >= 0.3) continue;
+        }
+        if (bd.rotH) {
+          /* 成水氢的 O–H：氢完全离开原键且氧脱离铜后，由氧→氢整根连接 */
+          var Hh2 = cur.ao[bd.a].el === 'H' ? bd.a : bd.b;
+          var Ow2 = Hh2 === bd.a ? bd.b : bd.a;
+          var dRw = 1;
+          for (var qrw = 0; qrw < cur.bonds.length; qrw++) {
+            var brw = cur.bonds[qrw];
+            if (!cur.bmeta[qrw].cleave) continue;
+            var oRw = brw.a === Hh2 ? brw.b : (brw.b === Hh2 ? brw.a : -1);
+            if (oRw >= 0 && oRw !== Ow2 && cur.ao[oRw].el !== 'Cu') { dRw = raws[qrw]; break; }
+          }
+          var cuW2 = 1;
+          for (var qcu = 0; qcu < cur.bonds.length; qcu++) {
+            var bcu = cur.bonds[qcu];
+            if (!cur.bmeta[qcu].cleave) continue;
+            var oCu = bcu.a === Ow2 ? bcu.b : (bcu.b === Ow2 ? bcu.a : -1);
+            if (oCu >= 0 && cur.ao[oCu].el === 'Cu') { cuW2 = raws[qcu]; break; }
+          }
+          if (dRw < 0.3 && cuW2 < 0.2) {
+            stickDraw(a1x, a1y, a1z, b1x, b1y, b1z, pv2, eye); /* 整根 O–H 连接 */
+          }
+          continue;
+        }
+        if (pivotTargetBond(bd.a, bd.b)) continue; /* C–H / O–H 由 pivot 的两个半键绘制，避免双棒 */
+        /* —— 全新生成的键：两端的半键从各自原子伸出、随原子靠近而合拢成完整键 —— */
+        if (raw >= 0.5) {
+          stickDraw(a1x, a1y, a1z, b1x, b1y, b1z, pv2, eye);
+        } else if (raw > 0.004 && dSurf > 0.05) {
+          var hf = (dSurf / 2) * (raw / 0.5);
+          stickDraw(a1x, a1y, a1z, a1x + ux * hf, a1y + uy * hf, a1z + uz * hf, pv2, eye);
+          stickDraw(b1x, b1y, b1z, b1x - ux * hf, b1y - uy * hf, b1z - uz * hf, pv2, eye);
+        }
+        continue;
+      }
+      /* —— 稳定键 / 键级变化（C=C↔C–C、C=O↔C–O）：按强度缩放 —— */
+      var sv;
+      if (bd.s[k + 1] < bd.s[k] - 0.02) {
+        var q3 = Math.max(0, raw);
+        sv = q3 * q3 * q3;
+        if (raw > 0.72) sv = 1;
+      } else {
+        sv = raw;
+      }
+      if (sv < 0.02) continue;
+      var eo = perpOf([ux, uy, uz]);
+      var ax2 = bd.off * eo[0], ay2 = bd.off * eo[1], az2 = bd.off * eo[2];
+      var a0x = pa[0] + ax2, a0y = pa[1] + ay2, a0z = pa[2] + az2;
+      var b0x = pb[0] + ax2, b0y = pb[1] + ay2, b0z = pb[2] + az2;
+      var gx = b0x - a0x, gy = b0y - a0y, gz = b0z - a0z;
+      var Lg = Math.sqrt(gx * gx + gy * gy + gz * gz) || 1e-6;
+      var ugx = gx / Lg, ugy = gy / Lg, ugz = gz / Lg;
+      var c1x = a0x + ugx * rA, c1y = a0y + ugy * rA, c1z = a0z + ugz * rA;
+      var c2x = b0x - ugx * rB, c2y = b0y - ugy * rB, c2z = b0z - ugz * rB;
+      var cx = (c1x + c2x) / 2, cy = (c1y + c2y) / 2, cz = (c1z + c2z) / 2;
+      var dx = (c2x - c1x) * sv, dy = (c2y - c1y) * sv, dz = (c2z - c1z) * sv;
+      var L = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (L < 0.02) continue;
+      var uu = [dx / L, dy / L, dz / L];
+      var pp = perpOf(uu);
+      var qq = [uu[1] * pp[2] - uu[2] * pp[1], uu[2] * pp[0] - uu[0] * pp[2], uu[0] * pp[1] - uu[1] * pp[0]];
+      var M2 = m4scaleT(
+        [pp[0] * BOND_R, pp[1] * BOND_R, pp[2] * BOND_R],
+        [uu[0] * L, uu[1] * L, uu[2] * L],
+        [qq[0] * BOND_R, qq[1] * BOND_R, qq[2] * BOND_R],
+        [cx, cy, cz]);
+      drawMesh(cylMesh, m4mul(pv2, M2), M2, nm3x3(pp, uu, qq), BOND_C, eye);
+    }
+
+    /* HUD 文本 */
+    var segNow = Math.max(0, Math.min(segs, Math.floor(time + 1e-9)));
+    var cap = R.caps[Math.min(segNow, R.caps.length - 1)];
+    scrb.value = segs > 0 ? (time / segs) * 100 : 0;
+    seglbl.textContent = '第 ' + segNow + ' / ' + segs + ' 步';
+    phase.innerHTML = '<span class="stepchip">' + R.name + ' · 步骤 ' + segNow + '/' + segs +
+      '</span><div class="ptxt">' + cap + '</div>';
+    btnPlay.textContent = playing ? '⏸ 暂停' : '▶ 播放';
+  }
+  function speedMul() { var v = parseFloat(spd.value); return isNaN(v) || v <= 0 ? 1 : v; }
+  function segDur() { return 2.8; }
+
+  /* ---------------- 交互 ---------------- */
+  glCanvas.addEventListener('pointerdown', function (e) {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    glCanvas.classList.add('drag');
+    try { glCanvas.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (dragging) {
+      var dx = e.clientX - lastX, dy = e.clientY - lastY;
+      cam.az -= dx * 0.008;
+      cam.el = Math.max(0.04, Math.min(1.46, cam.el + dy * 0.008));
+      lastX = e.clientX; lastY = e.clientY;
+    }
+  });
+  window.addEventListener('pointerup', function () {
+    dragging = false; glCanvas.classList.remove('drag');
+  });
+  glCanvas.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    cam.dist *= Math.exp(e.deltaY * 0.0011);
+    cam.dist = Math.max(2.6, Math.min(90, cam.dist));
+    var p = Math.max(26, Math.min(100, Math.round((1.45 - cam.dist / baseDist) * 100)));
+    zoomRange.value = p; zoomValue.textContent = p + '%';
+  }, { passive: false });
+  function setZoom(p) {
+    p = Math.max(26, Math.min(100, p));
+    zoomRange.value = p; zoomValue.textContent = p + '%';
+    cam.dist = Math.max(2.6, baseDist * (1.45 - p / 100));
+  }
+  zoomRange.addEventListener('input', function () { setZoom(parseInt(zoomRange.value, 10) || 70); });
+  zoomIn.onclick = function () { setZoom((parseInt(zoomRange.value, 10) || 70) + 8); };
+  zoomOut.onclick = function () { setZoom((parseInt(zoomRange.value, 10) || 70) - 8); };
+  function pickAtom(e) {
+    var r = glCanvas.getBoundingClientRect();
+    var px = e.clientX - r.left, py = e.clientY - r.top;
+    var best = -1, bestD = 900;
+    for (var j = 0; j < cur.ao.length; j++) {
+      var p2 = tempPts[j];
+      var hx = lastPV[0] * p2[0] + lastPV[4] * p2[1] + lastPV[8] * p2[2] + lastPV[12];
+      var hy = lastPV[1] * p2[0] + lastPV[5] * p2[1] + lastPV[9] * p2[2] + lastPV[13];
+      var hw = lastPV[3] * p2[0] + lastPV[7] * p2[1] + lastPV[11] * p2[2] + lastPV[15];
+      if (hw <= 0.01) continue;
+      var nx = (hx / hw * 0.5 + 0.5) * W;
+      var ny = (1 - (hy / hw * 0.5 + 0.5)) * H;
+      var ddx = nx - px, ddy = ny - py;
+      if (ddx > -13 && ddx < 13 && ddy > -13 && ddy < 13) {
+        var dd = ddx * ddx + ddy * ddy;
+        if (dd < bestD) { bestD = dd; best = j; }
+      }
+    }
+    if (best >= 0) {
+      var A = cur.ao[best];
+      tip.style.display = 'block';
+      tip.style.left = (px + 14) + 'px';
+      tip.style.top = (py - 10) + 'px';
+      tip.textContent = A.el + ' · ' + A.name;
+    } else tip.style.display = 'none';
+  }
+  function clearPick() { tip.style.display = 'none'; }
+  glCanvas.addEventListener('pointerleave', clearPick);
+  glCanvas.addEventListener('mouseleave', clearPick);
+
+  /* ---------------- 侧栏（方程式卡片） ---------------- */
+  function arrowSVG() {
+    return '<svg width="94" height="16" viewBox="0 0 94 16" style="display:block">' +
+      '<line x1="2" y1="8" x2="80" y2="8" stroke="#c2410c" stroke-width="2.6"/>' +
+      '<path d="M80 3 L91 8 L80 13 Z" fill="#c2410c"/></svg>';
+  }
+  function updateSidePanel() {
+    var R = cur.R;
+    eqDef.innerHTML = R.def;
+    var arrow = '<span class="arrowcol">' +
+      (R.cond ? '<div>' + R.cond + '</div>' : '') +
+      arrowSVG() +
+      (R.condb ? '<div>' + R.condb + '</div>' : '') +
+      '</span>';
+    eqLine.innerHTML = '<span class="sp">' + R.lhs + '</span>' + arrow + '<span class="sp">' + R.rhs + '</span>';
+    eqNotes.innerHTML = '';
+    R.notes.forEach(function (t) {
+      var li = document.createElement('li');
+      li.innerHTML = t;
+      eqNotes.appendChild(li);
+    });
+    var cnt = {}, order = [];
+    R.atoms.forEach(function (a) {
+      if (!cnt[a.el]) { cnt[a.el] = 0; order.push(a.el); }
+      cnt[a.el]++;
+    });
+    var html = '';
+    order.forEach(function (el) {
+      html += '<span style="display:inline-block;margin-right:12px"><b>' + el + '</b>×' + cnt[el] + '</span>';
+    });
+    atomStat.innerHTML = '总原子 <b>' + R.atoms.length + '</b> 个　·　' + html +
+      '<div class="okline">✔ 每个球＝一个原子，动画全程一一对应、不增不减（原子守恒）</div>';
+    rtName.textContent = R.name;
+    rtEx.textContent = R.ex;
+    rtCond.textContent = (R.cond || '') + (R.condb ? ' · ' + R.condb : '');
+  }
+
+  /* ---------------- 按钮与控制 ---------------- */
+  function buildNav() {
+    btnGrp.innerHTML = '';
+    RX.forEach(function (R, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tbtn';
+      b.innerHTML = '<div class="t1">' + R.name + '</div><div class="t2">' + R.ex + '</div>';
+      b.onclick = function () { selectReaction(i); setActive(i); };
+      btnGrp.appendChild(b);
+    });
+  }
+  function setActive(i) {
+    var all = btnGrp.children;
+    for (var j = 0; j < all.length; j++) all[j].classList.toggle('active', j === i);
+  }
+  function syncUI() {
+    if (!cur) return;
+    var segs = cur.segments;
+    var segNow = Math.max(0, Math.min(segs, Math.floor(time + 1e-9)));
+    seglbl.textContent = '第 ' + segNow + ' / ' + segs + ' 步';
+    btnPlay.textContent = playing ? '⏸ 暂停' : '▶ 播放';
+    rotChk.checked = autoRot;
+  }
+  btnPlay.onclick = function () { playing = !playing; syncUI(); };
+  btnBack.onclick = function () { time = 0; playing = false; syncUI(); };
+  scrb.addEventListener('input', function () {
+    if (!cur || cur.segments <= 0) return;
+    time = (parseFloat(scrb.value) || 0) / 100 * cur.segments;
+    playing = false;
+    syncUI();
+  });
+  rotChk.onchange = function () { autoRot = rotChk.checked; };
+
+  /* ---------------- 取代反应判断练习 ---------------- */
+  var quizItems = [
+    { eq: 'CH₃CH₂Br + NaOH → CH₃CH₂OH + NaBr', yes: true, why: '是。乙醇分子中的 —Br 被 —OH 替换，碳骨架没有改变。' },
+    { eq: 'CH₂=CH₂ + Br₂ → CH₂Br—CH₂Br', yes: false, why: '不是。这是加成反应：C=C 变为 C—C，两个 Br 分别加到两个碳上，没有“一换一”。' },
+    { eq: 'CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O', yes: true, why: '是。酯化反应也可看作取代：羧酸中的 —OH 被 —OC₂H₅ 替换，同时生成水。' }
+  ];
+  var quizIndex = 0, quizScore = 0, quizAnswered = false;
+  function showQuizItem() {
+    var item = quizItems[quizIndex];
+    $('quizEquation').textContent = item.eq;
+    $('quizFeedback').className = 'quiz-feedback';
+    $('quizFeedback').textContent = '先寻找：有机物中是否发生“一换一”。';
+    $('quizNext').hidden = true;
+    quizAnswered = false;
+    Array.prototype.forEach.call(document.querySelectorAll('.quiz-actions button'), function (b) { b.disabled = false; });
+  }
+  $('reactionQuiz').addEventListener('click', function (ev) {
+    var answer = ev.target && ev.target.getAttribute('data-answer');
+    if (!answer || quizAnswered) return;
+    quizAnswered = true;
+    var correct = (answer === 'yes') === quizItems[quizIndex].yes;
+    if (correct) quizScore++;
+    $('quizScore').textContent = quizScore + ' / ' + quizItems.length;
+    $('quizFeedback').className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+    $('quizFeedback').textContent = (correct ? '判断正确！' : '再看一步：') + quizItems[quizIndex].why;
+    Array.prototype.forEach.call(document.querySelectorAll('.quiz-actions button'), function (b) { b.disabled = true; });
+    $('quizNext').hidden = false;
+    $('quizNext').textContent = quizIndex === quizItems.length - 1 ? '重新练习 ↻' : '下一题 →';
+  });
+  $('quizNext').onclick = function () {
+    quizIndex++;
+    if (quizIndex >= quizItems.length) { quizIndex = 0; quizScore = 0; $('quizScore').textContent = '0 / ' + quizItems.length; }
+    showQuizItem();
+  };
+  showQuizItem();
+
+  /* ---------------- ATP 能量释放剧场 ---------------- */
+  var energyLab = $('energyLab'), energyStage = $('energyStage'), energyTitle = $('energyTitle'), energyCaption = $('energyCaption');
+  var energyTimers = [];
+  function clearEnergyTimers() { energyTimers.forEach(function (timer) { clearTimeout(timer); }); energyTimers = []; }
+  function resetEnergy() {
+    clearEnergyTimers();
+    energyStage.classList.remove('run');
+    $('answerCard').classList.remove('show');
+    $('energyNext').hidden = true;
+    energyTitle.textContent = 'ATP：腺苷连接三个磷酸基团';
+    energyCaption.textContent = '点击播放，观察 ATP 水解时最外侧磷酸基团的变化。';
+  }
+  function playEnergy() {
+    resetEnergy();
+    void energyStage.offsetWidth;
+    energyStage.classList.add('run');
+    energyTitle.textContent = '第 1 步：水分子靠近 ATP';
+    energyCaption.textContent = '水解反应将作用于 ATP 最外侧的磷酸基团。';
+    energyTimers.push(setTimeout(function () {
+      energyTitle.textContent = '第 2 步：最外侧磷酸基团分离';
+      energyCaption.textContent = 'ATP 转变为 ADP，并生成无机磷酸 Pi。';
+    }, 1500));
+    energyTimers.push(setTimeout(function () {
+      energyTitle.textContent = '观察完成：ATP + H₂O → ADP + Pi';
+      energyCaption.textContent = '先根据现象想一想，再点击“下一步”查看能量释放的准确解释。';
+      $('energyNext').hidden = false;
+    }, 3400));
+  }
+  $('openEnergy').onclick = function () { document.body.classList.add('energy-mode'); energyLab.setAttribute('aria-hidden', 'false'); resetEnergy(); };
+  $('closeEnergy').onclick = function () { clearEnergyTimers(); document.body.classList.remove('energy-mode'); energyLab.setAttribute('aria-hidden', 'true'); };
+  $('playEnergy').onclick = playEnergy;
+  $('replayEnergy').onclick = playEnergy;
+  $('energyNext').onclick = function () {
+    $('answerCard').classList.add('show');
+    $('answerCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+  if (document.modelContext && document.modelContext.registerTool) {
+    var lifecycle = new AbortController();
+    Promise.resolve(document.modelContext.registerTool({
+      name: 'set_molecule_zoom', title: '调整分子模型大小', description: '调整甲烷与氯气三维模型的显示比例。',
+      inputSchema: { type: 'object', properties: { percent: { type: 'number', minimum: 26, maximum: 100 } }, required: ['percent'], additionalProperties: false },
+      annotations: { readOnlyHint: false, untrustedContentHint: false },
+      execute: function (input) { if (!input || typeof input.percent !== 'number') throw new Error('percent 必须是 26–100 的数字'); setZoom(input.percent); return { zoomPercent: Math.round(input.percent) }; }
+    }, { signal: lifecycle.signal })).catch(function () {});
+    Promise.resolve(document.modelContext.registerTool({
+      name: 'start_energy_analogy', title: '启动 ATP 能量释放演示', description: '打开并播放 ATP 水解释放可用能量的教学动画。',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      annotations: { readOnlyHint: false, untrustedContentHint: false },
+      execute: function () { $('openEnergy').click(); $('playEnergy').click(); return { view: 'atp-energy', playing: true, reaction: 'ATP + H2O -> ADP + Pi' }; }
+    }, { signal: lifecycle.signal })).catch(function () {});
+  }
+
+  /* ---------------- 主循环 ---------------- */
+  var lastT = 0, rafId = 0;
+  function frame(now) {
+    /* 先预约下一帧：渲染中即使出现异常也不会让动画死掉 */
+    rafId = requestAnimationFrame(frame);
+    var dt = Math.min(0.05, Math.max(0.001, (now - lastT) / 1000));
+    lastT = now;
+    try {
+      ensureSize();
+      if (gl) {
+        if (!prog && !shaderFail) compile();
+        if (prog && cur) {
+          aspect = Math.max(0.2, (W * DPR) / Math.max(1, H * DPR));
+          render(now, dt);
+          hideErr();
+          frameN++;
+          if (dbgOn && !dbgDone && frameN >= 20) { dbgDone = true; diagReport(); }
+        }
+      }
+    } catch (err) {
+      showErr('渲染出错：' + (err && err.message ? err.message : err));
+      playing = false;
+    }
+  }
+  function parseHash() {
+    var h = decodeURIComponent(location.hash.replace(/^#/, '')), m = {};
+    h.split('&').forEach(function (s) {
+      var kv = s.split('=');
+      if (kv[0]) m[kv[0]] = kv[1];
+    });
+    return m;
+  }
+  function boot() {
+    buildNav();
+    var q = parseHash();
+    dbgOn = q.dbg === '1';
+    var idx = 0;
+    var rv = parseInt(q.r, 10);
+    if (!isNaN(rv)) idx = Math.max(0, Math.min(RX.length - 1, rv));
+    if (q.rot !== undefined) autoRot = q.rot === '1';
+    setActive(idx);
+    selectReaction(idx);
+    if (q.t !== undefined) { time = parseFloat(q.t) || 0; playing = false; }
+    ensureSize();
+    lastT = performance.now();
+    if (gl) {
+      if (!sphMesh) sphMesh = buildSphere();
+      if (!cylMesh) cylMesh = buildCylinder();
+      if (!prog && !shaderFail) compile();
+      rafId = requestAnimationFrame(frame);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>

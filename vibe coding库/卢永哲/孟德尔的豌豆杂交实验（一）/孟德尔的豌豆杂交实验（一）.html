@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="用实验和闯关游戏学习孟德尔遗传规律" />
+    <title>遗传实验室｜孟德尔遗传游戏</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="app intro-active">
+      <section id="introView" class="intro-view" aria-labelledby="introTitle">
+        <div class="intro-page-tag">第 1 节 · 孟德尔的豌豆杂交实验（一）</div>
+        <div class="intro-heading">
+          <span class="intro-icon" aria-hidden="true">▣</span>
+          <div><p class="intro-kicker">问题探讨</p><h2 id="introTitle">子代会不会只是父母性状的“混合”？</h2></div>
+        </div>
+        <div class="intro-question">
+          <p>人们曾经认为，两个亲本杂交后，双亲的遗传物质会在子代内发生混合，使子代表现出介于双亲之间的性状。就像一瓶蓝墨水和一瓶红墨水倒在一起，混合液会变成另一种颜色，再也无法分出蓝色和红色。</p>
+          <div class="intro-discuss"><div class="intro-discuss-head"><b>想一想</b><button id="showAnswers" class="answer-trigger" type="button">查看参考答案 <span aria-hidden="true">↗</span></button></div><ol><li>如果高茎豌豆和矮茎豌豆杂交，子代会长成什么样？</li><li>你同意“遗传物质会混合”的观点吗？证据可能来自哪里？</li></ol></div>
+        </div>
+        <div class="intro-bottom"><p>带着问题进入实验室，亲手完成一次杂交实验。</p><button id="enterLab" class="intro-next" type="button" aria-label="进入遗传实验室"><span>进入遗传实验室</span><b aria-hidden="true">→</b></button></div>
+        <div id="answerModal" class="answer-modal" hidden role="dialog" aria-modal="true" aria-labelledby="answerTitle">
+          <div class="answer-backdrop" data-close-answer></div>
+          <section class="answer-dialog">
+            <div class="answer-dialog-head"><div><p class="answer-kicker">参考答案</p><h2 id="answerTitle">把问题带进实验室</h2></div><button id="closeAnswers" class="answer-close" type="button" aria-label="关闭参考答案">×</button></div>
+            <div class="answer-block"><span>问题 1</span><div><h3>高茎 × 矮茎，子代会怎样？</h3><p>如果两株亲本都是纯种，第一代（F₁）会全部表现为高茎；让 F₁ 自交，第二代（F₂）会重新出现矮茎，表现型比例约为 <b>3 高茎 ∶ 1 矮茎</b>。</p></div></div>
+            <div class="answer-block"><span>问题 2</span><div><h3>遗传物质会不会混合？</h3><p>不同意。矮茎性状能在 F₂ 中重新出现，说明遗传因子没有融合或消失，而是成对存在；形成配子时彼此分离，受精时再随机结合。F₂ 接近 3∶1、测交接近 1∶1，都是支持这个解释的证据。</p></div></div>
+            <p class="answer-note">先自己想一想，再点击右下角箭头进入实验。</p>
+          </section>
+        </div>
+      </section>
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">✦</div>
+          <div>
+            <p class="eyebrow">高中生物 · 互动实验</p>
+            <h1>孟德尔的豌豆杂交实验（一）</h1>
+          </div>
+        </div>
+        <div class="mode-switch" role="tablist" aria-label="学习模式">
+          <button class="mode-btn active" data-mode="learn" role="tab" aria-selected="true" type="button">学习模式</button>
+          <button class="mode-btn" data-mode="challenge" role="tab" aria-selected="false" type="button">闯关模式</button>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="kicker">MENDEL'S GARDEN</p>
+          <h2>让基因自己“说话”</h2>
+          <p class="hero-copy">从一粒豌豆开始，亲手完成杂交实验，观察基因型如何决定表现型。</p>
+        </div>
+        <aside id="heroLearnIntro" class="hero-learn-intro" aria-label="实验背景与分离定律">
+          <p>MENDEL'S FIRST LAW</p>
+          <h3>从一对相对性状，发现分离定律</h3>
+          <div class="hero-fact"><span>背景</span><b>当时流行“融合遗传”的观点</b></div>
+          <div class="hero-fact"><span>证据</span><b>F₁ 全为高茎，F₂ 高∶矮约为 3∶1</b></div>
+          <div class="hero-fact"><span>定律</span><b>成对遗传因子形成配子时彼此分离</b></div>
+        </aside>
+        <div id="heroStats" class="hero-stats" aria-label="闯关数据" hidden>
+          <div><strong id="heroProgress">1 / 3</strong><span>闯关进度</span></div>
+          <div><strong id="heroScore">0</strong><span>实验积分</span></div>
+        </div>
+      </section>
+
+      <section id="learnView" class="view active-view" aria-labelledby="learnTitle">
+        <div class="view-heading">
+          <div><span class="section-index">01</span><h2 id="learnTitle">先做一次杂交实验</h2></div>
+          <p>以豌豆茎高为例：<b>T</b> 是显性基因，<b>t</b> 是隐性基因。</p>
+        </div>
+
+        <div class="learn-grid">
+          <article class="panel experiment-panel">
+            <div class="panel-heading"><div><span class="panel-label">PARENT PLANTS</span><h3>选择亲本</h3></div><span class="pill">单因子遗传</span></div>
+            <div class="genotype-picker">
+              <p class="picker-label">拖一个基因型到下面的亲本位置，也可以直接点击选取</p>
+              <div class="genotype-options" aria-label="基因型选项">
+                <button class="genotype-choice" draggable="true" data-genotype="TT" type="button"><b>TT</b><small>高茎</small></button>
+                <button class="genotype-choice" draggable="true" data-genotype="Tt" type="button"><b>Tt</b><small>高茎</small></button>
+                <button class="genotype-choice" draggable="true" data-genotype="tt" type="button"><b>tt</b><small>矮茎</small></button>
+              </div>
+            </div>
+            <div class="parents drop-parents">
+              <button class="parent-slot" data-slot="0" type="button" aria-label="亲本 A，拖入基因型"><span class="slot-label">亲本 A</span><span class="slot-plant" aria-hidden="true">🌱</span><strong class="slot-value">拖入基因型</strong></button>
+              <span class="cross" aria-hidden="true">×</span>
+              <button class="parent-slot" data-slot="1" type="button" aria-label="亲本 B，拖入基因型"><span class="slot-label">亲本 B</span><span class="slot-plant" aria-hidden="true">🌱</span><strong class="slot-value">拖入基因型</strong></button>
+            </div>
+            <div id="gameteNote" class="gamete-note"><span class="dot yellow"></span>先放入两个亲本，系统会根据基因型生成配子</div>
+            <button id="runExperiment" class="primary wide" type="button" disabled>开始杂交实验 <span>→</span></button>
+            <button id="resetExperiment" class="text-button" type="button">重置实验</button>
+          </article>
+
+          <article class="panel square-panel">
+            <div class="panel-heading"><div><span class="panel-label">PUNNETT SQUARE</span><h3>子代组合棋盘</h3></div><span id="squareStatus" class="status">等待配子</span></div>
+            <div class="punnett-wrap">
+              <div class="punnett" aria-label="孟德尔棋盘格">
+                <div class="corner">×</div><div class="gamete top">T</div><div class="gamete top">t</div>
+                <div class="gamete side">T</div><div class="cell" data-cell="0">?</div><div class="cell" data-cell="1">?</div>
+                <div class="gamete side">t</div><div class="cell" data-cell="2">?</div><div class="cell" data-cell="3">?</div>
+              </div>
+              <div class="ratio" id="ratioBox"><span>表现型比例</span><strong>—</strong><small>完成实验后查看</small></div>
+              <div class="knowledge-box" aria-label="孟德尔实验知识点">
+                <div class="knowledge-title"><span>✦</span><b>教材知识点</b></div>
+                <div id="knowledgeContent">
+                  <p class="knowledge-intro">本页用 <b>T/t</b> 表示一对遗传因子，讲解教材中的豌豆杂交实验与分离定律。</p>
+                  <details class="knowledge-details" open>
+                  <summary><span>01</span>为什么选择豌豆？</summary>
+                  <p>豌豆是两性花，通常能自花传粉，容易保持纯种；它还有许多容易区分的相对性状，例如茎的高与矮、花的红与白。孟德尔还可以人工去雄、采粉和套袋，控制传粉来源，再利用数量较多的后代进行统计。</p>
+                </details>
+                <details class="knowledge-details">
+                  <summary><span>02</span>高茎与矮茎怎样杂交？</summary>
+                  <p>用纯种高茎与纯种矮茎作为亲本 P，杂交后得到的 F₁ 全是高茎；让 F₁ 自交，F₂ 又出现矮茎。教材统计的 1 064 株 F₂ 中有 787 株高茎、277 株矮茎，比例接近 3∶1。</p>
+                </details>
+                <details class="knowledge-details">
+                  <summary><span>03</span>分离定律如何解释？</summary>
+                  <p>性状由成对的遗传因子决定，遗传因子像独立的颗粒，不会在传递中融合或消失。杂合子 Tt 形成配子时，T 和 t 会彼此分离，分别进入不同配子；受精时雌、雄配子随机结合，于是 Tt × Tt 形成 TT、Tt、Tt、tt。</p>
+                </details>
+                <details class="knowledge-details">
+                  <summary><span>04</span>怎样验证这个解释？</summary>
+                  <p>可以做测交：让 F₁ 杂合子 Tt 与隐性纯合子 tt 杂交。Tt 能产生 T、t 两种配子，tt 只能产生 t 配子，子代预期为 Tt∶tt = 1∶1；教材中的测交结果也接近这个比例。</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+            <div id="offspringGarden" class="offspring-garden" aria-live="polite"><span class="garden-placeholder">点击“开始杂交实验”，让子代长出来</span></div>
+          </article>
+        </div>
+
+        <div class="lesson-flow">
+          <div class="flow-card"><span>1</span><div><b>配子分离</b><small>每个亲本将 T、t 分开</small></div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>2</span><div><b>随机结合</b><small>配子两两组合成子代</small></div></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>3</span><div><b>表现型出现</b><small>Tt 也会长成高茎</small></div></div>
+        </div>
+
+        <aside id="learnMessage" class="message" aria-live="polite"><span class="message-icon">i</span><p><b>小提示：</b>显性基因只要出现一份，性状就会表现出来；只有 <b>tt</b> 才会长成矮茎。</p></aside>
+      </section>
+
+      <section id="challengeView" class="view" aria-labelledby="challengeTitle" hidden>
+        <div class="view-heading">
+          <div><span class="section-index">02</span><h2 id="challengeTitle">遗传农场 · 闯关任务</h2></div>
+          <p>根据亲本基因型，选出所有可能的子代。答对才能解锁下一关。</p>
+        </div>
+        <div class="challenge-layout">
+          <article class="panel challenge-panel">
+            <div class="level-row"><span id="levelBadge" class="level-badge">LEVEL 1</span><span id="levelHint">基础配对</span><span class="hearts" aria-label="三次机会">♥ ♥ ♥</span></div>
+            <div class="challenge-story"><span class="story-plant">🌿</span><div><p>农场主的两株豌豆要结籽了！</p><h3 id="challengePrompt">请找出它们可能产生的子代。</h3></div></div>
+            <div class="challenge-parents"><div><span class="plant tall">🌿</span><b id="challengeParentA">TT</b></div><span>×</span><div><span class="plant short">🌱</span><b id="challengeParentB">tt</b></div></div>
+            <div id="answerGrid" class="answer-grid" aria-label="子代选项"></div>
+            <div id="challengeFeedback" class="feedback" aria-live="polite"></div>
+            <div class="challenge-actions"><button id="submitAnswer" class="primary" type="button">提交答案</button><button id="nextLevel" class="secondary" type="button" hidden>进入下一关 →</button></div>
+          </article>
+          <aside class="panel guide-panel"><span class="panel-label">GENE GUIDE</span><h3>基因小图鉴</h3><div class="gene-key"><div><b>T</b><span>显性基因<br /><small>高茎</small></span></div><div><b>t</b><span>隐性基因<br /><small>矮茎</small></span></div></div><div class="guide-tip"><span>✦</span><p>先看配子，再把字母两两组合。每个字母都来自一方亲本。</p></div><div class="score-card"><span>本次得分</span><strong id="challengeScore">0</strong><small>答对一关 +100</small></div><button id="leaveLab" class="leave-lab" type="button">离开实验室前，想一想 <span aria-hidden="true">→</span></button></aside>
+        </div>
+      </section>
+
+      <div id="exitModal" class="answer-modal" hidden role="dialog" aria-modal="true" aria-labelledby="exitQuestionTitle">
+        <div class="answer-backdrop" data-close-exit></div>
+        <section class="answer-dialog exit-dialog">
+          <div class="answer-dialog-head"><div><p class="answer-kicker">迁移应用</p><h2 id="exitQuestionTitle">离开实验室前的最后一问</h2></div><button id="closeExitQuestion" class="answer-close" type="button" aria-label="关闭问题">×</button></div>
+          <div class="exit-question">
+            <span>问题</span>
+            <p>某农场的马有栗色和白色两种毛色，分别由遗传因子 <b>B</b> 和 <b>b</b> 控制。育种工作者选出一匹栗色公马，想仅根据毛色判断它是纯合子还是杂合子。</p>
+            <ol><li>一匹母马通常一次只生一匹小马。为了在一个配种季完成鉴定，应该怎样安排配种？</li><li>后代可能出现哪些结果？怎样根据结果作出判断？</li></ol>
+          </div>
+          <details class="exit-answer-details">
+            <summary>查看参考答案 <span aria-hidden="true">＋</span></summary>
+            <div class="exit-answer-content">
+              <div><b>1｜配种方案</b><p>采用<strong>测交</strong>：让这匹栗色公马与多匹白色母马（<b>bb</b>）在同一配种季分别交配，以便一次获得较多后代。</p></div>
+              <div><b>2｜结果判断</b><p>若公马为 <b>BB</b>，则 <b>BB × bb</b> 的后代全为 <b>Bb</b>，都表现栗色；若公马为 <b>Bb</b>，则 <b>Bb × bb</b> 的后代约有一半栗色、一半白色。</p><p>只要出现白色小马，就能判断公马是杂合子 <b>Bb</b>；若后代全为栗色，则更支持公马是纯合子 <b>BB</b>，且观察的后代越多，判断越可靠。</p></div>
+            </div>
+          </details>
+          <button id="returnToLab" class="primary return-lab" type="button">返回实验室</button>
+        </section>
+      </div>
+
+      <footer class="footer"><span>孟德尔的豌豆杂交实验（一） · 用观察理解规律</span><span>当前主题：豌豆茎的高度</span></footer>
+    </main>
+    <script src="./src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+# Generated publication artifacts
+/dist/
+/releases/
+
+# Generated catalog snapshots stay tracked so the static checkout works immediately.
+
+# Local dependencies and operating-system metadata
+**/node_modules/
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+
+# Local hosting metadata and superseded optical exports
+**/.openai/
+/vibe coding库/郭尚玮/ai可视化平台及promt/ai可视化平台及promt.zip
+/vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4-offline.zip
+/vibe coding库/郭尚玮/ai可视化平台及promt/site.tar.gz

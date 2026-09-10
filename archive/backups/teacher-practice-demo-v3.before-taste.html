@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="zh-CN" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>教师实践平台 V3 页面原型</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+:root:not([data-app-block-surface], [data-visualize-standalone]) > body {
+  padding: 12px;
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget > :not(.card, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The shared runtime owns data-tooltip; suppress AppBlock's pseudo-tooltip. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled="true"]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed="true"],
+  [aria-selected="true"],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type="file"]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type="color"] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="time"],
+    [type="week"]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html>body{padding:0}</style>
+<style>body{max-width:1240px;margin:0 auto;padding:16px!important;box-sizing:border-box} @media(max-width:680px){body{padding:8px!important}}</style></head>
+<body>
+<div id="practice-ui">
+<style>
+#practice-ui{--p-bg:light-dark(#f7f8fa,#171b21);--p-paper:light-dark(#ffffff,#222730);--p-text:light-dark(#222e39,#eff3f8);--p-sub:light-dark(#586777,#b5c1cc);--p-line:light-dark(#dce3e9,#424b56);--p-brand:light-dark(#176951,#8dd9bd);--p-soft:light-dark(#e8f3ed,#283e36);font:14px/1.65 system-ui,sans-serif;color:var(--p-text);background:var(--p-bg);border:1px solid var(--p-line);border-radius:12px;overflow:hidden;color-scheme:light dark}
+#practice-ui *{box-sizing:border-box}#practice-ui button,#practice-ui input,#practice-ui select,#practice-ui textarea{font:inherit}#practice-ui button{cursor:pointer;background:var(--p-paper);color:var(--p-text);border:1px solid var(--p-line);border-radius:7px;padding:8px 13px}#practice-ui button.main{background:var(--p-brand);color:light-dark(#fff,#10281f);border-color:var(--p-brand)}#practice-ui button:hover{filter:brightness(.94)}#practice-ui button:focus-visible{outline:3px solid var(--p-brand);outline-offset:3px}#practice-ui .top{padding:16px 24px;background:var(--p-paper);display:flex;align-items:center;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--p-line)}#practice-ui .brand{font-weight:700;margin-right:auto}#practice-ui .top button{border:0}#practice-ui .note{font-size:12px;color:var(--p-sub);padding:8px 24px;border-bottom:1px solid var(--p-line)}#practice-ui main{padding:25px}#practice-ui h2{font-size:25px;line-height:1.35;margin:0 0 10px}#practice-ui h3{font-size:17px;margin:0 0 8px}#practice-ui p{margin:5px 0 14px}#practice-ui .muted{color:var(--p-sub)}#practice-ui .search{display:flex;gap:8px;margin:22px 0 15px}#practice-ui input,#practice-ui select,#practice-ui textarea{min-width:0;border:1px solid var(--p-line);background:var(--p-paper);color:var(--p-text);border-radius:7px;padding:10px;width:100%}#practice-ui .search input{flex:1}#practice-ui .filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0 20px}#practice-ui .filters select{width:auto;max-width:100%}#practice-ui .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}#practice-ui article{background:var(--p-paper);border:1px solid var(--p-line);border-radius:9px;overflow:hidden}#practice-ui .cover{height:135px;display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--p-soft);color:var(--p-brand);gap:8px;padding:18px;text-align:center}#practice-ui .cover strong{font-size:21px}#practice-ui .body{padding:16px}#practice-ui .tags{font-size:12px;color:var(--p-sub);margin:7px 0}#practice-ui .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#practice-ui .detail-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:24px;margin:18px 0}#practice-ui .preview{min-height:230px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--p-soft);padding:20px;color:var(--p-brand)}#practice-ui .math{font-size:22px;line-height:2}#practice-ui .facts{display:grid;grid-template-columns:80px 1fr;gap:9px 15px;margin:0}#practice-ui dt{color:var(--p-sub)}#practice-ui dd{margin:0}#practice-ui .section{padding:21px 0;border-top:1px solid var(--p-line)}#practice-ui .steps{padding:12px 0;color:var(--p-sub)}#practice-ui .field{display:block;margin:17px 0}#practice-ui .field span{display:block;margin-bottom:7px;font-weight:600}#practice-ui .edit{max-width:720px}#practice-ui .source{padding:14px 18px;background:var(--p-soft);border-radius:8px;margin:15px 0}#practice-ui textarea{min-height:85px;resize:vertical}#practice-ui .result{white-space:pre-wrap;border:1px solid var(--p-line);padding:18px;border-radius:8px;background:var(--p-paper);margin-top:20px}#practice-ui [hidden]{display:none!important}#practice-ui .empty{padding:30px 0}#practice-ui .small{font-size:12px}
+@media(max-width:680px){#practice-ui .grid{grid-template-columns:1fr}#practice-ui .detail-grid{grid-template-columns:1fr}#practice-ui main{padding:17px}#practice-ui .top{padding:12px 17px;gap:8px}#practice-ui .brand{width:100%}#practice-ui .cover{height:110px}#practice-ui h2{font-size:22px}#practice-ui .search{flex-wrap:wrap}#practice-ui input,#practice-ui textarea,#practice-ui select{font-size:16px}}
+#practice-ui{--p-blue:light-dark(#286cad,#8ab9e6);--p-gold:light-dark(#e9b957,#d4ad5b);--p-oncolor:light-dark(#ffffff,#132521)}
+#practice-ui .cover{height:200px;padding:12px;gap:0}#practice-ui .lesson-art{display:block;width:100%;height:176px;max-width:330px;color:var(--p-text);fill:currentColor;font:14px system-ui,sans-serif}#practice-ui .preview .lesson-art{height:220px;max-width:400px}#practice-ui .filters label{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px;color:var(--p-sub);font-size:12px}#practice-ui .filters select{width:100%;font-size:14px;color:var(--p-text)}#practice-ui .checkline{display:flex;align-items:flex-start;gap:8px;line-height:1.6;padding:7px 0}#practice-ui input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;margin:3px 0;accent-color:var(--p-brand)}#practice-ui .paper-preview{width:85%;background:var(--p-paper);color:var(--p-text);border:1px solid var(--p-line);border-radius:5px;text-align:left;padding:14px 16px;box-shadow:4px 5px 0 var(--p-line)}#practice-ui .paper-preview div{margin:6px 0;font-size:13px}#practice-ui fieldset{border:0;padding:0;margin:20px 0;min-width:0}#practice-ui legend{font-weight:600;margin-bottom:8px}#practice-ui .grade-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:2px 12px}#practice-ui .grade-summary{padding:12px;background:var(--p-soft);border-radius:7px;margin-top:10px}#practice-ui details{padding:10px 0}#practice-ui summary{cursor:pointer;font-weight:600}#practice-ui .mini-facts{margin-top:15px;border-top:1px solid var(--p-line);padding-top:15px}#practice-ui .math{font-size:16px}#practice-ui .grade-options label{font-size:14px}
+@media(min-width:681px) and (max-width:900px){#practice-ui .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#practice-ui .spread{justify-content:space-between}#practice-ui .statusline{display:flex;gap:10px 24px;flex-wrap:wrap;border-top:1px solid var(--p-line);border-bottom:1px solid var(--p-line);padding:13px 0;margin:18px 0;color:var(--p-sub);font-size:13px}#practice-ui .reference-row{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:14px 0}#practice-ui .reference-row p{margin:3px 0}#practice-ui .reference-row button{flex-shrink:0}#practice-ui button[aria-pressed="true"]{color:var(--p-brand);border-color:var(--p-brand);background:var(--p-soft)}#practice-ui .publish-preview{border:1px solid var(--p-line);background:var(--p-paper);padding:20px;border-radius:8px;overflow-wrap:anywhere}#practice-ui .upload-preview{margin:16px 0;background:var(--p-soft);padding:15px;border-radius:8px}#practice-ui .upload-preview img{display:block;max-width:100%;max-height:250px;object-fit:contain;margin:auto}#practice-ui .error{color:light-dark(#a42727,#ffadad)}#practice-ui .steps{font-weight:600;border-bottom:1px solid var(--p-line);margin-bottom:18px}#practice-ui #practice-task-text{min-height:330px}#practice-ui [data-copy-prompt]{margin-top:10px}#practice-ui .note{line-height:1.6}#practice-ui button:disabled{opacity:.55;cursor:not-allowed}#practice-ui textarea{overflow-wrap:anywhere}#practice-ui .desk-item{padding:15px 0;border-bottom:1px solid var(--p-line)}#practice-ui .desk-item:last-child{border-bottom:0}#practice-ui .filters{align-items:end}#practice-ui .filters label{min-width:130px}#practice-ui small{font-size:12px}
+@media(max-width:680px){#practice-ui .top button{padding:8px 10px}#practice-ui .facts{grid-template-columns:75px 1fr}#practice-ui .publish-preview{padding:14px}#practice-ui .filters select{font-size:16px}}
+</style>
+<div class="top"><span class="brand">教师实践 · 名称暂定</span><button data-page="discover">发现项目</button><button data-page="guide">使用指南</button><button data-page="desk">我的工作台</button><button data-page="upload" class="main">分享项目</button></div>
+<div class="note">V3 交互示意 · 项目、预览图、权限及实践状态均为演示数据；未连接 AI 或发布服务。填写与收藏仅在本次预览中保留，刷新会重置。</div>
+<main>
+<section data-view="discover">
+<h2>为下一节课，找到一个更好的起点。</h2><p class="muted">找到好的，直接用；学会好的，继续改；做得更好，再分享。</p>
+<form class="search" id="practice-search"><input aria-label="搜索项目" placeholder="搜索知识点或用途，例如：递归、地理、PBL"><button class="main" type="submit">搜索项目</button></form>
+<div class="filters">
+<label>项目类别<select id="practice-category"><option value="">全部类别</option><option>教学可视化</option><option>Prompt与AI工作流</option><option>教育小游戏</option><option>Maker／机器人／硬件</option><option>学校综合应用</option><option>其他</option></select></label>
+<label>适用学段<select id="practice-stage"><option value="">全部学段</option><option>学前教育</option><option>小学</option><option>初中</option><option>高中</option><option>高等教育</option><option>教师专业发展</option></select></label>
+<label>年级所属地区<select id="practice-region"><option value="">选择地区后筛选年级</option><option>中国内地</option><option>中国香港</option></select></label>
+<label>建议年级<select id="practice-grade" disabled><option value="">不限具体年级</option></select></label>
+</div>
+<label class="checkline"><input type="checkbox" id="practice-ungraded" checked>同时查看未限定年级的项目，根据前置知识判断</label>
+<p id="practice-count" class="muted small" aria-live="polite">3 个示例项目 · 年级筛选不代表课堂效果或课程对应认证</p>
+<div class="grid" id="practice-cards">
+<article data-key="递归 最大公因数 辗转相除法 数学 信息技术" data-kind="教学可视化" data-stages="小学,初中"><div class="cover">
+<svg id="practice-tiling" viewBox="0 0 280 160" class="lesson-art" role="img" aria-label="长48宽18的矩形分成边长18、12和6的正方形，示意辗转相除法">
+<text x="140" y="19" text-anchor="middle">48 = 18 × 2 + 12</text>
+<g transform="translate(20,34)" stroke="var(--p-paper)" stroke-width="2"><rect width="90" height="90" fill="var(--p-brand)"/><rect x="90" width="90" height="90" fill="var(--p-brand)" opacity=".78"/><rect x="180" width="60" height="60" fill="var(--p-blue)"/><rect x="180" y="60" width="30" height="30" fill="var(--p-gold)"/><rect x="210" y="60" width="30" height="30" fill="var(--p-gold)"/></g>
+<g fill="var(--p-oncolor)" text-anchor="middle"><text x="65" y="87">18</text><text x="155" y="87">18</text><text x="230" y="71">12</text></g><g text-anchor="middle"><text x="215" y="114">6</text><text x="245" y="114">6</text><text x="140" y="148">正方形分割 · 示意图</text></g></svg>
+</div><div class="body"><div class="tags">教学可视化 · 数学 / 信息技术</div><h3>从最大公因数理解递归</h3><p>逐步观察参数变化、递归出口和答案返回。</p><p class="tags">小学 / 初中 · 不限具体年级<br>前置基础：函数、参数、取余</p><button class="main" data-page="detail">查看项目</button></div></article>
+<article data-key="地理 水循环 过程演示" data-kind="教学可视化" data-stages="初中,高中"><div class="cover">
+<svg viewBox="0 0 280 160" class="lesson-art" role="img" aria-label="水循环示意：水体蒸发、水汽凝结、降水及径流回到水体">
+<path d="M15 123 Q50 116 80 123 T145 123 T210 123 T265 123 L265 140 L15 140Z" fill="var(--p-blue)" opacity=".65"/>
+<path d="M161 122 L203 67 L256 122Z" fill="var(--p-brand)" opacity=".45"/>
+<ellipse cx="133" cy="39" rx="46" ry="18" fill="var(--p-blue)" opacity=".2"/>
+<g fill="none" stroke="var(--p-blue)" stroke-width="2"><path d="M55 105 Q37 56 80 39 M72 35 L80 39 L75 46"/><path d="M178 48 L204 79 M195 76 L204 79 L204 70"/><path d="M200 123 L144 123 M151 117 L144 123 L151 129"/></g>
+<text x="17" y="80">蒸发</text><text x="133" y="44" text-anchor="middle">凝结</text><text x="217" y="62">降水</text><text x="165" y="111">径流</text><text x="140" y="155" text-anchor="middle">水循环 · 示意图</text></svg>
+</div><div class="body"><div class="tags">教学可视化 · 地理</div><h3>地理教学可视化项目</h3><p>以水循环为例，展示过程图在卡片中的效果。</p><p class="tags">初中 / 高中 · 不限具体年级<br>内容与适用范围为示例</p></div></article>
+<article data-key="PBL 项目 设计 评价量规" data-kind="Prompt与AI工作流" data-stages="教师专业发展"><div class="cover"><div class="paper-preview" role="img" aria-label="PBL方案示意：驱动问题、探究活动、成果和评价"><b>PBL 项目设计</b><div>01　提出驱动问题</div><div>02　安排探究活动</div><div>03　设计成果与评价</div><span class="small muted">方案预览 · 示意</span></div></div><div class="body"><div class="tags">Prompt与AI工作流 · 教师使用</div><h3>PBL 项目设计工具包</h3><p>按步骤组织项目主题、实施方案与评价量规。</p><p class="tags">教师专业发展 · 学生年级按任务填写</p></div></article>
+</div><p class="empty" id="practice-empty" hidden>当前没有符合条件的示例项目。可放宽筛选，或勾选“同时查看未限定年级的项目”。</p>
+</section>
+<section data-view="detail" hidden>
+<button data-page="discover">← 返回项目库</button><div class="tags">教学可视化 / 数学、信息技术</div><h2>从最大公因数理解递归</h2><p>让学生看见：函数怎样一层层调用，答案又怎样一层层返回。</p>
+<div class="detail-grid"><div class="preview"><div class="math">gcd(48, 18)<br>gcd(18, 12) → gcd(12, 6)<br>gcd(6, 0) → 返回 6</div><span class="small">预览区域示意 · 正式页面放作者确认的真实图片或动图</span></div><div><h3>上课前，先看这几项</h3><dl class="facts"><dt>前置知识</dt><dd>简单函数、参数与返回值、取余运算</dd><dt>使用方式</dt><dd>教师投屏、引导学生观察</dd><dt>学习目标</dt><dd>理解调用、出口和逐层返回</dd><dt>学习边界</dt><dd>不要求独立设计复杂递归</dd><dt>使用条件</dt><dd>以作者确认的文件说明为准</dd></dl></div></div>
+<div class="source small">正式项目在此显示：运行方式 · 课堂使用记录 · 开放权限。当前示例未核实这些信息。</div>
+<div class="row"><button id="practice-get" class="main">查看获取说明</button><button data-page="adapt">基于它继续创作</button><button data-save="recursion" aria-pressed="false">收藏</button></div><p id="practice-get-note" class="muted small" aria-live="polite"></p>
+<div class="section"><h3>怎样在课堂使用</h3><p>先让学生预测下一组参数，再逐步演示；到递归出口时暂停，追问“返回的答案会到哪里去”。</p><span class="muted small">教学用法示例，需作者确认。</span></div>
+<div class="section"><h3>为什么这样设计</h3><p>把“向下调用”和“向上返回”分别展示，让学生观察两个不同的过程。将过程暂停，可以留出预测和讨论的时间。</p><span class="muted small">设计思路示例，需作者确认。</span></div>
+<div class="section"><h3>教师判断与修改经验</h3><dl class="facts"><dt>观察困难</dt><dd>学生可能只会追踪参数变化，难以理解函数暂停等待和逐层返回。</dd><dt>设计取舍</dt><dd>保留“单步演示”和“当前层高亮”；先呈现核心过程，再展示更多信息。</dd><dt>课堂调整</dt><dd>先让学生说出预测，再点击下一步。若同时展示代码和动画造成负担，可分阶段呈现。</dd></dl><p class="muted small">以上为写作示例，实际成功或失败经验由作者补充。</p></div>
+<div class="section"><h3>参考来源与后续实践</h3><div class="reference-row"><div><b>本项目参考了：最大公因数的几何演示</b><p class="muted small">示例编号 DEMO-MATH-001 · 借鉴矩形分割与逐步观察的思路</p></div><button data-page="math">查看参考项目</button></div><p class="muted">后续实践会在新项目发布并填写参考来源后显示。收藏和生成任务说明不计作“被参考”。</p></div>
+<details class="section"><summary>课堂使用记录</summary><p>尚无课堂使用记录（演示状态）。作者建议适用小学、初中，具体是否适合仍需核对学生前置知识。</p></details>
+</section>
+<section data-view="adapt" hidden>
+<button data-page="detail">← 返回原项目</button><div class="edit"><h2 style="margin-top:18px">把这个思路，用到你的课堂</h2><div class="source">参考项目：从最大公因数理解递归<br><span class="small">可保留的设计：逐步呈现 · 当前步骤高亮 · 暂停预测</span></div>
+<label class="field"><span>你准备教什么？学生已经会什么？</span><textarea id="practice-audience">初中数学，学生已经学习整式，希望帮助他们理解合并同类项。</textarea></label>
+<label class="field"><span>学生哪里不容易理解？你希望怎样改？</span><textarea id="practice-goal">学生不容易分辨哪些项可以合并。希望逐步高亮同类项，让学生先预测，再观察合并结果。</textarea></label>
+<label class="field"><span>课堂怎样使用？有什么条件？</span><textarea id="practice-setting">教师投屏讲解，浏览器打开；按钮少一些，不需要登录和排名。</textarea></label>
+<fieldset><legend>你希望保留哪些设计？</legend><div class="row"><label class="checkline"><input class="mechanism" type="checkbox" value="逐步呈现" checked>逐步呈现</label><label class="checkline"><input class="mechanism" type="checkbox" value="当前步骤高亮" checked>当前步骤高亮</label><label class="checkline"><input class="mechanism" type="checkbox" value="暂停后先预测再验证" checked>暂停预测</label></div></fieldset>
+<label class="field"><span>第一版必须做到什么？哪些先不做？</span><textarea id="practice-boundary">先完成一个例题的完整演示，可以暂停和重看。暂不做题库、排行榜和账号系统。</textarea></label>
+<button id="practice-generate" class="main">整理任务说明（示意）</button><div id="practice-result" class="result" hidden></div>
+<div id="practice-task-tools" hidden><label class="field"><span>确认并编辑给外部 AI 的任务说明</span><textarea id="practice-task-text" rows="14"></textarea></label><div class="row"><button id="practice-copy-task" class="main">复制任务说明</button><button id="practice-save-task">保存到工作台</button><button id="practice-return-project">我已做好，分享成果</button></div><p id="practice-task-message" class="muted small" aria-live="polite"></p></div>
+<p class="muted small">当前按表单拼接任务说明。正式产品由 AI 提炼设计机制，教师确认后再带到外部工具完成开发。</p></div>
+</section>
+<section data-view="upload" hidden><div class="edit"><div class="row spread"><h2>分享你的教学实践</h2><button id="practice-save-draft">保存草稿</button></div><p class="muted">先交成果，再确认教学信息；创作经验可以以后补充。</p><div class="steps" id="practice-upload-progress" aria-live="polite">第 1 步 / 共 3 步：提交成果</div>
+<div data-upload-step="1">
+<label class="field"><span>这是什么类型的项目？</span><select id="practice-upload-kind"><option>教学可视化</option><option>Prompt与AI工作流</option><option>教育小游戏</option><option>Maker／机器人／硬件</option><option>学校综合应用</option><option>其他</option></select></label>
+<label class="field"><span id="practice-core-label">项目链接或成果说明</span><textarea id="practice-upload-core" placeholder="粘贴可获取的项目链接，或说明准备分享的核心文件。"></textarea></label>
+<label class="field"><span>也可以选择项目文件</span><input id="practice-upload-file" type="file"><small class="muted">当前只记录文件名称，不上传、不执行文件。</small></label>
+<div class="source" id="practice-kind-tip">教学可视化：需要成果、真实预览，以及它帮助学生理解什么。</div>
+<label class="field"><span>项目预览</span><input id="practice-upload-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small class="muted">选择图片或动图；当前只在本次预览中显示。正式页面支持自动生成后由你确认。</small></label>
+<div id="practice-upload-preview" class="upload-preview" hidden></div><div class="row"><button id="practice-load-example">载入一份演示资料</button><button class="main" id="practice-upload-next1">下一步：教学信息</button></div>
+</div>
+<div data-upload-step="2" hidden>
+<p class="muted small">正式产品可由 AI 建议名称和简介；本示意可手动填写，也可载入演示资料。</p>
+<label class="field"><span>项目名称</span><input id="practice-upload-title" placeholder="让另一位教师一眼知道这是什么"></label>
+<label class="field"><span>它能帮助教师或学生完成什么？</span><textarea id="practice-upload-purpose"></textarea></label>
+<label class="field"><span>谁会操作？最终帮助谁？</span><textarea id="practice-upload-audience" placeholder="例如：教师投屏操作，面向学过整式的初中学生。"></textarea></label>
+<label class="field"><span>使用前需要具备什么基础？</span><textarea id="practice-upload-prior"></textarea></label>
+<label class="field"><span>希望达到什么结果？</span><textarea id="practice-upload-outcome"></textarea></label>
+<label class="field"><span>准备怎样使用？有什么设备或环境要求？</span><textarea id="practice-upload-setting"></textarea></label>
+<label class="field" id="practice-upload-tested-wrap" hidden><span>实际测试过的 AI 工具</span><input id="practice-upload-tested" placeholder="填写你实际使用过的工具，发布前检查输出"></label>
+<div id="practice-grade-destination"></div>
+<fieldset><legend>参考过哪些平台项目？（可多选）</legend><label class="checkline"><input type="checkbox" id="practice-ref-recursion" value="DEMO-CS-001">从最大公因数理解递归 · DEMO-CS-001</label><label class="checkline"><input type="checkbox" id="practice-ref-math" value="DEMO-MATH-001">最大公因数的几何演示 · DEMO-MATH-001</label></fieldset>
+<div class="row"><button data-upload-back="1">上一步</button><button class="main" id="practice-upload-next2">下一步：检查并发布</button></div>
+</div>
+<div data-upload-step="3" hidden><h3>这是其他教师将看到的介绍</h3><div id="practice-publish-preview" class="publish-preview"></div>
+<label class="field"><span>开放权限</span><select id="practice-upload-license"><option value="open">开放再创作</option><option value="teach">仅限教学使用</option><option value="show">仅供展示体验</option></select></label><p id="practice-license-explanation" class="muted"></p>
+<label class="checkline"><input id="practice-confirm-rights" type="checkbox">我有权分享所提交内容，并已说明第三方素材来源。</label>
+<label class="checkline"><input id="practice-confirm-privacy" type="checkbox">已处理学生敏感信息，并说明外部服务或数据收集情况。</label>
+<label class="checkline"><input id="practice-confirm-content" type="checkbox">我已检查预览、教学信息和实际使用状态。</label>
+<div class="row"><button data-upload-back="2">返回修改</button><button class="main" id="practice-publish-demo">完成发布演示</button></div><p class="muted small">仅演示发布完成后的衔接，不会公开发布任何内容。</p>
+</div>
+<p id="practice-upload-error" class="error" role="alert"></p><p id="practice-draft-message" class="muted small" aria-live="polite"></p>
+</div></section>
+<section data-view="math" hidden>
+<button data-page="discover">← 返回项目库</button><div class="tags">教学可视化 · 数学 · DEMO-MATH-001</div><h2>最大公因数的几何演示</h2><p>用正方形逐步分割矩形，观察为什么可以把原问题变成一个更小的同类问题。</p>
+<div class="detail-grid"><div id="practice-math-preview" class="preview"></div><div><h3>是否适合我的学生？</h3><dl class="facts"><dt>前置基础</dt><dd>整除、余数、矩形与正方形</dd><dt>建议学段</dt><dd>小学、初中（示例）</dd><dt>建议年级</dt><dd>不限定，依据前置知识判断</dd><dt>学习目标</dt><dd>理解取余过程与最大公因数的关系</dd><dt>学习边界</dt><dd>数学使用场景不要求学生学习 C++</dd></dl></div></div>
+<div class="statusline"><span>获取方式：示例说明</span><span>实践：尚无课堂记录</span><span>权限：开放再创作（示例）</span></div>
+<div class="row"><button data-page="detail" class="main">看看它怎样迁移到编程递归</button><button data-save="math" aria-pressed="false">收藏</button></div>
+<div class="section"><h3>值得继承的教学思路</h3><p>把抽象的除法和取余转成可以观察的面积分割。每一步只改变一个主要状态，让学生比较前后变化，再概括共同规则。</p></div>
+<div class="section"><h3>由这个项目启发的新实践</h3><div class="reference-row"><div><b>从最大公因数理解递归</b><p class="muted">保留逐步呈现机制，增加函数调用、出口和返回过程。</p></div><button data-page="detail">查看新实践</button></div><p class="small muted">此处演示引用关系，不代表已产生真实外部使用反馈。</p></div>
+</section>
+<section data-view="geo" hidden>
+<button data-page="discover">← 返回项目库</button><div class="tags">教学可视化 · 地理 · DEMO-GEO-001</div><h2>水循环过程演示</h2><p>先观察水体、空气和陆地之间的联系，再讨论环境变化对过程的影响。</p>
+<div class="detail-grid"><div id="practice-geo-preview" class="preview"></div><div><h3>使用前先看</h3><dl class="facts"><dt>前置基础</dt><dd>蒸发、凝结及降水的基本概念</dd><dt>建议学段</dt><dd>初中、高中（示例）</dd><dt>建议年级</dt><dd>不限定具体年级</dd><dt>使用方式</dt><dd>教师投屏，引导学生指出路径</dd><dt>学习边界</dt><dd>简化过程图，不作定量模拟</dd></dl></div></div>
+<div class="statusline"><span>获取：仅查看演示</span><span>实践：尚无课堂记录</span><span>权限：仅供展示体验（示例）</span></div>
+<div class="row"><button data-save="geo" aria-pressed="false">收藏</button><button data-page="guide">了解使用权限</button></div><p class="muted small">此示例不提供源文件下载和修改版发布入口。</p>
+<div class="section"><h3>怎样使用</h3><p>请学生从水体出发描述水的去向，再解释每一条路径的条件。示意图省略了部分水循环过程，使用时应补充说明。</p></div>
+</section>
+<section data-view="prompt" hidden>
+<button data-page="discover">← 返回项目库</button><div class="tags">Prompt与AI工作流 · 教师专业发展 · DEMO-PBL-001</div><h2>PBL 项目设计工具包</h2><p>按主题、方案、评价的顺序形成草稿，教师逐步检查后继续。</p>
+<div class="source">准备：学科主题、学生基础、可用课时和设备。以下 Prompt 为可操作的流程示例，未附真实模型测试结果。</div>
+<div class="statusline"><span>使用方式：复制到外部 AI</span><span>测试工具：待作者补充</span><span>开放再创作（示例）</span></div>
+<div class="row"><button data-save="prompt" aria-pressed="false">收藏</button></div>
+<div class="section"><h3>第 1 步：确定驱动问题</h3><p class="muted small">先替换方括号中的信息，再复制使用。</p><textarea id="practice-prompt-1" rows="5">我正在为[学科与主题]设计 PBL 活动。学生是[学段与已有基础]，可用[课时]，设备条件为[条件]。请先检查信息是否足够，再提出 3 个可探究的驱动问题，说明各自的学习目标与实施限制。等待我选定后再继续。</textarea><button data-copy-prompt="1">复制这一步</button></div>
+<div class="section"><h3>第 2 步：组织探究活动</h3><p class="muted small">建议在同一段 AI 对话中继续，保留已选主题与学生背景。</p><textarea id="practice-prompt-2" rows="5">基于我刚才选定的驱动问题，请拟定活动步骤、学生分工、需要的材料与阶段性成果。每个步骤说明学生要作出什么判断。检查是否超出课时或学生基础，先给我可修改的最小方案。</textarea><button data-copy-prompt="2">复制这一步</button></div>
+<div class="section"><h3>第 3 步：评价与调整</h3><textarea id="practice-prompt-3" rows="5">请针对刚才确定的学习目标与活动，设计简洁的评价量规，覆盖过程、理解与作品。说明哪些证据可以观察到学生的真实学习，并列出我需要人工核对的内容。不要虚构学生表现或课堂效果。</textarea><button data-copy-prompt="3">复制这一步</button></div>
+<p id="practice-prompt-message" class="small muted" aria-live="polite"></p><p class="muted">将学生信息匿名化；检查 AI 输出的内容正确性、课时可行性和评价标准。</p>
+</section>
+<section data-view="desk" hidden><h2>我的工作台</h2><p class="muted">接着上次的想法往下做。</p><div class="section"><h3>正在创作</h3><div id="practice-desk-task" class="empty">还没有保存创作任务。打开一个项目，点击“基于它继续创作”即可开始。</div></div><div class="section"><h3>我的项目与草稿</h3><div id="practice-desk-draft" class="empty">还没有草稿。分享项目时可以随时保存。</div></div><div class="section"><h3>我的收藏</h3><div id="practice-desk-saves" class="empty">收藏后会在这里显示，方便备课时找回。</div></div></section>
+<section data-view="guide" hidden><h2>第一次使用，从这里开始</h2><details open><summary>我只是想找到一个能用的项目</summary><p>搜索知识点或用途，先看真实预览，再检查前置知识、使用条件和开放权限。建议年级用于参考，实际课堂使用记录单独查看。</p></details><details><summary>我想把一个好思路用到自己的课堂</summary><p>在项目中选择“基于它继续创作”，说明学生基础、目标和限制。确认任务说明后交给外部 AI；完成后回到工作台分享成果，检查并保留参考来源。</p></details><details><summary>三个开放等级有什么区别？</summary><p><b>开放再创作：</b>允许非商业教学使用、修改与重新分享，保留原作者和参考来源。</p><p><b>仅限教学使用：</b>允许非商业教学使用和下载，不默认允许公开修改版或重新分发源码。</p><p><b>仅供展示体验：</b>查看预览或作者开放的演示，不提供源码下载和二次发布。</p></details><details><summary>没有真实课堂使用记录，可以分享吗？</summary><p>可以。成果和真实预览可查看，核心信息经作者确认，并如实标记“尚无课堂使用记录”。能够运行与教学有效分别记录。</p></details><details><summary>没有动图，或者 AI 整理失败怎么办？</summary><p>先提供一张真实图片即可。自动生成的预览不满意时可以替换；AI 整理失败时可手动填写，草稿仍然保留。</p></details></section>
+<div id="practice-grade-editor" hidden>
+<fieldset><legend>建议适用学段（可多选）</legend><div class="grade-options" id="practice-upload-stages"></div></fieldset>
+<fieldset><legend>建议适用年级（选填，可跨地区多选）</legend>
+<label class="checkline"><input type="checkbox" id="practice-no-grade" checked>不限定具体年级，根据前置知识判断</label>
+<div id="practice-upload-grades"></div>
+<p class="grade-summary" id="practice-grade-summary" aria-live="polite">不限定具体年级，根据前置知识判断。</p>
+</fieldset>
+<label class="field"><span>班级组织方式</span><select><option>不限定</option><option>同年级</option><option>同学段跨年级</option><option>跨学段混龄</option><option>个别化学习</option></select></label>
+<label class="field"><span>机构或其他课程体系（选填）</span><input placeholder="例如：机构 C++ 高阶课程；补充学生需要具备的基础"></label>
+<label class="field"><span>实际课堂使用记录</span><select id="practice-used"><option value="no">尚无课堂使用记录</option><option value="yes">已有课堂使用记录</option></select></label>
+<label class="field" id="practice-used-context" hidden><span>实际在哪些学生中使用过？</span><textarea placeholder="填写实际地区、年级或课程阶段，以及怎样使用；与建议适用范围分开记录。"></textarea></label>
+<p class="small muted">年级和学段由作者确认；AI 不自动把“建议适用”改成“已在课堂使用”。</p>
+</div>
+</main></div>
+<script>
+(()=>{const root=document.getElementById('practice-ui');function page(name){root.querySelectorAll('[data-view]').forEach(s=>s.hidden=s.dataset.view!==name)}root.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));function search(){const q=root.querySelector('.search input').value.trim().toLowerCase();const kind=root.querySelector('#practice-category').value;let count=0;root.querySelectorAll('article[data-key]').forEach(c=>{const ok=(!q||c.dataset.key.toLowerCase().includes(q))&&(!kind||c.dataset.kind===kind);c.hidden=!ok;if(ok)count++});root.querySelector('#practice-empty').hidden=count>0}root.querySelector('#practice-search').addEventListener('submit',e=>{e.preventDefault();search()});root.querySelector('#practice-category').addEventListener('change',search);root.querySelector('#practice-get').addEventListener('click',()=>{root.querySelector('#practice-get-note').textContent='正式页面依据项目情况显示“下载项目”“复制 Prompt”或“前往外部体验”。'});root.querySelector('#practice-generate').addEventListener('click',()=>{const box=root.querySelector('#practice-result');box.hidden=false;box.textContent='任务说明预览（示例）\n\n教学对象与基础：\n'+root.querySelector('#practice-audience').value+'\n\n需要解决的问题：\n'+root.querySelector('#practice-goal').value+'\n\n使用条件：\n'+root.querySelector('#practice-setting').value+'\n\n参考来源：从最大公因数理解递归。\n请判断逐步呈现、当前步骤高亮和暂停预测是否适合新的学习目标，再确定要保留的设计。\n第一版先完成一个核心演示，并说明教师如何检查内容和试用。\n引用代码或素材前，核对原项目开放权限；发布时保留参考来源。';});})();
+</script>
+<script>
+(()=>{
+const r=document.getElementById('practice-ui');const q=s=>r.querySelector(s);
+const stages=['学前教育','小学','初中','高中','高等教育','教师专业发展'];
+const cn=['一','二','三','四','五','六'];
+const regions={
+'中国内地':{'学前教育':['小班','中班','大班'],'小学':cn.map(n=>'小学'+n+'年级'),'初中':cn.slice(0,3).map(n=>'初中'+n+'年级'),'高中':cn.slice(0,3).map(n=>'高中'+n+'年级')},
+'中国香港':{'学前教育':['K1','K2','K3'],'小学':cn.map(n=>'小'+n),'初中':cn.slice(0,3).map(n=>'中'+n),'高中':cn.slice(3).map(n=>'中'+n)}
+};
+function fillGrades(){const select=q('#practice-grade');const previous=select.value;select.replaceChildren(new Option('不限具体年级',''));const groups=regions[q('#practice-region').value];select.disabled=!groups;const stage=q('#practice-stage').value;if(groups)Object.entries(groups).forEach(([name,list])=>{if(stage&&name!==stage)return;const group=document.createElement('optgroup');group.label=name;list.forEach(grade=>group.append(new Option(grade,grade)));select.append(group)});if([...select.options].some(o=>o.value===previous))select.value=previous;}
+function filter(){const term=q('.search input').value.trim().toLowerCase();const kind=q('#practice-category').value;const stage=q('#practice-stage').value;const grade=q('#practice-grade').value;const include=q('#practice-ungraded').checked;const group=regions[q('#practice-region').value];const implied=group&&grade?Object.keys(group).find(s=>group[s].includes(grade)):'';let count=0;r.querySelectorAll('article[data-key]').forEach(c=>{const ss=c.dataset.stages.split(',');const ok=(!term||c.dataset.key.toLowerCase().includes(term))&&(!kind||c.dataset.kind===kind)&&(!stage||ss.includes(stage))&&(!implied||ss.includes(implied))&&(!grade||include);c.hidden=!ok;if(ok)count++});q('#practice-empty').hidden=count>0;q('#practice-count').textContent=count+' 个示例项目'+(grade?' · 当前结果未限定具体年级，请核对前置知识':' · 适用范围为演示数据');}
+q('#practice-region').addEventListener('change',()=>{fillGrades();filter()});q('#practice-stage').addEventListener('change',()=>{fillGrades();filter()});q('#practice-grade').addEventListener('change',filter);q('#practice-ungraded').addEventListener('change',filter);q('#practice-category').addEventListener('change',filter);q('#practice-search').addEventListener('submit',filter);
+const editor=q('#practice-grade-editor');q('[data-view="upload"] .edit').append(editor);editor.hidden=false;
+stages.forEach(s=>{const label=document.createElement('label');label.className='checkline';const input=document.createElement('input');input.type='checkbox';input.value=s;input.checked=s==='小学'||s==='初中';label.append(input,document.createTextNode(s));q('#practice-upload-stages').append(label)});
+const boxes=[];Object.entries(regions).forEach(([region,groups])=>{const details=document.createElement('details');details.open=true;const summary=document.createElement('summary');summary.textContent=region;details.append(summary);Object.entries(groups).forEach(([stage,grades])=>{const group=document.createElement('fieldset');const legend=document.createElement('legend');legend.textContent=stage;group.append(legend);const grid=document.createElement('div');grid.className='grade-options';grades.forEach(grade=>{const label=document.createElement('label');label.className='checkline';const input=document.createElement('input');input.type='checkbox';input.dataset.region=region;input.dataset.stage=stage;input.value=grade;boxes.push(input);label.append(input,document.createTextNode(grade));grid.append(label);input.addEventListener('change',()=>{if(input.checked){q('#practice-no-grade').checked=false;[...q('#practice-upload-stages').querySelectorAll('input')].find(b=>b.value===stage).checked=true;}updateSummary()})});group.append(grid);details.append(group)});q('#practice-upload-grades').append(details)});
+function updateSummary(){const picked=boxes.filter(b=>b.checked);q('#practice-no-grade').checked=picked.length===0;q('#practice-grade-summary').textContent=picked.length?Object.keys(regions).map(region=>{const rows=picked.filter(b=>b.dataset.region===region);return rows.length?region+'：'+rows.map(b=>b.value).join('、'):''}).filter(Boolean).join('；'):'不限定具体年级，根据前置知识判断。';}
+q('#practice-no-grade').addEventListener('change',()=>{if(q('#practice-no-grade').checked)boxes.forEach(b=>b.checked=false);updateSummary()});q('#practice-upload-stages').addEventListener('change',e=>{if(!e.target.checked)boxes.filter(b=>b.dataset.stage===e.target.value).forEach(b=>b.checked=false);updateSummary()});q('#practice-used').addEventListener('change',()=>q('#practice-used-context').hidden=q('#practice-used').value==='no');
+const preview=q('.preview');const art=q('#practice-tiling').cloneNode(true);art.removeAttribute('id');preview.prepend(art);q('.preview .small').textContent='几何分割与递归过程示意 · 非原项目截图';
+const facts=q('.facts');[['建议学段','小学、初中（示例）'],['建议年级','不限定具体年级，根据前置知识判断'],['实际使用','未提供记录，待作者补充']].reverse().forEach(([label,value])=>{const dt=document.createElement('dt');dt.textContent=label;const dd=document.createElement('dd');dd.textContent=value;facts.prepend(dt,dd)});
+})();
+</script>
+<script>
+(()=>{
+const root=document.getElementById('practice-ui'),q=s=>root.querySelector(s),all=s=>[...root.querySelectorAll(s)];
+const state={saved:new Set(),task:'',draft:false,published:false,step:1,previewReady:false,sample:false};
+function go(name){all('[data-view]').forEach(s=>s.hidden=s.dataset.view!==name);all('.top [data-page]').forEach(b=>b.setAttribute('aria-current',b.dataset.page===name?'page':'false'));if(name==='desk')desk();}
+root.addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b&&root.contains(b))go(b.dataset.page)});
+function node(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;}
+function button(text,action){const b=node('button',text);b.type='button';b.addEventListener('click',action);return b;}
+function cloneArt(selector,container){const art=q(selector).cloneNode(true);art.removeAttribute('id');container.append(art);}
+cloneArt('#practice-tiling',q('#practice-math-preview'));cloneArt('article[data-key*="地理"] svg',q('#practice-geo-preview'));
+q('#practice-math-preview').append(node('span','数学情境示意 · 非真实项目截图','small'));
+q('#practice-geo-preview').append(node('span','简化水循环示意 · 非真实项目截图','small'));
+const mathCard=q('article[data-key*="递归"]').cloneNode(true);mathCard.dataset.key='数学 最大公因数 辗转相除法 整除 余数';mathCard.querySelector('svg').removeAttribute('id');mathCard.querySelector('h3').textContent='最大公因数的几何演示';mathCard.querySelector('.body p:not(.tags)').textContent='用正方形分割矩形，观察取余与问题缩小。';mathCard.querySelectorAll('.tags')[1].textContent='小学 / 初中 · 前置基础：整除、余数';mathCard.querySelector('button').dataset.page='math';q('#practice-cards').prepend(mathCard);q('#practice-count').textContent='4 个示例项目 · 适用范围为演示数据';
+[['article[data-key*="地理"]','geo'],['article[data-key*="PBL"]','prompt']].forEach(([selector,page])=>{const b=node('button','查看项目','main');b.dataset.page=page;q(selector+' .body').append(b)});
+q('article[data-key*="PBL"]').dataset.key+=' 综合实践活动';
+const subjectLabel=node('label','学科');const subject=node('select');subject.id='practice-subject';['全部学科','语文','数学','英语','科学','物理','化学','生物','历史','地理','信息技术','综合实践活动','艺术','体育与健康','其他'].forEach(s=>subject.append(new Option(s,s==='全部学科'?'':s)));subjectLabel.append(subject);q('.filters').prepend(subjectLabel);
+function filterSubject(){const term=q('.search input').value.trim().toLowerCase(),kind=q('#practice-category').value,stage=q('#practice-stage').value,grade=q('#practice-grade').value;const inferred=grade?(grade.startsWith('小学')||/^小[一二三四五六]$/.test(grade)?'小学':grade.startsWith('初中')||/^中[一二三]$/.test(grade)?'初中':grade.startsWith('高中')||/^中[四五六]$/.test(grade)?'高中':'学前教育'):'';let count=0;all('article[data-key]').forEach(c=>{const ss=c.dataset.stages.split(',');const subj=subject.value;const subjectOk=!subj||c.dataset.key.includes(subj);const ok=(!term||c.dataset.key.toLowerCase().includes(term))&&(!kind||kind===c.dataset.kind)&&(!stage||ss.includes(stage))&&(!inferred||ss.includes(inferred))&&(!grade||q('#practice-ungraded').checked)&&subjectOk;c.hidden=!ok;if(ok)count++});q('#practice-count').textContent=count+' 个示例项目'+(grade?' · 年级未限定的结果需结合前置知识判断':' · 适用范围为演示数据');q('#practice-empty').hidden=count>0;}
+all('.filters select').forEach(s=>s.addEventListener('change',filterSubject));q('#practice-ungraded').addEventListener('change',filterSubject);q('#practice-search').addEventListener('submit',filterSubject);
+q('[data-view="detail"] .source').textContent='示例编号 DEMO-CS-001 · 开放再创作（示例设置） · 尚无课堂使用记录';q('#practice-get').addEventListener('click',()=>{q('#practice-get-note').textContent='正式项目在这里显示文件名称、大小、运行步骤与下载入口。本示意没有接入原项目文件，因此暂不提供下载。';});
+const projectNames={recursion:'从最大公因数理解递归',math:'最大公因数的几何演示',geo:'水循环过程演示',prompt:'PBL 项目设计工具包'},projectPages={recursion:'detail',math:'math',geo:'geo',prompt:'prompt'};
+all('[data-save]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.save;if(state.saved.has(id))state.saved.delete(id);else state.saved.add(id);b.textContent=state.saved.has(id)?'已收藏':'收藏';b.setAttribute('aria-pressed',String(state.saved.has(id)));}));
+async function copyText(text,textarea,message){try{if(!navigator.clipboard)throw Error('unavailable');await navigator.clipboard.writeText(text);message.textContent='已复制，可以粘贴到外部 AI 工具。';}catch{textarea.focus();textarea.select();message.textContent='当前环境未开放自动复制，已选中文字，请按 Ctrl+C 或 ⌘C 复制。';}}
+all('[data-copy-prompt]').forEach(b=>b.addEventListener('click',()=>{const t=q('#practice-prompt-'+b.dataset.copyPrompt);copyText(t.value,t,q('#practice-prompt-message'))}));
+q('#practice-generate').addEventListener('click',()=>{q('#practice-result').hidden=true;const fields=['#practice-audience','#practice-goal','#practice-setting'];if(fields.some(s=>!q(s).value.trim())){q('#practice-task-tools').hidden=false;q('#practice-task-message').textContent='请先补充学生背景、改造目标和使用条件。';return;}const mechanisms=all('.mechanism:checked').map(b=>b.value);q('#practice-task-text').value=['外部 AI 创作任务说明（请教师检查后使用）','参考项目：从最大公因数理解递归；示例编号 DEMO-CS-001。','一、学生与前置基础\n'+q('#practice-audience').value,'二、教学问题与预期结果\n'+q('#practice-goal').value,'三、希望保留的设计\n'+(mechanisms.join('、')||'请先提出适合当前目标的设计建议。')+'。请说明这些设计如何帮助当前学生；不适合的新情境应重新设计。','四、使用环境和技术限制\n'+q('#practice-setting').value,'五、第一版范围\n'+q('#practice-boundary').value,'六、交付与检查\n先完成一个可演示的完整学习过程，附操作方法与教师检查清单。用一个正确例子和一个容易出错的例子检查内容。不要虚构课堂成效。','七、来源与权限\n保留原作者及参考来源。此任务仅说明设计思路；没有自动附带原项目源码。需要代码或素材时，先核对实际开放权限，再由教师提供文件。'].join('\n\n');q('#practice-task-tools').hidden=false;q('#practice-task-message').textContent='任务说明已整理，可以修改后复制或保存。';});
+q('#practice-copy-task').addEventListener('click',()=>{const t=q('#practice-task-text');copyText(t.value,t,q('#practice-task-message'))});
+q('#practice-save-task').addEventListener('click',()=>{state.task=q('#practice-task-text').value;q('#practice-task-message').textContent='已保存到本次预览的工作台，可继续编辑或回来分享成果。';});
+q('#practice-return-project').addEventListener('click',()=>{state.task=q('#practice-task-text').value;q('#practice-ref-recursion').checked=true;go('upload');});
+function desk(){const saved=q('#practice-desk-saves');saved.replaceChildren();if(!state.saved.size)saved.textContent='还没有收藏。打开项目后点击“收藏”，下次备课时更容易找回。';state.saved.forEach(id=>{const row=node('div',undefined,'reference-row');row.append(node('b',projectNames[id]),button('查看项目',()=>go(projectPages[id])));saved.append(row)});const task=q('#practice-desk-task');task.replaceChildren();if(!state.task)task.textContent='还没有保存创作任务。打开一个项目，点击“基于它继续创作”即可开始。';else{task.append(node('b','基于递归项目的教学改造任务'),node('p','任务说明已保存 · 参考 DEMO-CS-001','muted'));const row=node('div',undefined,'row');row.append(button('继续编辑任务',()=>{q('#practice-task-text').value=state.task;q('#practice-task-tools').hidden=false;go('adapt')}),button('分享完成的成果',()=>{q('#practice-ref-recursion').checked=true;go('upload')}));task.append(row)}const draft=q('#practice-desk-draft');draft.replaceChildren();if(!state.draft&&!state.published)draft.textContent='还没有草稿。分享项目时可以随时保存。';else{draft.append(node('b',q('#practice-upload-title').value||'未命名实践'),node('p',state.published?'已完成发布演示 · 未公开发布':'草稿 · '+stepNames[state.step],'muted'));draft.append(button(state.published?'查看介绍':'继续填写',()=>{if(state.published)showStep(3);go('upload')}));}}
+const editor=q('#practice-grade-editor');q('#practice-grade-destination').append(editor);all('#practice-upload-grades details').forEach(d=>d.open=false);all('#practice-upload-stages input').forEach(b=>b.checked=false);
+const stepNames={1:'提交成果',2:'补充教学信息',3:'检查并发布'};
+function showStep(n){state.step=n;all('[data-upload-step]').forEach(s=>s.hidden=Number(s.dataset.uploadStep)!==n);q('#practice-upload-progress').textContent='第 '+n+' 步 / 共 3 步：'+stepNames[n];q('#practice-upload-error').textContent='';}
+all('[data-upload-back]').forEach(b=>b.addEventListener('click',()=>showStep(Number(b.dataset.uploadBack))));
+function kind(){const k=q('#practice-upload-kind').value;const prompt=k==='Prompt与AI工作流';q('#practice-core-label').textContent=prompt?'Prompt 正文（多条请标明顺序）':'项目链接或核心成果说明';q('#practice-upload-tested-wrap').hidden=!prompt;const tips={'教学可视化':'教学可视化：提交成果与真实预览，说明帮助理解什么。','Prompt与AI工作流':'Prompt：提供完整正文、真实输出预览，以及实际测试过的 AI 工具。','教育小游戏':'教育小游戏：说明学习目标、玩法、反馈规则和运行要求。','Maker／机器人／硬件':'硬件项目：说明材料、连接方式、程序与制作步骤，配真实成品或过程照片。','学校综合应用':'学校应用：说明角色与场景、体验入口、配置要求及数据收集情况。','其他':'说明可独立使用的成果是什么，以及另一位教师怎样获取和使用。'};q('#practice-kind-tip').textContent=tips[k];}
+function categoryFields(){kind();const prompt=q('#practice-upload-kind').value==='Prompt与AI工作流';['audience','prior','outcome','setting'].forEach(id=>q('#practice-upload-'+id).closest('.field').hidden=prompt);editor.hidden=prompt;}
+q('#practice-upload-kind').addEventListener('change',categoryFields);
+q('#practice-upload-image').addEventListener('change',()=>{state.previewReady=false;state.sample=false;q('#practice-upload-preview').replaceChildren();q('#practice-upload-preview').hidden=true;const file=q('#practice-upload-image').files[0];if(!file)return;if(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>10*1024*1024){q('#practice-upload-error').textContent='本预览支持 10MB 以内的 PNG、JPEG、WebP 或 GIF。请换一张图片。';return;}const reader=new FileReader();reader.onload=()=>{const img=document.createElement('img');img.alt='你选择的项目预览';img.onload=()=>{state.previewReady=true;q('#practice-upload-error').textContent='';};img.onerror=()=>{state.previewReady=false;q('#practice-upload-error').textContent='图片无法显示，请换一张图片。';};img.src=reader.result;q('#practice-upload-preview').append(img);q('#practice-upload-preview').hidden=false;};reader.onerror=()=>q('#practice-upload-error').textContent='图片读取失败，请重新选择。';reader.readAsDataURL(file);});
+q('#practice-load-example').addEventListener('click',()=>{q('#practice-upload-kind').value='教学可视化';kind();const values={'core':'演示资料：合并同类项教学网页（未附真实文件）','title':'合并同类项的逐步演示','purpose':'让学生观察哪些项可以合并，并理解系数变化。','audience':'教师投屏操作，面向已经学习整式的初中学生。','prior':'认识项、系数、字母及指数。','outcome':'能说明哪些项属于同类项，并解释合并时什么变化、什么不变。','setting':'浏览器打开，教师引导观察；第一版只演示一个例题。'};Object.entries(values).forEach(([id,value])=>q('#practice-upload-'+id).value=value);q('#practice-ref-recursion').checked=true;q('#practice-upload-preview').replaceChildren();const art=node('div',undefined,'paper-preview');art.append(node('b','3x + 2x + 4'),node('div','同类项：3x 与 2x'),node('div','合并系数：3 + 2 = 5'),node('div','结果：5x + 4'),node('p','演示预览 · 非真实上传截图','small muted'));q('#practice-upload-preview').append(art);q('#practice-upload-preview').hidden=false;state.previewReady=true;state.sample=true;q('#practice-upload-error').textContent='';q('#practice-draft-message').textContent='已载入演示资料；你仍需检查教学信息和开放权限。';});
+q('#practice-upload-next1').addEventListener('click',()=>{const core=q('#practice-upload-core').value.trim();const prompt=q('#practice-upload-kind').value==='Prompt与AI工作流';if((prompt&&!core)||(!prompt&&!core&&!q('#practice-upload-file').files.length)){q('#practice-upload-error').textContent=prompt?'请提供至少一条完整 Prompt 正文。':'请提供成果说明、链接或项目文件。';return;}if(!state.previewReady){q('#practice-upload-error').textContent='请先选择一张能显示的真实预览，或载入演示资料体验流程。';return;}showStep(2)});
+function describe(){const container=q('#practice-publish-preview');container.replaceChildren();container.append(node('h3',q('#practice-upload-title').value),node('p',q('#practice-upload-purpose').value));const facts=node('dl',undefined,'facts');const pairs=[['主类别',q('#practice-upload-kind').value],['使用对象',q('#practice-upload-audience').value],['前置知识',q('#practice-upload-prior').value],['学习结果',q('#practice-upload-outcome').value],['使用条件',q('#practice-upload-setting').value],['建议学段',all('#practice-upload-stages input:checked').map(b=>b.value).join('、')],['建议年级',q('#practice-grade-summary').textContent],['实际使用',q('#practice-used').value==='yes'?q('#practice-used-context textarea').value:'尚无课堂使用记录'],['参考来源',[q('#practice-ref-recursion'),q('#practice-ref-math')].filter(b=>b.checked).map(b=>b.value).join('、')||'未填写']];pairs.forEach(([a,b])=>facts.append(node('dt',a),node('dd',b)));container.append(facts);if(state.sample)container.append(node('p','使用演示资料生成，未提交真实项目。','small muted'));}
+q('#practice-upload-next2').addEventListener('click',()=>{const prompt=q('#practice-upload-kind').value==='Prompt与AI工作流';const needed=prompt?['title','purpose','tested']:['title','purpose','audience','prior','outcome','setting'];if(needed.some(id=>!q('#practice-upload-'+id).value.trim())){q('#practice-upload-error').textContent=prompt?'请补充项目名称、用途和实际测试过的 AI 工具。':'请补充名称、用途、对象、前置基础、预期结果和使用条件；确实无需基础时可写“无需特定基础”。';return;}if(!prompt&&!all('#practice-upload-stages input:checked').length){q('#practice-upload-error').textContent='请至少选择一个建议学段。';return;}if(!prompt&&q('#practice-used').value==='yes'&&!q('#practice-used-context textarea').value.trim()){q('#practice-upload-error').textContent='请说明实际在哪些学生中使用过。';return;}describe();if(prompt){const dl=q('#practice-publish-preview dl');dl.replaceChildren();[['主类别','Prompt与AI工作流'],['测试工具',q('#practice-upload-tested').value],['使用方式','复制到外部 AI 工具，按照正文标明的顺序使用'],['参考来源',[q('#practice-ref-recursion'),q('#practice-ref-math')].filter(b=>b.checked).map(b=>b.value).join('、')||'未填写']].forEach(([a,b])=>dl.append(node('dt',a),node('dd',b)));}showStep(3);});
+function license(){const text={open:'允许非商业教学使用、修改和重新分享，保留原作者信息与参考来源。',teach:'允许非商业教学使用与下载，不默认允许公开修改版或重新分发源文件。',show:'允许查看预览或作者开放的演示，不提供源文件下载、修改和二次发布。'};q('#practice-license-explanation').textContent=text[q('#practice-upload-license').value];}
+q('#practice-upload-license').addEventListener('change',license);license();
+q('#practice-save-draft').addEventListener('click',()=>{state.draft=true;state.published=false;q('#practice-draft-message').textContent='草稿已保留在本次预览的工作台，刷新后会重置。';});
+q('#practice-publish-demo').addEventListener('click',()=>{if(['rights','privacy','content'].some(id=>!q('#practice-confirm-'+id).checked)){q('#practice-upload-error').textContent='请先完成权利、隐私和内容确认。';return;}state.published=true;state.draft=true;all('.session-reference').forEach(n=>n.remove());[['#practice-ref-recursion','detail'],['#practice-ref-math','math']].forEach(([selector,page])=>{if(!q(selector).checked)return;const group=node('div',undefined,'section session-reference');group.append(node('h3','本次预览中新分享的参考实践'),node('p',q('#practice-upload-title').value));group.append(button('查看项目介绍',()=>{showStep(3);go('upload')}));q('[data-view="'+page+'"]').append(group)});go('desk')});
+q('#practice-load-example').addEventListener('click',()=>{categoryFields();all('#practice-upload-stages input').forEach(b=>b.checked=b.value==='初中');});
+categoryFields();showStep(1);
+})();
+</script>
+
+</body>
+</html>

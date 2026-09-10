@@ -1,0 +1,1226 @@
+{
+  "earth": {
+    "audience": {
+      "zh-CN": "初中地理入门；高中可延伸太阳高度与昼长推理",
+      "zh-Hant": "初中地理入門；高中可延伸太陽高度與晝長推理",
+      "en": "Junior-secondary geography; extend solar altitude and daylight reasoning in senior secondary"
+    },
+    "prior": {
+      "zh-CN": "能区分自转与公转，认识纬度、赤道和南北半球",
+      "zh-Hant": "能區分自轉與公轉，認識緯度、赤道和南北半球",
+      "en": "Distinguish rotation from revolution; identify latitude, the equator and hemispheres"
+    },
+    "method": {
+      "zh-CN": "预测—观察—解释；一次改变一个变量",
+      "zh-Hant": "預測—觀察—解釋；一次改變一個變量",
+      "en": "Predict–observe–explain; change one variable at a time"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时，35–45 分钟",
+      "zh-Hant": "建議 1 課時，35–45 分鐘",
+      "en": "Suggested: one 35–45-minute lesson"
+    },
+    "objective": {
+      "zh-CN": "用同一地点的两组日期数据，解释地轴倾斜如何影响昼长和太阳高度。",
+      "zh-Hant": "用同一地點的兩組日期數據，解釋地軸傾斜如何影響晝長和太陽高度。",
+      "en": "Use two dates at the same location to explain how axial tilt affects daylight and solar altitude."
+    },
+    "activities": [
+      {
+        "zh-CN": "固定纬度 40°N，先预测夏至与冬至哪天昼更长，并写下理由。",
+        "zh-Hant": "固定緯度 40°N，先預測夏至與冬至哪天晝更長，並寫下理由。",
+        "en": "At 40°N, predict whether the June or December solstice has longer daylight and explain why."
+      },
+      {
+        "zh-CN": "切换两个至日，记录昼长、直射纬度和正午太阳高度；只比较日期变化。",
+        "zh-Hant": "切換兩個至日，記錄晝長、直射緯度和正午太陽高度；只比較日期變化。",
+        "en": "Compare the two solstices and record daylight, subsolar latitude and noon solar altitude."
+      },
+      {
+        "zh-CN": "保持日期，改到 40°S；再把倾角调至 0°，检验原解释是否仍成立。",
+        "zh-Hant": "保持日期，改到 40°S；再把傾角調至 0°，檢驗原解釋是否仍成立。",
+        "en": "Keep the date, move to 40°S, then test zero axial tilt against the original explanation."
+      },
+      {
+        "zh-CN": "用两条观察证据修订解释，并画出太阳光与地轴的关系。",
+        "zh-Hant": "用兩條觀察證據修訂解釋，並畫出太陽光與地軸的關係。",
+        "en": "Revise the explanation using two observations and sketch the Sun–axis relationship."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一张条件对照表＋一段包含“光照角度/时长”的证据解释。",
+      "zh-Hant": "一張條件對照表＋一段包含“光照角度/時長”的證據解釋。",
+      "en": "A controlled-comparison table and an explanation using illumination angle or duration."
+    },
+    "limitation": {
+      "zh-CN": "不是天气预报或精密日出计算器；不要把四季归因于距太阳远近。自由调倾角是反事实模型实验。",
+      "zh-Hant": "不是天氣預報或精密日出計算器；不要把四季歸因於距太陽遠近。自由調傾角是反事實模型實驗。",
+      "en": "Not a weather forecast or precision sunrise calculator. Seasons should not be attributed to Earth–Sun distance; changing tilt is a counterfactual model."
+    },
+    "sources": [
+      {
+        "title": "NASA · What Causes the Seasons?",
+        "url": "https://spaceplace.nasa.gov/seasons/en/",
+        "note": {
+          "zh-CN": "用于核实地轴倾斜与四季关系，辨别“距离太阳近所以是夏天”的误区。",
+          "zh-Hant": "用於覈實地軸傾斜與四季關係，辨別“距離太陽近所以是夏天”的誤區。",
+          "en": "Checks axial tilt as the cause of seasons and addresses the Sun–Earth distance misconception."
+        }
+      },
+      {
+        "title": "EDB · Science (S1–3) Curriculum Framework (2025)",
+        "url": "https://www.edb.gov.hk/attachment/en/curriculum-development/kla/science-edu/JS_Science_Curriculum_Framework_2025_english.pdf",
+        "note": {
+          "zh-CN": "参考科学探究、模型与证据的组织方式。2025/26–2026/27 可试行，2027/28 起从中一逐级实施；不称目前全校统一采用。",
+          "zh-Hant": "參考科學探究、模型與證據的組織方式。2025/26–2026/27 可試行，2027/28 起從中一逐級實施；不稱目前全校統一採用。",
+          "en": "Informs inquiry, models and evidence. Schools may pilot in 2025/26–2026/27; phased S1 implementation starts in 2027/28."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "地球运动与模型探究；初中定性，高中增加定量推理",
+      "zh-Hant": "地球運動與模型探究；初中定性，高中增加定量推理",
+      "en": "Earth motion and model-based inquiry: qualitative first, quantitative extension later"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "chemistry": {
+    "audience": {
+      "zh-CN": "已学共价键与有机物结构的高中学生",
+      "zh-Hant": "已學共價鍵與有機物結構的高中學生",
+      "en": "Senior-secondary students who know covalent bonds and organic structures"
+    },
+    "prior": {
+      "zh-CN": "识别结构式、甲烷和卤素；能配平方程式与追踪原子",
+      "zh-Hant": "識別結構式、甲烷和鹵素；能配平方程式與追蹤原子",
+      "en": "Read structural formulas, identify methane/halogens and track atoms in balanced equations"
+    },
+    "method": {
+      "zh-CN": "分步模型解释＋正反例辨析",
+      "zh-Hant": "分步模型解釋＋正反例辨析",
+      "en": "Stepwise model explanation and contrasting examples"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 40–45 分钟；ATP 另作 10 分钟延伸",
+      "zh-Hant": "建議 1 課時 40–45 分鐘；ATP 另作 10 分鐘延伸",
+      "en": "Suggested: 40–45 minutes; add a separate 10-minute ATP extension"
+    },
+    "objective": {
+      "zh-CN": "追踪被取代的原子，依据结构变化区分取代与加成，并说明动画只展示净变化。",
+      "zh-Hant": "追蹤被取代的原子，依據結構變化區分取代與加成，並說明動畫只展示淨變化。",
+      "en": "Track the replaced atom, distinguish substitution from addition, and state the animation’s net-change boundary."
+    },
+    "activities": [
+      {
+        "zh-CN": "在纸上圈出 CH₄ 与 Cl₂ 的原子，预测 CH₃Cl 和 HCl 的组成。",
+        "zh-Hant": "在紙上圈出 CH₄ 與 Cl₂ 的原子，預測 CH₃Cl 和 HCl 的組成。",
+        "en": "Circle atoms in CH₄ and Cl₂ and predict the composition of CH₃Cl and HCl."
+      },
+      {
+        "zh-CN": "暂停关键帧，逐个追踪原子去向，对照反应前后原子计数。",
+        "zh-Hant": "暫停關鍵幀，逐個追蹤原子去向，對照反應前後原子計數。",
+        "en": "Pause at key frames and track each atom against before/after counts."
+      },
+      {
+        "zh-CN": "用烷烃卤代与烯烃加成作对照，先说明“一换一”的结构证据再答题。",
+        "zh-Hant": "用烷烴鹵代與烯烴加成作對照，先說明“一換一”的結構證據再答題。",
+        "en": "Contrast alkane halogenation with alkene addition and give structural evidence before answering."
+      },
+      {
+        "zh-CN": "教师补充引发、传播、终止的链式过程；延伸时辨析断键与净能量变化。",
+        "zh-Hant": "教師補充引發、傳播、終止的鏈式過程；延伸時辨析斷鍵與淨能量變化。",
+        "en": "Add initiation, propagation and termination; in the extension, distinguish bond breaking from net energy change."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一份标注原子对应的方程式＋一道新反应的分类及理由。",
+      "zh-Hant": "一份標注原子對應的方程式＋一道新反應的分類及理由。",
+      "en": "An atom-mapped equation and a justified classification of a new reaction."
+    },
+    "limitation": {
+      "zh-CN": "原页一道水解解释把“溴乙烷”写成“乙醇”，使用前须纠正。球棍动画不等于真实碰撞路径；断键本身需要能量。",
+      "zh-Hant": "原頁一道水解解釋把“溴乙烷”寫成“乙醇”，使用前須糾正。球棍動畫不等於真實碰撞路徑；斷鍵本身需要能量。",
+      "en": "One hydrolysis explanation misnames bromoethane as ethanol and needs correction. Ball-and-stick motion is not a collision trajectory; bond breaking requires energy."
+    },
+    "sources": [
+      {
+        "title": "RSC Education · Organic chemistry starters 16–18",
+        "url": "https://edu.rsc.org/resources/organic-chemistry-starters-16-18/4010274.article",
+        "note": {
+          "zh-CN": "用于核实甲烷氯代的自由基链式取代与适合的先备知识，避免把净变化动画当成完整机理。",
+          "zh-Hant": "用於覈實甲烷氯代的自由基鏈式取代與適合的先備知識，避免把淨變化動畫當成完整機理。",
+          "en": "Checks free-radical substitution and suitable prerequisites; a net-change animation is not a full mechanism."
+        }
+      },
+      {
+        "title": "OpenStax · Bond Dissociation Energies",
+        "url": "https://openstax.org/books/organic-chemistry/pages/6-8-describing-a-reaction-bond-dissociation-energies",
+        "note": {
+          "zh-CN": "核实断键需要能量，用于 ATP 延伸模块中“断键直接放能”误区的辨析。",
+          "zh-Hant": "覈實斷鍵需要能量，用於 ATP 延伸模塊中“斷鍵直接放能”誤區的辨析。",
+          "en": "Checks that bond breaking requires energy, supporting discussion of the ATP extension’s bond-energy misconception."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "高中有机反应入门；ATP 跨生物/化学延伸须单独设目标",
+      "zh-Hant": "高中有機反應入門；ATP 跨生物/化學延伸須單獨設目標",
+      "en": "Introductory senior-secondary organic reactions; set a separate objective for the ATP extension"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "mendel": {
+    "audience": {
+      "zh-CN": "高中生物遗传单元；初中仅作有支架的拓展",
+      "zh-Hant": "高中生物遺傳單元；初中僅作有支架的拓展",
+      "en": "Senior-secondary inheritance; scaffolded enrichment only for junior secondary"
+    },
+    "prior": {
+      "zh-CN": "认识基因、配子和受精；能读简单概率与比例",
+      "zh-Hant": "認識基因、配子和受精；能讀簡單概率與比例",
+      "en": "Understand genes, gametes and fertilization; read simple probabilities and ratios"
+    },
+    "method": {
+      "zh-CN": "假说—推演—模拟检验＋证据论证",
+      "zh-Hant": "假說—推演—模擬檢驗＋證據論證",
+      "en": "Hypothesis, prediction, simulation and evidence-based argument"
+    },
+    "duration": {
+      "zh-CN": "建议 1–2 课时，每课时 40 分钟",
+      "zh-Hant": "建議 1–2 課時，每課時 40 分鐘",
+      "en": "Suggested: one or two 40-minute lessons"
+    },
+    "objective": {
+      "zh-CN": "用配子分离与随机结合解释单因子杂交，并区分基因型比例与表现型概率。",
+      "zh-Hant": "用配子分離與隨機結合解釋單因子雜交，並區分基因型比例與表現型概率。",
+      "en": "Explain a monohybrid cross through segregation and random fertilization, distinguishing genotype and phenotype proportions."
+    },
+    "activities": [
+      {
+        "zh-CN": "先回应“性状会不会融合”，分别预测 TT×tt 与 Tt×Tt 的子代。",
+        "zh-Hant": "先回應“性狀會不會融合”，分別預測 TT×tt 與 Tt×Tt 的子代。",
+        "en": "Respond to blending inheritance and predict offspring from TT×tt and Tt×Tt."
+      },
+      {
+        "zh-CN": "选择亲本，先列配子再填棋盘；把每个字母追溯到一方亲本。",
+        "zh-Hant": "選擇親本，先列配子再填棋盤；把每個字母追溯到一方親本。",
+        "en": "Select parents, list gametes and complete the square, tracing each allele to a parent."
+      },
+      {
+        "zh-CN": "比较 Tt×Tt 与 Tt×tt，解释为何测交可能提供新的判断证据。",
+        "zh-Hant": "比較 Tt×Tt 與 Tt×tt，解釋為何測交可能提供新的判斷證據。",
+        "en": "Compare Tt×Tt with Tt×tt and explain what a test cross can reveal."
+      },
+      {
+        "zh-CN": "用抽签模拟小样本，讨论为什么 4 个后代不保证恰好 3 高 1 矮。",
+        "zh-Hant": "用抽籤模擬小樣本，討論為什麼 4 個後代不保證恰好 3 高 1 矮。",
+        "en": "Use draws to model a small sample and discuss why four offspring need not be exactly three tall and one short."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "学生独立完成一个新杂交棋盘，并注明概率预测的条件。",
+      "zh-Hant": "學生獨立完成一個新雜交棋盤，並注明概率預測的條件。",
+      "en": "An independently completed new Punnett square with the assumptions behind its predictions."
+    },
+    "limitation": {
+      "zh-CN": "采用单基因、完全显性和随机结合的简化模型；3∶1 是预期概率，不是小样本保证，也不能推广到所有人类性状。",
+      "zh-Hant": "採用單基因、完全顯性和隨機結合的簡化模型；3∶1 是預期概率，不是小樣本保證，也不能推廣到所有人類性狀。",
+      "en": "Assumes one gene, complete dominance and random fertilization. A 3:1 expectation is not a small-sample guarantee or a rule for all human traits."
+    },
+    "sources": [
+      {
+        "title": "OpenStax · Laws of Inheritance",
+        "url": "https://openstax.org/books/concepts-biology/pages/8-2-laws-of-inheritance",
+        "note": {
+          "zh-CN": "核实单因子杂交、棋盘法与预期比例；将模型概率与有限样本观察区分。",
+          "zh-Hant": "覈實單因子雜交、棋盤法與預期比例；將模型概率與有限樣本觀察區分。",
+          "en": "Checks monohybrid crosses, Punnett squares and expected proportions; separates probabilities from sample outcomes."
+        }
+      },
+      {
+        "title": "EDB · Biology (S4–6) Curriculum and Assessment Guide",
+        "url": "https://www.edb.gov.hk/attachment/en/curriculum-development/kla/science-edu/Bio_C_and_A_Guide_updated_e_20151126.pdf",
+        "note": {
+          "zh-CN": "以高中生物的遗传主题为学段参考，具体教学顺序由学校课程决定。",
+          "zh-Hant": "以高中生物的遺傳主題為學段參考，具體教學順序由學校課程決定。",
+          "en": "Uses senior-secondary inheritance content as a level reference; schools determine their teaching sequence."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "高中遗传规律；结合概率表达和模型适用条件",
+      "zh-Hant": "高中遺傳規律；結合概率表達和模型適用條件",
+      "en": "Senior-secondary inheritance, probability language and model assumptions"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "conics": {
+    "audience": {
+      "zh-CN": "已学解析几何的高中学生；教师引导使用",
+      "zh-Hant": "已學解析幾何的高中學生；教師引導使用",
+      "en": "Senior-secondary analytic geometry with teacher guidance"
+    },
+    "prior": {
+      "zh-CN": "坐标、距离公式、二次曲线标准方程与平方根",
+      "zh-Hant": "坐標、距離公式、二次曲線標準方程與平方根",
+      "en": "Coordinates, distance formula, standard quadratic-curve equations and square roots"
+    },
+    "method": {
+      "zh-CN": "参数探究＋数形互证",
+      "zh-Hant": "參數探究＋數形互證",
+      "en": "Parameter exploration linked to algebraic and geometric reasoning"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 40–45 分钟；分视图使用",
+      "zh-Hant": "建議 1 課時 40–45 分鐘；分視圖使用",
+      "en": "Suggested: one 40–45-minute lesson, using selected views"
+    },
+    "objective": {
+      "zh-CN": "在椭圆或双曲线内部比较 e、a、b、c 的关系，并用焦点—准线定义辨别抛物线。",
+      "zh-Hant": "在橢圓或雙曲線內部比較 e、a、b、c 的關係，並用焦點—准線定義辨別拋物線。",
+      "en": "Compare e, a, b and c within an ellipse or hyperbola, and identify a parabola through its focus–directrix definition."
+    },
+    "activities": [
+      {
+        "zh-CN": "固定 a=1，预测 e=0.5 与 0.85 时椭圆哪个更扁，并计算 b。",
+        "zh-Hant": "固定 a=1，預測 e=0.5 與 0.85 時橢圓哪個更扁，並計算 b。",
+        "en": "Fix a=1, predict which ellipse is flatter at e=0.5 or 0.85, and calculate b."
+      },
+      {
+        "zh-CN": "观察动点到两焦点距离之和，取两处位置核对椭圆定义。",
+        "zh-Hant": "觀察動點到兩焦點距離之和，取兩處位置核對橢圓定義。",
+        "en": "Check the sum of distances to the foci at two positions on the ellipse."
+      },
+      {
+        "zh-CN": "切换双曲线，比较 c²=a²+b² 与椭圆关系；记录渐近线变化。",
+        "zh-Hant": "切換雙曲線，比較 c²=a²+b² 與橢圓關係；記錄漸近線變化。",
+        "en": "For the hyperbola, compare c²=a²+b² with the ellipse relation and record asymptote changes."
+      },
+      {
+        "zh-CN": "单独验证 y²=4x 上点到焦点和准线等距，讨论两种参数族为何不能直接拼接。",
+        "zh-Hant": "單獨驗證 y²=4x 上點到焦點和准線等距，討論兩種參數族為何不能直接拼接。",
+        "en": "Separately verify the focus–directrix distances for y²=4x and discuss why differently normalized families cannot be directly joined."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一组手算与图像核对记录＋对 e=1 情形的条件说明。",
+      "zh-Hant": "一組手算與圖像核對記錄＋對 e=1 情形的條件說明。",
+      "en": "A calculation–graph comparison and an explanation of the conditions behind e=1."
+    },
+    "limitation": {
+      "zh-CN": "原页有概念误述：固定 a=1、e→1 的椭圆趋于线段，不能称其变成抛物线；y²=4x 的焦点(1,0)也不在顶点。须先纠正讲解。",
+      "zh-Hant": "原頁有概念誤述：固定 a=1、e→1 的橢圓趨於線段，不能稱其變成拋物線；y²=4x 的焦點(1,0)也不在頂點。須先糾正講解。",
+      "en": "The source wrongly describes a fixed-a=1 ellipse approaching e=1 as a parabola; it approaches a segment. For y²=4x, focus (1,0) is not the vertex. Correct these explanations first."
+    },
+    "sources": [
+      {
+        "title": "OpenStax · Conic Sections",
+        "url": "https://openstax.org/books/calculus-volume-3/pages/1-5-conic-sections",
+        "note": {
+          "zh-CN": "用于核实焦点—准线定义、离心率分类与椭圆/双曲线的 c/a；不把 c/a 直接套用于抛物线。",
+          "zh-Hant": "用於覈實焦點—准線定義、離心率分類與橢圓/雙曲線的 c/a；不把 c/a 直接套用於拋物線。",
+          "en": "Checks the focus–directrix definition and eccentricity; c/a applies to ellipses and hyperbolas, not directly to a parabola."
+        }
+      },
+      {
+        "title": "B.C. Curriculum · Mathematics 12: Foundations",
+        "url": "https://curriculum.gov.bc.ca/sites/curriculum.gov.bc.ca/files/curriculum/mathematics/en_mathematics_12_foundations-of-mathematics_elab.pdf",
+        "note": {
+          "zh-CN": "高中课程将圆锥曲线与轨迹、作图及应用联系；仅作学段参考，不等同本地课程条目对齐。",
+          "zh-Hant": "高中課程將圓錐曲線與軌跡、作圖及應用聯繫；僅作學段參考，不等同本地課程條目對齊。",
+          "en": "Provides a senior-secondary reference for conics, loci and constructions, not a claimed local curriculum alignment."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "高中圆锥曲线；公式与定义核验优先于连续形变的视觉印象",
+      "zh-Hant": "高中圓錐曲線；公式與定義核驗優先於連續形變的視覺印象",
+      "en": "Senior-secondary conics: prioritize definitions and equations over an apparent morphing effect"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "cpp": {
+    "audience": {
+      "zh-CN": "初中编程入门至高中基础课程",
+      "zh-Hant": "初中編程入門至高中基礎課程",
+      "en": "Junior-secondary introductory programming through senior-secondary foundations"
+    },
+    "prior": {
+      "zh-CN": "能读赋值、整数运算和简单条件；数组活动前先懂下标",
+      "zh-Hant": "能讀賦值、整數運算和簡單條件；數組活動前先懂下標",
+      "en": "Read assignment, integer arithmetic and conditions; learn indexing before array activities"
+    },
+    "method": {
+      "zh-CN": "预测—逐步执行—解释—修改",
+      "zh-Hant": "預測—逐步執行—解釋—修改",
+      "en": "Predict, step through, explain and modify"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 35–45 分钟，每次聚焦一个概念",
+      "zh-Hant": "建議 1 課時 35–45 分鐘，每次聚焦一個概念",
+      "en": "Suggested: one 35–45-minute lesson focused on one concept"
+    },
+    "objective": {
+      "zh-CN": "逐句追踪变量或数组的值，说明一次赋值/交换/循环如何改变程序状态。",
+      "zh-Hant": "逐句追蹤變量或數組的值，說明一次賦值/交換/循環如何改變程序狀態。",
+      "en": "Trace values statement by statement and explain how assignment, swapping or looping changes program state."
+    },
+    "activities": [
+      {
+        "zh-CN": "选择简短交换或累加程序，先填写纸面变量表并预测输出。",
+        "zh-Hant": "選擇簡短交換或累加程序，先填寫紙面變量表並預測輸出。",
+        "en": "Choose a short swap or accumulation program, trace values on paper and predict output."
+      },
+      {
+        "zh-CN": "用单步按钮核对每行执行后的值；在首次不一致处暂停说明。",
+        "zh-Hant": "用單步按鈕核對每行執行後的值；在首次不一致處暫停說明。",
+        "en": "Step through values after each statement and stop at the first mismatch with the prediction."
+      },
+      {
+        "zh-CN": "只改一个初值或循环边界，再预测；与同伴交换解释。",
+        "zh-Hant": "只改一個初值或循環邊界，再預測；與同伴交換解釋。",
+        "en": "Change one initial value or loop boundary, predict again and exchange explanations."
+      },
+      {
+        "zh-CN": "回到完整 C++ 环境运行小例子，比较输出并归纳调试方法。",
+        "zh-Hant": "回到完整 C++ 環境運行小例子，比較輸出並歸納調試方法。",
+        "en": "Run the small example in a full C++ environment, compare outputs and summarize debugging moves."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "两轮变量追踪表＋一个边界错误的定位与修正理由。",
+      "zh-Hant": "兩輪變量追蹤表＋一個邊界錯誤的定位與修正理由。",
+      "en": "Two trace tables and a justified diagnosis and correction of a boundary error."
+    },
+    "limitation": {
+      "zh-CN": "这是有限语法的教学模拟器，不是完整 C++ 编译器；内存格为概念示意，复杂语法与运行结果须在真实环境复核。",
+      "zh-Hant": "這是有限語法的教學模擬器，不是完整 C++ 編譯器；內存格為概念示意，複雜語法與運行結果須在真實環境復核。",
+      "en": "A limited teaching interpreter, not a complete C++ compiler. Memory cells are conceptual; verify unsupported syntax and behavior in a real environment."
+    },
+    "sources": [
+      {
+        "title": "CSTA · K–12 Computer Science Standards (2017)",
+        "url": "https://csteachers.org/wp-content/uploads/2025/03/2017-csta-k12-computer-science-standards-al.pdf",
+        "note": {
+          "zh-CN": "使用明确标年的 2017 版变量、控制结构和分解条目作能力进阶参考；不声称是最新版本或已经通过 CSTA 对齐审查。",
+          "zh-Hant": "使用明確標年的 2017 版變量、控制結構和分解條目作能力進階參考；不聲稱是最新版本或已經通過 CSTA 對齊審查。",
+          "en": "Uses the explicitly dated 2017 progression for variables, control and decomposition; makes no claim of latest-version or CSTA-reviewed alignment."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "变量、顺序、选择、循环与数组；按概念拆成小任务",
+      "zh-Hant": "變量、順序、選擇、循環與數組；按概念拆成小任務",
+      "en": "Variables, sequence, selection, iteration and arrays, split into small concept-focused tasks"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "lens": {
+    "audience": {
+      "zh-CN": "初中光学；高中可加入定量计算",
+      "zh-Hant": "初中光學；高中可加入定量計算",
+      "en": "Junior-secondary optics, with quantitative extension for senior secondary"
+    },
+    "prior": {
+      "zh-CN": "光沿直线传播、折射、光心、焦点；计算前需掌握比例和分式",
+      "zh-Hant": "光沿直線傳播、折射、光心、焦點；計算前需掌握比例和分式",
+      "en": "Straight-line propagation, refraction, optical center and focus; ratios and fractions for calculations"
+    },
+    "method": {
+      "zh-CN": "预测—验证—解释＋控制变量探究",
+      "zh-Hant": "預測—驗證—解釋＋控制變量探究",
+      "en": "Predict, test and explain through controlled comparisons"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 40 分钟，后接实体实验",
+      "zh-Hant": "建議 1 課時 40 分鐘，後接實體實驗",
+      "en": "Suggested: one 40-minute lesson followed by a physical experiment"
+    },
+    "objective": {
+      "zh-CN": "用特殊光线解释实像与虚像，概括物距跨过 f 和 2f 时像的位置、大小及正倒。",
+      "zh-Hant": "用特殊光線解釋實像與虛像，概括物距跨過 f 和 2f 時像的位置、大小及正倒。",
+      "en": "Use principal rays to explain real and virtual images and compare position, size and orientation across f and 2f."
+    },
+    "activities": [
+      {
+        "zh-CN": "固定焦距，先预测 u>2f、f<u<2f 和 u<f 三种情形。",
+        "zh-Hant": "固定焦距，先預測 u>2f、f<u<2f 和 u<f 三種情形。",
+        "en": "Fix focal length and predict the cases u>2f, f<u<2f and u<f."
+      },
+      {
+        "zh-CN": "逐一设置物距，记录像的位置、大小、正倒和实虚；画两条不重合光线。",
+        "zh-Hant": "逐一設置物距，記錄像的位置、大小、正倒和實虛；畫兩條不重合光線。",
+        "en": "Set each object distance, record image properties and draw two distinct principal rays."
+      },
+      {
+        "zh-CN": "靠近 u=f，讨论为何没有有限像距；分清真实光线与反向延长线。",
+        "zh-Hant": "靠近 u=f，討論為何沒有有限像距；分清真實光線與反向延長線。",
+        "en": "Approach u=f, discuss the lack of a finite image distance and distinguish rays from backward extensions."
+      },
+      {
+        "zh-CN": "用真实透镜与光屏检验其中一组结果，说明模型未包含什么。",
+        "zh-Hant": "用真實透鏡與光屏檢驗其中一組結果，說明模型未包含什麼。",
+        "en": "Check one case with a real lens and screen and identify what the model omits."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "三种物距的成像表＋一幅标明实线/虚线含义的光路图。",
+      "zh-Hant": "三種物距的成像表＋一幅標明實線/虛線含義的光路圖。",
+      "en": "An image-properties table for three cases and an annotated ray diagram."
+    },
+    "limitation": {
+      "zh-CN": "采用理想薄透镜与近轴模型，不模拟像差和亮度；虚像能被眼睛观察却不能直接用光屏承接，u=f 不应当作普通除法。",
+      "zh-Hant": "採用理想薄透鏡與近軸模型，不模擬像差和亮度；虛像能被眼睛觀察卻不能直接用光屏承接，u=f 不應當作普通除法。",
+      "en": "Ideal thin-lens/paraxial model without aberration or brightness. A virtual image is visible through the lens but cannot be caught directly on a screen; u=f is a singular case."
+    },
+    "sources": [
+      {
+        "title": "OpenStax · Thin Lenses",
+        "url": "https://openstax.org/books/university-physics-volume-3/pages/2-4-thin-lenses",
+        "note": {
+          "zh-CN": "核实薄透镜公式、实像/虚像与像距符号；该教材用于知识核验，不作为初中阅读要求。",
+          "zh-Hant": "覈實薄透鏡公式、實像/虛像與像距符號；該教材用於知識核驗，不作為初中閱讀要求。",
+          "en": "Checks the thin-lens equation, real/virtual images and signs; this university text is a teacher reference, not required pupil reading."
+        }
+      },
+      {
+        "title": "EDB · Science (S1–3) Curriculum Framework (2025)",
+        "url": "https://www.edb.gov.hk/attachment/en/curriculum-development/kla/science-edu/JS_Science_Curriculum_Framework_2025_english.pdf",
+        "note": {
+          "zh-CN": "参考科学探究、模型与证据的组织方式。2025/26–2026/27 可试行，2027/28 起从中一逐级实施；不称目前全校统一采用。",
+          "zh-Hant": "參考科學探究、模型與證據的組織方式。2025/26–2026/27 可試行，2027/28 起從中一逐級實施；不稱目前全校統一採用。",
+          "en": "Informs inquiry, models and evidence. Schools may pilot in 2025/26–2026/27; phased S1 implementation starts in 2027/28."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "初中定性成像规律；公式与符号约定作为分层延伸",
+      "zh-Hant": "初中定性成像規律；公式與符號約定作為分層延伸",
+      "en": "Qualitative imaging first; equations and sign conventions as differentiated extension"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "pinhole": {
+    "audience": {
+      "zh-CN": "初中光学；小学高年级可做定性观察",
+      "zh-Hant": "初中光學；小學高年級可做定性觀察",
+      "en": "Junior-secondary optics; qualitative exploration for upper-primary learners"
+    },
+    "prior": {
+      "zh-CN": "光沿直线传播；能区分物距与孔屏距离，定量部分需理解比例",
+      "zh-Hant": "光沿直線傳播；能區分物距與孔屏距離，定量部分需理解比例",
+      "en": "Straight-line propagation; distinguish object and screen distances, with ratios for calculations"
+    },
+    "method": {
+      "zh-CN": "单变量实验＋多视图模型解释",
+      "zh-Hant": "單變量實驗＋多視圖模型解釋",
+      "en": "Single-variable experiments and explanation across multiple views"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 35–45 分钟",
+      "zh-Hant": "建議 1 課時 35–45 分鐘",
+      "en": "Suggested: one 35–45-minute lesson"
+    },
+    "objective": {
+      "zh-CN": "用物点光线解释倒像，并区分距离决定的放大比例与孔径影响的亮度、模糊。",
+      "zh-Hant": "用物點光線解釋倒像，並區分距離決定的放大比例與孔徑影響的亮度、模糊。",
+      "en": "Explain inversion using rays from object points and distinguish distance-based magnification from aperture effects on brightness and blur."
+    },
+    "activities": [
+      {
+        "zh-CN": "选不对称字母 F，预测上下、左右在光屏上的位置，再追踪两个物点。",
+        "zh-Hant": "選不對稱字母 F，預測上下、左右在光屏上的位置，再追蹤兩個物點。",
+        "en": "Choose an asymmetric F, predict its screen orientation and trace two object points."
+      },
+      {
+        "zh-CN": "固定物距，只改孔屏距离，记录 L/u 与像大小的对应。",
+        "zh-Hant": "固定物距，只改孔屏距離，記錄 L/u 與像大小的對應。",
+        "en": "Keep object distance fixed; vary screen distance and compare L/u with image size."
+      },
+      {
+        "zh-CN": "固定两个距离，只改孔径，比较亮度、边缘模糊与放大比例。",
+        "zh-Hant": "固定兩個距離，只改孔徑，比較亮度、邊緣模糊與放大比例。",
+        "en": "Keep both distances fixed; vary aperture and compare brightness, blur and magnification."
+      },
+      {
+        "zh-CN": "从装置、光路、光屏三种视图说明同一个现象，再用纸盒暗箱检验。",
+        "zh-Hant": "從裝置、光路、光屏三種視圖說明同一個現象，再用紙盒暗箱檢驗。",
+        "en": "Explain the same effect from apparatus, ray and screen views, then check with a box camera."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "两个控制变量对照＋“孔径不会改变 L/u”的模型解释。",
+      "zh-Hant": "兩個控制變量對照＋“孔徑不會改變 L/u”的模型解釋。",
+      "en": "Two controlled comparisons and an explanation of why aperture does not change L/u."
+    },
+    "limitation": {
+      "zh-CN": "只模拟有限孔径的几何模糊，未模拟衍射；不能推出“小孔越小永远越清晰”。屏幕亮度经提亮，并非实际照度测量。",
+      "zh-Hant": "只模擬有限孔徑的幾何模糊，未模擬衍射；不能推出“小孔越小永遠越清晰”。屏幕亮度經提亮，並非實際照度測量。",
+      "en": "Models geometric aperture blur, not diffraction: a smaller hole is not always sharper. Screen brightness is enhanced and is not a measured illuminance."
+    },
+    "sources": [
+      {
+        "title": "Exploratorium · Pringles Pinhole",
+        "url": "https://annex.exploratorium.edu/science-explorer/pringles_pinhole.html",
+        "note": {
+          "zh-CN": "以可操作的暗箱活动核实小孔筛选光线、屏上形成倒像，并连接实体观察。",
+          "zh-Hant": "以可操作的暗箱活動覈實小孔篩選光線、屏上形成倒像，並連接實體觀察。",
+          "en": "Connects the simulation to a hands-on camera obscura and its inverted screen image."
+        }
+      },
+      {
+        "title": "EDB · Science (S1–3) Curriculum Framework (2025)",
+        "url": "https://www.edb.gov.hk/attachment/en/curriculum-development/kla/science-edu/JS_Science_Curriculum_Framework_2025_english.pdf",
+        "note": {
+          "zh-CN": "参考科学探究、模型与证据的组织方式。2025/26–2026/27 可试行，2027/28 起从中一逐级实施；不称目前全校统一采用。",
+          "zh-Hant": "參考科學探究、模型與證據的組織方式。2025/26–2026/27 可試行，2027/28 起從中一逐級實施；不稱目前全校統一採用。",
+          "en": "Informs inquiry, models and evidence. Schools may pilot in 2025/26–2026/27; phased S1 implementation starts in 2027/28."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "光的直线传播与模型边界；比例计算按学生基础选用",
+      "zh-Hant": "光的直線傳播與模型邊界；比例計算按學生基礎選用",
+      "en": "Straight-line propagation and model boundaries; use ratio calculations when appropriate"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "gcd": {
+    "audience": {
+      "zh-CN": "小学五六年级拓展或初中整数单元",
+      "zh-Hant": "小學五六年級拓展或初中整數單元",
+      "en": "Upper-primary enrichment or junior-secondary integer work"
+    },
+    "prior": {
+      "zh-CN": "理解因数、公因数、余数与矩形面积",
+      "zh-Hant": "理解因數、公因數、余數與矩形面積",
+      "en": "Understand factors, common factors, remainders and rectangular area"
+    },
+    "method": {
+      "zh-CN": "操作表征→图形→算式的连接",
+      "zh-Hant": "操作表徵→圖形→算式的連接",
+      "en": "Connect manipulation, diagrams and arithmetic"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 30–40 分钟",
+      "zh-Hant": "建議 1 課時 30–40 分鐘",
+      "en": "Suggested: one 30–40-minute lesson"
+    },
+    "objective": {
+      "zh-CN": "把矩形分割对应到除法等式，解释为何取余后最大公因数保持不变。",
+      "zh-Hant": "把矩形分割對應到除法等式，解釋為何取余後最大公因數保持不變。",
+      "en": "Link rectangle cuts to division equations and explain why remainder reduction preserves the GCD."
+    },
+    "activities": [
+      {
+        "zh-CN": "先用方格纸尝试把 84×36 的矩形铺成等大的正方形。",
+        "zh-Hant": "先用方格紙嘗試把 84×36 的矩形鋪成等大的正方形。",
+        "en": "First try tiling an 84×36 rectangle with equal squares on graph paper."
+      },
+      {
+        "zh-CN": "单步切割，逐次把剩余矩形写成 a=q×b+r 的算式。",
+        "zh-Hant": "單步切割，逐次把剩餘矩形寫成 a=q×b+r 的算式。",
+        "en": "Step through cuts, expressing each remainder rectangle as a=q×b+r."
+      },
+      {
+        "zh-CN": "预测最后可铺满的正方形边长，用原来两个数分别除以它检验。",
+        "zh-Hant": "預測最後可鋪滿的正方形邊長，用原來兩個數分別除以它檢驗。",
+        "en": "Predict the final tile size and check that it divides both original numbers."
+      },
+      {
+        "zh-CN": "换一组互质数或整除数，解释为什么余数为 0 就可以停止。",
+        "zh-Hant": "換一組互質數或整除數，解釋為什麼余數為 0 就可以停止。",
+        "en": "Try coprime or exactly divisible inputs and explain why a zero remainder ends the process."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "带算式的分割草图＋对“共同铺满长度不变”的口头说明。",
+      "zh-Hant": "帶算式的分割草圖＋對“共同鋪滿長度不變”的口頭說明。",
+      "en": "An annotated cutting diagram and an explanation of the unchanged common tile length."
+    },
+    "limitation": {
+      "zh-CN": "输入限正整数 1–500；这是理解算法的拓展，不直接等同某地区小学必修要求。答案是边长，不是最后正方形的面积。",
+      "zh-Hant": "輸入限正整數 1–500；這是理解算法的拓展，不直接等同某地區小學必修要求。答案是邊長，不是最後正方形的面積。",
+      "en": "Inputs are positive integers from 1–500. Treat this as algorithmic enrichment, not a claimed local primary requirement. The answer is a side length, not an area."
+    },
+    "sources": [
+      {
+        "title": "Yale · Euclid’s Algorithm",
+        "url": "https://www.cs.yale.edu/homes/aspnes/pinewiki/EuclidsAlgorithm.html",
+        "note": {
+          "zh-CN": "核实取余前后公因数保持不变及递归出口；大学讲义用于教师理解算法，不用于确定小学必修内容。",
+          "zh-Hant": "覈實取余前後公因數保持不變及遞歸出口；大學講義用於教師理解算法，不用於確定小學必修內容。",
+          "en": "Checks the invariant under remainder reduction and the base case; this university note does not establish a primary-school requirement."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "公因数与有余数除法；把程序思想连接到已有算术经验",
+      "zh-Hant": "公因數與有餘數除法；把程序思想連接到已有算術經驗",
+      "en": "Common factors and division with remainders, linked to emerging algorithmic thinking"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "recursion": {
+    "audience": {
+      "zh-CN": "已学函数的初中进阶或高中编程学生",
+      "zh-Hant": "已學函數的初中進階或高中編程學生",
+      "en": "Advanced junior-secondary or senior-secondary programmers who already know functions"
+    },
+    "prior": {
+      "zh-CN": "会用函数参数、返回值、条件、取余，并理解辗转相除法",
+      "zh-Hant": "會用函數參數、返回值、條件、取余，並理解輾轉相除法",
+      "en": "Use parameters, return values, conditions and remainder; understand Euclid’s algorithm"
+    },
+    "method": {
+      "zh-CN": "调用栈追踪＋循环/递归比较",
+      "zh-Hant": "調用棧追蹤＋循環/遞歸比較",
+      "en": "Trace the call stack and compare recursion with iteration"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 40–45 分钟",
+      "zh-Hant": "建議 1 課時 40–45 分鐘",
+      "en": "Suggested: one 40–45-minute lesson"
+    },
+    "objective": {
+      "zh-CN": "区分向下调用与向上返回，说明 gcd 的递归出口和每层参数如何缩小问题。",
+      "zh-Hant": "區分向下調用與向上返回，說明 gcd 的遞歸出口和每層參數如何縮小問題。",
+      "en": "Distinguish calls from returns and explain the GCD base case and reduction at each level."
+    },
+    "activities": [
+      {
+        "zh-CN": "先手算 gcd(84,36)，写出每层将收到的两项参数。",
+        "zh-Hant": "先手算 gcd(84,36)，寫出每層將收到的兩項參數。",
+        "en": "Compute gcd(84,36) by hand and list the arguments for each call."
+      },
+      {
+        "zh-CN": "逐步观察调用栈，把每层局部参数写在独立便签上。",
+        "zh-Hant": "逐步觀察調用棧，把每層局部參數寫在獨立便簽上。",
+        "en": "Step through the stack, writing each call’s local arguments on a separate note."
+      },
+      {
+        "zh-CN": "到 b=0 时暂停，预测返回值怎样逐层传回，再播放核对。",
+        "zh-Hant": "到 b=0 時暫停，預測返回值怎樣逐層傳回，再播放核對。",
+        "en": "Pause at b=0, predict how the result returns through the calls, then check."
+      },
+      {
+        "zh-CN": "改写为 while 循环，对照停止条件与结果；讨论没有出口会发生什么。",
+        "zh-Hant": "改寫為 while 循環，對照停止條件與結果；討論沒有出口會發生什麼。",
+        "en": "Rewrite with a while loop, compare termination and result, and discuss a missing base case."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一个未见输入的调用/返回双向追踪表＋递归出口说明。",
+      "zh-Hant": "一個未見輸入的調用/返回雙向追蹤表＋遞歸出口說明。",
+      "en": "A call-and-return trace for unseen inputs and an explanation of the base case."
+    },
+    "limitation": {
+      "zh-CN": "栈是概念模型，不承诺编译器按同样方式分配内存；此例的返回值原样向上传递，不能代表所有递归。输入域需保持合理。",
+      "zh-Hant": "棧是概念模型，不承諾編譯器按同樣方式分配內存；此例的返回值原樣向上傳遞，不能代表所有遞歸。輸入域需保持合理。",
+      "en": "The stack is conceptual, not a promise about compiler memory behavior. This example passes the same answer back unchanged; other recursive algorithms may combine results."
+    },
+    "sources": [
+      {
+        "title": "Princeton · Euclid.java",
+        "url": "https://introcs.cs.princeton.edu/java/23recursion/Euclid.java.html",
+        "note": {
+          "zh-CN": "用递归与循环两种欧几里得算法核对参数更新和 b=0 的返回条件；示例语言不同但算法相同。",
+          "zh-Hant": "用遞歸與循環兩種歐幾里得算法核對參數更新和 b=0 的返回條件；示例語言不同但算法相同。",
+          "en": "Checks argument updates and the zero-remainder base case against recursive and iterative Euclid implementations."
+        }
+      },
+      {
+        "title": "Yale · Euclid’s Algorithm",
+        "url": "https://www.cs.yale.edu/homes/aspnes/pinewiki/EuclidsAlgorithm.html",
+        "note": {
+          "zh-CN": "核实取余前后公因数保持不变及递归出口；大学讲义用于教师理解算法，不用于确定小学必修内容。",
+          "zh-Hant": "覈實取余前後公因數保持不變及遞歸出口；大學講義用於教師理解算法，不用於確定小學必修內容。",
+          "en": "Checks the invariant under remainder reduction and the base case; this university note does not establish a primary-school requirement."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "函数之后引入递归；先理解调用与返回，再讨论效率",
+      "zh-Hant": "函數之後引入遞歸；先理解調用與返回，再討論效率",
+      "en": "Introduce recursion after functions; understand calls and returns before efficiency"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "pbl": {
+    "audience": {
+      "zh-CN": "教师备课与教研；示例可先面向小学高年级",
+      "zh-Hant": "教師備課與教研；示例可先面向小學高年級",
+      "en": "Teacher planning and professional learning; start with an upper-primary example"
+    },
+    "prior": {
+      "zh-CN": "教师明确学生基础、课时、材料与目标；学生具备基本观察、记录和合作经验",
+      "zh-Hant": "教師明確學生基礎、課時、材料與目標；學生具備基本觀察、記錄和合作經驗",
+      "en": "Teachers specify learners, time, resources and goals; pupils need basic observation, recording and collaboration"
+    },
+    "method": {
+      "zh-CN": "项目式学习：持续探究与反馈修改",
+      "zh-Hant": "項目式學習：持續探究與反饋修改",
+      "en": "Project-based learning with sustained inquiry and revision"
+    },
+    "duration": {
+      "zh-CN": "教师分步备课约 60–90 分钟；示例课程建议 4–6 课时",
+      "zh-Hant": "教師分步備課約 60–90 分鐘；示例課程建議 4–6 課時",
+      "en": "Suggested planning: 60–90 minutes; example project: four to six lessons"
+    },
+    "objective": {
+      "zh-CN": "形成能把学习目标、真实探究任务和评价证据一一对应的课程初稿。",
+      "zh-Hant": "形成能把學習目標、真實探究任務和評價證據一一對應的課程初稿。",
+      "en": "Produce a draft connecting learning goals, authentic inquiry tasks and assessment evidence."
+    },
+    "activities": [
+      {
+        "zh-CN": "教师填基础信息，再运行主题研究、学情与目标、驱动性问题三个步骤。",
+        "zh-Hant": "教師填基礎信息，再運行主題研究、學情與目標、驅動性問題三個步驟。",
+        "en": "Complete the context form, then explore the theme, learner needs/goals and driving question."
+      },
+      {
+        "zh-CN": "以校园真实问题为例，让学生提出可调查的问题并选择收集证据的方法。",
+        "zh-Hant": "以校園真實問題為例，讓學生提出可調查的問題並選擇收集證據的方法。",
+        "en": "For a real school issue, let pupils choose investigable questions and methods for collecting evidence."
+      },
+      {
+        "zh-CN": "用后续 Prompt 安排探究、成果与评价；为中途同伴反馈和修订留出课时。",
+        "zh-Hant": "用後續 Prompt 安排探究、成果與評價；為中途同伴反饋和修訂留出課時。",
+        "en": "Use later prompts to plan inquiry, products and assessment, reserving time for peer feedback and revision."
+      },
+      {
+        "zh-CN": "学生向真实受众解释方案与证据；教师记录哪些目标达成，再修改下一版课程。",
+        "zh-Hant": "學生向真實受眾解釋方案與證據；教師記錄哪些目標達成，再修改下一版課程。",
+        "en": "Pupils explain a proposal and its evidence to an authentic audience; teachers record learning and revise the next version."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "目标—任务—证据对照表、学生调查记录、前后两版成果与修改理由。",
+      "zh-Hant": "目標—任務—證據對照表、學生調查記錄、前後兩版成果與修改理由。",
+      "en": "A goal–task–evidence map, inquiry records, two product versions and reasons for revision."
+    },
+    "limitation": {
+      "zh-CN": "模板的六步是备课工作流，不是固定的学生学习顺序。漂亮海报不能替代持续探究；未提供学情前不能声称全学段适用或课程已验证。",
+      "zh-Hant": "模板的六步是備課工作流，不是固定的學生學習順序。漂亮海報不能替代持續探究；未提供學情前不能聲稱全學段適用或課程已驗證。",
+      "en": "The six steps organize teacher planning, not a fixed pupil learning sequence. A poster cannot replace inquiry; broad age suitability and validation require actual learner and classroom evidence."
+    },
+    "sources": [
+      {
+        "title": "PBLWorks · Gold Standard Project Design",
+        "url": "https://www.pblworks.org/what-is-pbl/gold-standard-project-design",
+        "note": {
+          "zh-CN": "参考真实问题、持续探究、学生选择、反思、反馈修改与公开成果；本地六步 Prompt 是作者工作流。",
+          "zh-Hant": "參考真實問題、持續探究、學生選擇、反思、反饋修改與公開成果；本地六步 Prompt 是作者工作流。",
+          "en": "Informs inquiry, authenticity, choice, reflection, revision and public products; the local six-step prompt sequence is an authored workflow."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "跨学科主题由真实问题决定；先选一个学段与可实施案例",
+      "zh-Hant": "跨學科主題由真實問題決定；先選一個學段與可實施案例",
+      "en": "Let the authentic problem determine subject links; begin with one learner group and feasible case"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "poetry": {
+    "audience": {
+      "zh-CN": "小学古诗课堂；中学可增加炼字与虚实分析",
+      "zh-Hant": "小學古詩課堂；中學可增加煉字與虛實分析",
+      "en": "Primary poetry lessons, with diction and imagery extension for secondary students"
+    },
+    "prior": {
+      "zh-CN": "已接触所选诗的原文与必要古义；能用诗句支持观察",
+      "zh-Hant": "已接觸所選詩的原文與必要古義；能用詩句支持觀察",
+      "en": "Know the selected poem and essential historical meanings; support observations with lines from the text"
+    },
+    "method": {
+      "zh-CN": "先读诗—观图取证—回到文本",
+      "zh-Hant": "先讀詩—觀圖取證—回到文本",
+      "en": "Read first, inspect the image, then return to textual evidence"
+    },
+    "duration": {
+      "zh-CN": "建议 15–25 分钟嵌入一节诗歌课",
+      "zh-Hant": "建議 15–25 分鐘嵌入一節詩歌課",
+      "en": "Suggested: a 15–25-minute segment within a poetry lesson"
+    },
+    "objective": {
+      "zh-CN": "把一至两个关键字词与画面细节对应，并分清诗中明示、合理想象与不当添加。",
+      "zh-Hant": "把一至兩個關鍵字詞與畫面細節對應，並分清詩中明示、合理想象與不當添加。",
+      "en": "Connect one or two key words to visual details and distinguish stated imagery, plausible inference and unsupported additions."
+    },
+    "activities": [
+      {
+        "zh-CN": "教师填诗题、作者、原文与年级；先朗读并圈出景物、动作和时序词。",
+        "zh-Hant": "教師填詩題、作者、原文與年級；先朗讀並圈出景物、動作和時序詞。",
+        "en": "Enter title, author, exact poem and year level; read aloud and mark imagery, actions and temporal words."
+      },
+      {
+        "zh-CN": "生成海报后逐字核对；先让学生指出“这处画面根据哪一句”。",
+        "zh-Hant": "生成海報後逐字核對；先讓學生指出“這處畫面根據哪一句”。",
+        "en": "Check generated text character by character, then ask pupils which line supports a visual detail."
+      },
+      {
+        "zh-CN": "比较有字与无字版本，找出一处有依据的细节和一处需要修订的想象。",
+        "zh-Hant": "比較有字與無字版本，找出一處有依據的細節和一處需要修訂的想象。",
+        "en": "Compare text and text-free versions, finding one supported detail and one inference to revise."
+      },
+      {
+        "zh-CN": "学生用一句说明或短朗读解释修改理由，再回到完整诗意。",
+        "zh-Hant": "學生用一句說明或短朗讀解釋修改理由，再回到完整詩意。",
+        "en": "Explain a revision in a sentence or short reading, then reconnect it to the whole poem."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "两条“诗句—画面细节”对应说明＋一次有文本依据的修订。",
+      "zh-Hant": "兩條“詩句—畫面細節”對應說明＋一次有文本依據的修訂。",
+      "en": "Two text–image evidence links and one text-supported revision."
+    },
+    "limitation": {
+      "zh-CN": "生图是诗意解读示例，不是作者原意的唯一答案；可能出现错字、物候或古义错误，不能让图像替代细读。",
+      "zh-Hant": "生圖是詩意解讀示例，不是作者原意的唯一答案；可能出現錯字、物候或古義錯誤，不能讓圖像替代細讀。",
+      "en": "The image is one interpretation, not the sole authorial meaning. Check characters, seasonal details and historical word meanings; retain close reading."
+    },
+    "sources": [
+      {
+        "title": "EDB · 中國語文課程指引（小一至小六）2023",
+        "url": "https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/chi-edu/curriculum-documents/Primary_Chi_Lang_Curr_Guide_2023.pdf",
+        "note": {
+          "zh-CN": "参考文学感受、审美与读写听说的结合；具体诗篇与年级仍须依据采用的教材。",
+          "zh-Hant": "參考文學感受、審美與讀寫聽說的結合；具體詩篇與年級仍須依據採用的教材。",
+          "en": "Informs literary response and links between reading, writing, listening and speaking; poem selection remains textbook-specific."
+        }
+      },
+      {
+        "title": "EDB · 中國語文課程指引（中一至中三）2023",
+        "url": "https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/chi-edu/curriculum-documents/Junior_Sec_Chi_Lang_Curr_Guide_2023.pdf",
+        "note": {
+          "zh-CN": "参考理解、分析、鉴赏、阅读策略与读写结合；评价应回到学生的文本依据与表达。",
+          "zh-Hant": "參考理解、分析、鑒賞、閱讀策略與讀寫結合；評價應回到學生的文本依據與表達。",
+          "en": "Informs comprehension, analysis, appreciation and reading–writing connections, with attention to textual evidence."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "按教材选篇；低年级重具体观察，中学增加含蓄表达与虚实辨析",
+      "zh-Hant": "按教材選篇；低年級重具體觀察，中學增加含蓄表達與虛實辨析",
+      "en": "Choose the textbook poem; emphasize concrete observation first and layered interpretation later"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "dynasty": {
+    "audience": {
+      "zh-CN": "初中中国历史复习；高中可作背景梳理",
+      "zh-Hant": "初中中國歷史復習；高中可作背景梳理",
+      "en": "Junior-secondary Chinese-history review; background synthesis in senior secondary"
+    },
+    "prior": {
+      "zh-CN": "已学目标朝代的基本时序，能区分人物、制度、事件和影响",
+      "zh-Hant": "已學目標朝代的基本時序，能區分人物、制度、事件和影響",
+      "en": "Know the dynasty’s broad chronology and distinguish people, institutions, events and consequences"
+    },
+    "method": {
+      "zh-CN": "时间线梳理＋主题比较＋史料核对",
+      "zh-Hant": "時間線梳理＋主題比較＋史料核對",
+      "en": "Chronological synthesis, thematic comparison and source checking"
+    },
+    "duration": {
+      "zh-CN": "建议 20–30 分钟复习；教师另留核对与排版时间",
+      "zh-Hant": "建議 20–30 分鐘復習；教師另留核對與排版時間",
+      "en": "Suggested: 20–30 minutes of review, with separate teacher checking/layout time"
+    },
+    "objective": {
+      "zh-CN": "用时间线与主题模块说明朝代变化，并为一个历史解释提供可核查的资料依据。",
+      "zh-Hant": "用時間線與主題模塊說明朝代變化，並為一個歷史解釋提供可核查的資料依據。",
+      "en": "Explain dynastic change through a timeline and thematic modules, supporting one interpretation with a checkable source."
+    },
+    "activities": [
+      {
+        "zh-CN": "选择朝代与教学范围，先用教材确认起止年份、人物和关键转折。",
+        "zh-Hant": "選擇朝代與教學範圍，先用教材確認起止年份、人物和關鍵轉折。",
+        "en": "Choose the dynasty and scope; check dates, people and turning points against the adopted text."
+      },
+      {
+        "zh-CN": "学生先完成“事实＋作用/影响”的简表，再整理为不超过七个海报模块。",
+        "zh-Hant": "學生先完成“事實＋作用/影響”的簡表，再整理為不超過七個海報模塊。",
+        "en": "Write a fact-and-consequence table before organizing it into no more than seven modules."
+      },
+      {
+        "zh-CN": "给文物或遗址图配名称、年代与来源，区分真实资料图和生成示意。",
+        "zh-Hant": "給文物或遺址圖配名稱、年代與來源，區分真實資料圖和生成示意。",
+        "en": "Caption artifacts or sites with names, dates and sources; distinguish documentary images from generated illustration."
+      },
+      {
+        "zh-CN": "遮住海报后重建时间线；挑选一个因果箭头，说明支持它的证据与其他因素。",
+        "zh-Hant": "遮住海報後重建時間線；挑選一個因果箭頭，說明支持它的證據與其他因素。",
+        "en": "Rebuild the timeline without looking, then justify one causal link while considering other factors."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一张可追溯来源的海报＋脱离海报后的时序重建与因果说明。",
+      "zh-Hant": "一張可追溯來源的海報＋脫離海報後的時序重建與因果說明。",
+      "en": "A sourced poster and an independent chronology/causation explanation."
+    },
+    "limitation": {
+      "zh-CN": "模板信息密度高，建议拆成主线与专题两张。AI 重绘的文物不能当馆藏实拍；不要把复杂兴衰简化为单一人物或事件。",
+      "zh-Hant": "模板信息密度高，建議拆成主線與專題兩張。AI 重繪的文物不能當館藏實拍；不要把複雜興衰簡化為單一人物或事件。",
+      "en": "The template is dense: split chronology and themes when needed. Generated artifacts are not museum photographs; avoid single-cause accounts of rise and decline."
+    },
+    "sources": [
+      {
+        "title": "Digital Inquiry Group · Historical Thinking Chart",
+        "url": "https://www.inquirygroup.org/history-lessons/historical-thinking-chart",
+        "note": {
+          "zh-CN": "参考来源辨析、情境化、互证与细读；本平台活动是据该方法及本地模板作出的设计建议。",
+          "zh-Hant": "參考來源辨析、情境化、互證與細讀；本平台活動是據該方法及本地模板作出的設計建議。",
+          "en": "Informs sourcing, contextualization, corroboration and close reading; platform activities are editorial adaptations."
+        }
+      },
+      {
+        "title": "EDB · 初中中國歷史科學與教資源",
+        "url": "https://www.edb.gov.hk/tc/curriculum-development/kla/pshe/references-and-resources/chinese-history_ncs/Junior_Secondary_Chinese_History_Applicable_to_Non-Chinese_Speaking_Students.html",
+        "note": {
+          "zh-CN": "参考按语言基础与教学需要选择、调适中史材料；非华语学生需另配词语和阅读支持。",
+          "zh-Hant": "參考按語言基礎與教學需要選擇、調適中史材料；非華語學生需另配詞語和閱讀支持。",
+          "en": "Informs adaptation to learning and language needs; non-Chinese-speaking learners need explicit vocabulary and reading support."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "时序、历史解释和材料辨析；模块数量随阅读负荷调整",
+      "zh-Hant": "時序、歷史解釋和材料辨析；模塊數量隨閱讀負荷調整",
+      "en": "Chronology, historical explanation and source evaluation; adjust module count to reading load"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "history": {
+    "audience": {
+      "zh-CN": "以初中历史为默认；按资料语言与学生基础分层",
+      "zh-Hant": "以初中歷史為默認；按資料語言與學生基礎分層",
+      "en": "Junior-secondary history by default, differentiated by source language and prior knowledge"
+    },
+    "prior": {
+      "zh-CN": "能从一段材料提取时间、人物、事件；进阶需区分史实与解释",
+      "zh-Hant": "能從一段材料提取時間、人物、事件；進階需區分史實與解釋",
+      "en": "Extract dates, people and events from a short source; distinguish fact from interpretation for extension"
+    },
+    "method": {
+      "zh-CN": "有证据的历史探究＋检索练习",
+      "zh-Hant": "有證據的歷史探究＋檢索練習",
+      "en": "Evidence-based historical inquiry and retrieval practice"
+    },
+    "duration": {
+      "zh-CN": "建议 1 课时 35–45 分钟；长章节分为多页",
+      "zh-Hant": "建議 1 課時 35–45 分鐘；長章節分為多頁",
+      "en": "Suggested: one 35–45-minute lesson; split long chapters across pages"
+    },
+    "objective": {
+      "zh-CN": "依据资料建立事件之间的关系，提出可用史料回答的问题，而不是只记忆名词。",
+      "zh-Hant": "依據資料建立事件之間的關係，提出可用史料回答的問題，而不是只記憶名詞。",
+      "en": "Build relationships from supplied sources and pose answerable historical questions beyond recalling terms."
+    },
+    "activities": [
+      {
+        "zh-CN": "教师提供资料与学段，先标出事实、解释和待核对内容，确认保留范围。",
+        "zh-Hant": "教師提供資料與學段，先標出事實、解釋和待核對內容，確認保留範圍。",
+        "en": "Supply sources and learner level; mark facts, interpretations and uncertain points before fixing scope."
+      },
+      {
+        "zh-CN": "按主题选时间线、比较表或背景—过程—影响结构，填写两项可观察目标。",
+        "zh-Hant": "按主題選時間線、比較表或背景—過程—影響結構，填寫兩項可觀察目標。",
+        "en": "Choose a timeline, comparison or context–process–consequence structure and specify two observable goals."
+      },
+      {
+        "zh-CN": "每个模块设置一个有资料依据的问题；学生先独立作答，再互查来源。",
+        "zh-Hant": "每個模塊設置一個有資料依據的問題；學生先獨立作答，再互查來源。",
+        "en": "Give each module one source-answerable question; pupils answer independently, then cross-check evidence."
+      },
+      {
+        "zh-CN": "完成白板图后核对遗漏与箭头含义，最后用不看图的短自测检查理解。",
+        "zh-Hant": "完成白板圖後核對遺漏與箭頭含義，最後用不看圖的短自測檢查理解。",
+        "en": "Check the board image for omissions and meaningful arrows, then use a short closed-image self-check."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "包含来源说明的提纲＋学生对一个问题的“判断—证据—理由”。",
+      "zh-Hant": "包含來源說明的提綱＋學生對一個問題的“判斷—證據—理由”。",
+      "en": "A sourced outline and one student claim supported by evidence and reasoning."
+    },
+    "limitation": {
+      "zh-CN": "先后关系不自动构成因果；真实史料、改写材料与虚构情境必须区分。图片不可读时应分页，而非用小字挤满。",
+      "zh-Hant": "先後關係不自動構成因果；真實史料、改寫材料與虛構情境必須區分。圖片不可讀時應分頁，而非用小字擠滿。",
+      "en": "Sequence alone does not prove causation. Distinguish primary sources, adapted text and invented scenarios; paginate rather than shrink unreadable text."
+    },
+    "sources": [
+      {
+        "title": "Digital Inquiry Group · Historical Thinking Chart",
+        "url": "https://www.inquirygroup.org/history-lessons/historical-thinking-chart",
+        "note": {
+          "zh-CN": "参考来源辨析、情境化、互证与细读；本平台活动是据该方法及本地模板作出的设计建议。",
+          "zh-Hant": "參考來源辨析、情境化、互證與細讀；本平台活動是據該方法及本地模板作出的設計建議。",
+          "en": "Informs sourcing, contextualization, corroboration and close reading; platform activities are editorial adaptations."
+        }
+      },
+      {
+        "title": "EDB · 初中中國歷史科學與教資源",
+        "url": "https://www.edb.gov.hk/tc/curriculum-development/kla/pshe/references-and-resources/chinese-history_ncs/Junior_Secondary_Chinese_History_Applicable_to_Non-Chinese_Speaking_Students.html",
+        "note": {
+          "zh-CN": "参考按语言基础与教学需要选择、调适中史材料；非华语学生需另配词语和阅读支持。",
+          "zh-Hant": "參考按語言基礎與教學需要選擇、調適中史材料；非華語學生需另配詞語和閱讀支持。",
+          "en": "Informs adaptation to learning and language needs; non-Chinese-speaking learners need explicit vocabulary and reading support."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "模板可迁移至不同历史主题；学段须跟随实际资料与目标",
+      "zh-Hant": "模板可遷移至不同歷史主題；學段須跟隨實際資料與目標",
+      "en": "A transferable history template whose level depends on the actual sources and objectives"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  },
+  "lesson": {
+    "audience": {
+      "zh-CN": "语文教师备课；优先以初中一篇现代文试用",
+      "zh-Hant": "語文教師備課；優先以初中一篇現代文試用",
+      "en": "Chinese-language teacher planning; start with one junior-secondary modern prose text"
+    },
+    "prior": {
+      "zh-CN": "教师掌握所选课文、文体与单元目标；学生能概括段意并找文本依据",
+      "zh-Hant": "教師掌握所選課文、文體與單元目標；學生能概括段意並找文本依據",
+      "en": "Teachers know the text, genre and unit goals; pupils can summarize paragraphs and locate textual evidence"
+    },
+    "method": {
+      "zh-CN": "文本细读＋问题链＋读写迁移",
+      "zh-Hant": "文本細讀＋問題鏈＋讀寫遷移",
+      "en": "Close reading, a sequence of questions and writing transfer"
+    },
+    "duration": {
+      "zh-CN": "建议备课 30–45 分钟；教学 1–2 课时",
+      "zh-Hant": "建議備課 30–45 分鐘；教學 1–2 課時",
+      "en": "Suggested planning: 30–45 minutes; teaching: one or two lessons"
+    },
+    "objective": {
+      "zh-CN": "把一个阅读重点转化成有文本依据的学习任务，并通过短表达检验能否迁移。",
+      "zh-Hant": "把一個閱讀重點轉化成有文本依據的學習任務，並通過短表達檢驗能否遷移。",
+      "en": "Turn one reading focus into an evidence-based task and assess transfer through a short expressive response."
+    },
+    "activities": [
+      {
+        "zh-CN": "填课文、文体、学情与目标，选定一个可观察的重点，不必填满所有目标类别。",
+        "zh-Hant": "填課文、文體、學情與目標，選定一個可觀察的重點，不必填滿所有目標類別。",
+        "en": "Enter text, genre, learner needs and goals; choose one observable focus rather than filling every category."
+      },
+      {
+        "zh-CN": "先整体感知，再围绕核心问题圈点关键句；要求每个判断带一处文本依据。",
+        "zh-Hant": "先整體感知，再圍繞核心問題圈點關鍵句；要求每個判斷帶一處文本依據。",
+        "en": "Move from overview to a central question and annotate key lines, requiring evidence for each claim."
+      },
+      {
+        "zh-CN": "组织同伴比较不同解释，教师用追问补足依据，再总结阅读方法。",
+        "zh-Hant": "組織同伴比較不同解釋，教師用追問補足依據，再總結閱讀方法。",
+        "en": "Compare interpretations with peers; use follow-up questions to strengthen evidence and summarize the reading method."
+      },
+      {
+        "zh-CN": "设计短仿写、比较或口头表达，依目标检查；课后把真实困难写入反思。",
+        "zh-Hant": "設計短仿寫、比較或口頭表達，依目標檢查；課後把真實困難寫入反思。",
+        "en": "Use a short imitation, comparison or oral response, assess against the goal and record actual difficulties afterward."
+      }
+    ],
+    "evidence": {
+      "zh-CN": "一份学生批注、一次有依据的讨论回应和一个迁移片段。",
+      "zh-Hant": "一份學生批注、一次有依據的討論回應和一個遷移片段。",
+      "en": "An annotated text, an evidence-based discussion response and a short transfer task."
+    },
+    "limitation": {
+      "zh-CN": "它是教案结构模板，并非已完成课程；预设学生回答不能冒充实际课堂记录。记叙文、说明文、议论文须调整问题与评价标准。",
+      "zh-Hant": "它是教案結構模板，並非已完成課程；預設學生回答不能冒充實際課堂記錄。記敘文、說明文、議論文須調整問題與評價標準。",
+      "en": "A lesson-plan structure, not a completed lesson. Predicted responses are not classroom records; adapt questions and criteria to the genre."
+    },
+    "sources": [
+      {
+        "title": "EDB · 中國語文課程指引（中一至中三）2023",
+        "url": "https://www.edb.gov.hk/attachment/tc/curriculum-development/kla/chi-edu/curriculum-documents/Junior_Sec_Chi_Lang_Curr_Guide_2023.pdf",
+        "note": {
+          "zh-CN": "参考理解、分析、鉴赏、阅读策略与读写结合；评价应回到学生的文本依据与表达。",
+          "zh-Hant": "參考理解、分析、鑒賞、閱讀策略與讀寫結合；評價應回到學生的文本依據與表達。",
+          "en": "Informs comprehension, analysis, appreciation and reading–writing connections, with attention to textual evidence."
+        }
+      }
+    ],
+    "curriculum": {
+      "zh-CN": "初中语文阅读、鉴赏与表达；文体决定问题链与迁移任务",
+      "zh-Hant": "初中語文閱讀、鑒賞與表達；文體決定問題鏈與遷移任務",
+      "en": "Junior-secondary reading, appreciation and expression; genre determines questions and transfer tasks"
+    },
+    "basis": {
+      "zh-CN": "依据本地项目功能与所列资料推导的教学建议，尚无真实课堂成效记录。",
+      "zh-Hant": "依據本地項目功能與所列資料推導的教學建議，尚無真實課堂成效記錄。",
+      "en": "Teaching suggestions inferred from local project features and listed references; no classroom-effectiveness record is claimed."
+    },
+    "reviewedAt": "2026-09-10"
+  }
+}

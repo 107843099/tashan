@@ -1,0 +1,357 @@
+/* A quiet, two-scale gallery. The main frame fixes slide height across images. */
+.project-showcase {
+  width: 100%;
+  min-width: 0;
+  color: var(--text);
+}
+
+.showcase-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.showcase-content {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.project-showcase :is(.showcase-content, .showcase-main, .showcase-preview) {
+  touch-action: pan-y;
+}
+
+.showcase-main {
+  position: relative;
+  display: block;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--soft);
+  box-shadow: 0 12px 28px rgb(32 60 49 / 7%);
+}
+
+.showcase-main img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.showcase-main[data-kind="prompt"] img {
+  object-fit: contain;
+}
+
+.project-showcase .showcase-preview {
+  position: relative;
+  display: block;
+  contain: size;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+  color: var(--muted);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.showcase-preview img {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: calc(100% - 67px);
+  object-fit: contain;
+  object-position: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.showcase-preview-label {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.showcase-preview-label svg {
+  display: block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  stroke-width: 1.7;
+}
+
+.showcase-preview-title {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  display: -webkit-box;
+  height: 34px;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 17px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.project-showcase .showcase-preview:hover {
+  color: var(--brand);
+  background: transparent;
+}
+
+.showcase-preview:hover img {
+  border-color: var(--border-strong);
+  box-shadow: 0 5px 18px rgb(32 60 49 / 9%);
+}
+
+.project-showcase .showcase-arrow {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 160ms ease;
+}
+
+.showcase-prev { left: 10px; }
+/* Keep both controls on the main frame so the next-project preview stays visible. */
+.showcase-next { right: calc((100% - 16px) / 3.4 + 26px); }
+
+.project-showcase .showcase-arrow::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  box-shadow: 0 2px 6px rgb(20 40 30 / 8%);
+  transition: background-color 160ms ease;
+}
+
+.project-showcase .showcase-arrow:hover {
+  background: transparent;
+  color: var(--brand);
+}
+
+.project-showcase .showcase-arrow:hover::before { background: var(--paper); }
+.project-showcase .showcase-arrow svg { position: relative; z-index: 1; }
+
+.project-showcase .showcase-arrow:active {
+  transform: translateY(-50%) scale(.96);
+}
+
+.project-showcase :is(.showcase-arrow, .showcase-open, .showcase-play) svg {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.7;
+}
+
+.showcase-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 16px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.showcase-caption > div { min-width: 0; }
+
+.showcase-category {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.showcase-title {
+  display: -webkit-box;
+  min-height: 44px;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.showcase-title:hover { color: var(--brand); }
+
+.showcase-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--brand);
+}
+
+.showcase-open:hover {
+  border-color: var(--border-strong);
+  background: var(--soft);
+}
+
+.showcase-footer {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 44px;
+  gap: 6px;
+  align-items: center;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+}
+
+.showcase-count {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 20px;
+  letter-spacing: .5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.showcase-dots {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.project-showcase .showcase-dot {
+  display: inline-flex;
+  flex: 0 1 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.showcase-dot > span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.project-showcase .showcase-dot[aria-pressed="true"] { background: transparent; }
+.showcase-dot[aria-pressed="true"] > span { background: var(--brand); transform: scale(1.35); }
+.showcase-dot:hover > span { background: var(--brand); }
+
+.project-showcase .showcase-play {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+
+.project-showcase .showcase-play:hover {
+  background: var(--soft);
+  color: var(--brand);
+}
+
+.project-showcase :is(a, button):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+}
+
+.showcase-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.showcase-content.is-entering {
+  animation: showcase-enter 300ms cubic-bezier(.2, .7, .3, 1) both;
+}
+
+@keyframes showcase-enter {
+  from { opacity: .3; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Hover reveals the arrows; mouse focus must not leave them stuck on screen. */
+@media (any-hover: hover) {
+  .showcase-stage:hover .showcase-arrow { opacity: 1; pointer-events: auto; }
+}
+
+.showcase-stage:has(:focus-visible) .showcase-arrow { opacity: 1; pointer-events: auto; }
+
+@media (max-width: 640px) {
+  .showcase-content { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 12px; }
+  .showcase-main { border-radius: 12px; }
+  .showcase-preview img { top: 23px; height: calc(100% - 62px); border-radius: 6px; }
+  .showcase-preview-label { font-size: 10px; }
+  .showcase-preview-title { height: 32px; font-size: 10px; line-height: 16px; }
+  .showcase-caption { gap: 12px; margin-top: 14px; }
+  .showcase-title { font-size: 13px; }
+  .showcase-prev { left: 7px; }
+  .showcase-next { right: calc((100% - 12px) / 4 + 19px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-content.is-entering { animation: none; }
+  .project-showcase :is(a, button, img, .showcase-dot > span),
+  .project-showcase .showcase-arrow::before { transition: none; }
+}
+
+@media (max-width: 340px) {
+  .showcase-dots { grid-column: 1 / -1; grid-row: 1; }
+  .showcase-count { grid-column: 1; grid-row: 2; }
+  .showcase-play { grid-column: 3; grid-row: 2; }
+}

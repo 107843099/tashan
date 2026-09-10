@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>圆锥曲线 · 离心率四视图</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700;900&display=swap">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --grid:#E7E2D4;
+    --ink:#24272C;
+    --muted:#6C675D;
+    --card:#FFFDF6;
+    --line:rgba(36,39,44,.13);
+    --blue:#2E5E8C;
+    --orange:#C4551E;
+    --violet:#6B4E8C;
+    --red:#C43E3E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--paper);}
+  body{
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 40px;}
+
+  /* ===== 头部 ===== */
+  header{padding:6px 2px 18px;}
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.06em;color:var(--muted);}
+  .kicker .chip{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--card);}
+  h1{font-family:"Noto Serif SC",serif;font-size:30px;font-weight:900;line-height:1.25;margin-top:12px;letter-spacing:.01em;}
+  .sub{font-size:14px;color:var(--muted);margin-top:8px;max-width:720px;}
+  .sub b{color:var(--blue);font-weight:700;}
+
+  /* ===== Tabs ===== */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 18px;}
+  .tab{
+    padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+    background:var(--card);color:var(--muted);font-size:13px;font-weight:500;
+    text-decoration:none;font-family:inherit;cursor:pointer;
+    transition:border-color .15s,background .15s,color .15s;
+  }
+  .tab:hover{border-color:var(--ink);color:var(--ink);}
+  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:700;}
+
+  /* ===== 视图 ===== */
+  .view{display:none;}
+  .view.active{display:block;}
+  .view-row{display:flex;gap:18px;align-items:stretch;}
+
+  .stage-card{
+    flex:1 1 62%;min-width:0;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:14px;display:flex;flex-direction:column;
+  }
+  .stage-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 10px;flex-wrap:wrap;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+    padding:4px 12px;border-radius:999px;color:#fff;
+  }
+  .badge .eq{font-family:"Noto Serif SC",serif;font-weight:600;}
+  .stage-note{font-size:12px;color:var(--muted);}
+  .canvas-hold{position:relative;width:100%;aspect-ratio:16/11;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .canvas-hold canvas{display:block;width:100%;height:100%;}
+
+  .panel{flex:0 0 300px;min-width:0;display:flex;flex-direction:column;gap:14px;}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .pcard h3{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;}
+
+  /* 滑块 */
+  .slider-wrap{position:relative;padding:8px 0 0;}
+  .slider-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px;}
+  .slider-label{font-size:13px;font-weight:700;}
+  .slider-val{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;}
+  .slider-val small{font-size:12px;font-weight:500;color:var(--muted);}
+  .slider-range{
+    -webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:999px;
+    outline:none;cursor:pointer;
+  }
+  .slider-range::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid var(--ink);cursor:pointer;
+  }
+  .slider-range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ink);cursor:pointer;}
+  .track-ellipse{background:linear-gradient(90deg,var(--blue) 0%,#8FB3CC 100%);}
+  .track-full{background:linear-gradient(90deg,var(--blue) 0%,var(--blue) 70.7%,var(--violet) 70.7%,var(--violet) 100%);}
+  .track-cross{background:linear-gradient(90deg,var(--blue) 0%,var(--blue) 50%,var(--violet) 50%,var(--violet) 100%);}
+  .track-hyper{background:linear-gradient(90deg,#6B4E8C 0%,#A28BC6 100%);}
+  .para-mark{position:absolute;top:8px;width:2px;height:10px;background:var(--orange);transform:translateX(-1px);pointer-events:none;}
+  .para-mark.p70{left:70.7%;}
+  .para-mark.p50{left:50%;}
+  .slider-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;}
+
+  /* 参数与读数 */
+  .param-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .param-item{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;text-align:center;}
+  .param-item .k{font-size:11px;color:var(--muted);}
+  .param-item .v{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;}
+  .v.blue{color:var(--blue);} .v.orange{color:var(--orange);} .v.violet{color:var(--violet);}
+  .eq-box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+    font-family:"Noto Serif SC",serif;text-align:center;font-size:15px;}
+  .dist-box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center;}
+  .dist-box .lbl{font-size:11px;color:var(--muted);}
+  .dist-box .val{font-size:22px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .angle-box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center;}
+  .angle-box .lbl{font-size:11px;color:var(--muted);}
+  .angle-box .val{font-size:26px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .angle-box .lbl2{font-size:11px;color:var(--muted);margin-top:2px;}
+  .teach-note2{font-size:11.5px;color:var(--muted);line-height:1.5;background:var(--paper);border-radius:8px;padding:8px 10px;}
+
+  /* 名词小词典（可折叠） */
+  .glossary-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 14px;}
+  .glossary-card summary{list-style:none;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.05em;padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .glossary-card summary::-webkit-details-marker{display:none;}
+  .glossary-card summary .hint{font-size:11px;font-weight:500;color:var(--muted);}
+  .glossary-card summary .hint::after{content:" ▸";transition:transform .15s;display:inline-block;}
+  .glossary-card[open] summary .hint::after{transform:rotate(90deg);}
+  .glossary-card .g-body{padding-bottom:12px;}
+  .glossary{font-size:12px;}
+  .glossary .g-item{padding:6px 0;border-bottom:1px dashed var(--line);}
+  .glossary .g-item:last-child{border-bottom:none;}
+  .glossary .g-term{font-weight:700;color:var(--ink);}
+  .glossary .g-desc{color:var(--muted);font-size:11.5px;line-height:1.5;margin-top:1px;}
+
+  /* 按钮 */
+  .preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .preset-btn{
+    padding:10px 4px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);cursor:pointer;
+    font-size:12.5px;font-weight:500;font-family:inherit;transition:border-color .15s,background .15s;
+  }
+  .preset-btn:hover{border-color:var(--ink);}
+  .preset-btn.active{border-color:var(--ink);background:var(--paper);font-weight:700;}
+  .action-btn{
+    width:100%;padding:10px;border-radius:10px;border:1px solid var(--ink);
+    background:var(--card);color:var(--ink);font-size:13px;font-weight:600;
+    cursor:pointer;font-family:inherit;transition:background .15s,color .15s;
+  }
+  .action-btn:hover{background:var(--paper);}
+  .action-btn.toggled{background:var(--ink);color:#fff;}
+  .legend{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:12px;color:var(--ink);}
+  .legend .row{display:flex;align-items:center;gap:8px;}
+  .legend .sw{width:16px;height:4px;border-radius:2px;flex:none;}
+
+  .teach-note{
+    font-size:12.5px;color:var(--muted);line-height:1.6;
+    background:var(--paper);border-left:3px solid var(--orange);
+    border-radius:0 10px 10px 0;padding:10px 12px;
+  }
+  .teach-note b{color:var(--ink);}
+
+  /* 头部 e 解释 */
+  .e-intro{font-size:13px;color:var(--muted);line-height:1.65;background:var(--paper);border-left:3px solid var(--orange);border-radius:0 10px 10px 0;padding:10px 14px;margin-top:12px;max-width:760px;}
+  .e-intro b{color:var(--ink);}
+
+  /* 课后小测 */
+  .quiz{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;}
+  .quiz-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+  .quiz-item{padding:8px 0;border-bottom:1px dashed var(--line);}
+  .quiz-item:last-child{border-bottom:none;}
+  .quiz-q{font-size:13px;line-height:1.55;color:var(--ink);}
+  .quiz-q .num{font-weight:700;color:var(--blue);margin-right:4px;}
+  .quiz-answer{margin-top:6px;}
+  .quiz-answer summary{list-style:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:4px;}
+  .quiz-answer summary::-webkit-details-marker{display:none;}
+  .quiz-answer summary::after{content:"▸";transition:transform .15s;display:inline-block;font-size:10px;}
+  .quiz-answer[open] summary::after{transform:rotate(90deg);}
+  .quiz-answer .a{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px;padding:8px 10px;background:var(--paper);border-radius:8px;}
+  .quiz-answer .a b{color:var(--ink);}
+  .quiz-answer .a .tip{display:block;margin-top:5px;color:var(--orange);font-weight:600;}
+
+  footer{margin-top:22px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;}
+
+  @media (max-width:820px){
+    .view-row{flex-direction:column;}
+    .panel{flex:1 1 auto;width:100%;}
+    h1{font-size:24px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">
+      <span class="chip">V1 · V2 · V3 · V4</span>
+      <span>中学数学 · 解析几何</span>
+    </div>
+    <h1>离心率 e：圆锥曲线的统一钥匙</h1>
+    <p class="sub">拖动 e，看圆怎样被拉成椭圆、再裂成双曲线。四个视图，从全貌到细节。</p>
+    <div class="e-intro">
+      <b>什么是偏心率 e？</b> 偏心率（也叫离心率）e 是衡量圆锥曲线"扁平或开口程度"的一个数，定义为 <b>e = c/a</b>——也就是"焦点离中心有多远，除以半长轴"。<b>e = 0</b> 是圆，<b>0 &lt; e &lt; 1</b> 是椭圆，<b>e = 1</b> 是抛物线，<b>e &gt; 1</b> 是双曲线。一个 e 就能把四类曲线串起来，所以叫"统一钥匙"。
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <a class="tab active" href="#v1">V1 · 全局总览</a>
+    <a class="tab" href="#v2">V2 · 椭圆是怎么变扁的</a>
+    <a class="tab" href="#v3">V3 · 为什么 e=1 是分界线</a>
+    <a class="tab" href="#v4">V4 · 双曲线与渐近线</a>
+  </nav>
+
+  <!-- ========== V1 全局总览 ========== -->
+  <section class="view active" data-view="v1">
+    <div class="view-row">
+      <section class="stage-card">
+        <div class="stage-head">
+          <span class="badge" id="badge1"><span class="eq">x²/a² + y²/b² = 1</span></span>
+          <span class="stage-note">单位 1 · 所有图形按同一大小缩放（半长轴 a = 1）</span>
+        </div>
+        <div class="canvas-hold"><canvas id="stage1"></canvas></div>
+        <div class="quiz">
+          <div class="quiz-title">课后小测</div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">1.</span>判断以下 e 值分别对应哪种曲线：e = 0、e = 0.7、e = 1、e = 1.4。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">e = 0 是圆；0 &lt; e &lt; 1 是椭圆（0.7）；e = 1 是抛物线；e &gt; 1 是双曲线（1.4）。<span class="tip">可视化：把滑块分别拖到这四个值，看曲线颜色和形状变化。</span></div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">2.</span>已知某圆锥曲线长轴 2a = 10，两焦点距离 2c = 6，求 e，并判断它是什么曲线。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">a = 5，c = 3，e = c/a = 3/5 = 0.6。因为 0 &lt; e &lt; 1，所以是椭圆。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">3.</span>用你自己的话解释：为什么 e 越大，椭圆越扁、双曲线越开？e = 1 为什么是分界线？</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">e = c/a，e 越大说明焦点离中心越远：椭圆里焦点分得越开，曲线被拉得越扁；e &gt; 1 时 b = √(1−e²) 变成负数开不了方，必须换成 b = √(e²−1)，公式的"断裂"对应图形"裂开"成双曲线。e = 1 正好是两种 b 的公式交接处，所以是分界线。<span class="tip">可视化：把滑块从 0 一直拖到 √2，重点看 e 跨过 1 的瞬间。</span></div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">4.</span>地球轨道 e ≈ 0.017，哈雷彗星 e ≈ 0.967。谁的轨道更接近圆？哪个更"拉长"？为什么？</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">e 越接近 0 越接近圆。地球 e = 0.017 非常接近 0，轨道几乎是圆；哈雷彗星 e = 0.967 接近 1，椭圆被拉得极扁。<span class="tip">可视化：把 e 分别设为 0.02 和 0.97，对比两个椭圆的形状。</span></div></details>
+          </div>
+        </div>
+      </section>
+      <aside class="panel">
+        <div class="pcard">
+          <h3>e（离心率）：焦点离中心有多远</h3>
+          <div class="slider-wrap">
+            <div class="slider-meta">
+              <span class="slider-label">e</span>
+              <span class="slider-val" id="e-readout1">0.50<small>（椭圆）</small></span>
+            </div>
+            <div class="para-mark p70"></div>
+            <input type="range" id="e-slider1" class="slider-range track-full" min="0" max="1.414" step="0.001" value="0.5" aria-label="离心率 e">
+            <div class="slider-scale"><span>0 · 圆</span><span>1 · 抛物线</span><span>√2 · 等轴双曲线</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>实时参数（a = 1）</h3>
+          <div class="param-grid">
+            <div class="param-item"><div class="k">a · 半长轴</div><div class="v" id="p-a1">1.00</div></div>
+            <div class="param-item"><div class="k">b</div><div class="v blue" id="p-b1">0.87</div></div>
+            <div class="param-item"><div class="k">c · 焦点到中心</div><div class="v orange" id="p-c1">0.50</div></div>
+          </div>
+          <div style="height:10px"></div>
+          <h3>当前曲线方程</h3>
+          <div class="eq-box" id="eq-box1">x² + y²/0.75 = 1</div>
+        </div>
+        <div class="pcard">
+          <h3>快捷定位</h3>
+          <div class="preset-grid" id="presets1">
+            <button class="preset-btn" data-e="0">圆</button>
+            <button class="preset-btn active" data-e="0.5">椭圆 0.5</button>
+            <button class="preset-btn" data-e="0.85">椭圆 0.85</button>
+            <button class="preset-btn" data-e="1">抛物线</button>
+            <button class="preset-btn" data-e="1.2">双曲线 1.2</button>
+            <button class="preset-btn" data-e="1.414">等轴 √2</button>
+          </div>
+        </div>
+        <details class="glossary-card">
+          <summary><span>名词小词典</span><span class="hint">点击展开</span></summary>
+          <div class="g-body">
+            <div class="glossary">
+              <div class="g-item"><div class="g-term">离心率 e</div><div class="g-desc">判断曲线"扁不扁、开不开"的数。e = c/a，意思是"焦点离中心有多远（按半长轴来衡量）"。</div></div>
+              <div class="g-item"><div class="g-term">半长轴 a</div><div class="g-desc">中心到"长轴两端顶点"的距离。本页所有图形都按 a = 1 缩放，方便对比形状。</div></div>
+              <div class="g-item"><div class="g-term">半短轴 b</div><div class="g-desc">椭圆里是半短轴；双曲线里决定渐近线的坡度。都随 e 变化。</div></div>
+              <div class="g-item"><div class="g-term">焦距 c</div><div class="g-desc">中心到焦点的距离。c 越大，焦点离中心越远，e 也越大。</div></div>
+              <div class="g-item"><div class="g-term">焦点</div><div class="g-desc">定义曲线用的特殊点（圆里重叠成一个）。</div></div>
+              <div class="g-item"><div class="g-term">顶点</div><div class="g-desc">曲线长轴两端、离中心最近/最远的位置。</div></div>
+            </div>
+          </div>
+        </details>
+        <div class="teach-note">
+          e 越大，椭圆越扁、双曲线越开；<b>e = 1</b> 时焦点正好走到顶点，变成抛物线。<br>
+          试着把滑块从 0 一直拖到 √2，走完全程看一遍。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== V2 椭圆段专题 ========== -->
+  <section class="view" data-view="v2">
+    <div class="view-row">
+      <section class="stage-card">
+        <div class="stage-head">
+          <span class="badge" id="badge2" style="background:#2E5E8C"><span class="eq">|PF₁| + |PF₂| = 2a</span></span>
+          <span class="stage-note">红色虚线 = 动点 P 到两个焦点的距离</span>
+        </div>
+        <div class="canvas-hold"><canvas id="stage2"></canvas></div>
+        <div class="quiz">
+          <div class="quiz-title">课后小测</div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">1.</span>椭圆上一点 P 到两焦点距离之和为 10，求 2a 和 a。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">椭圆定义：|PF₁| + |PF₂| = 2a。所以 2a = 10，a = 5。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">2.</span>已知 e = 0.6、a = 5，求 c、b，并写出椭圆的标准方程。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">c = ae = 5 × 0.6 = 3；b = √(a²−c²) = √(25−9) = 4；标准方程 x²/25 + y²/16 = 1。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">3.</span>从"焦点分离"和"b = √(1−e²)"两个角度，分别解释 e 变大时椭圆为什么变扁。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">角度一：e 大 → c 大 → 两个焦点离中心越远、分得越开 → 椭圆被拉扁。角度二：e 大 → 1−e² 小 → b 小 → 短轴变短 → 椭圆变"瘦"。<span class="tip">可视化：拖动 e，同时观察面板里 b 的读数和画布上两个红色焦点的位置。</span></div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">4.</span>动点 P 运动到椭圆最右端时，|PF₁| 和 |PF₂| 分别是多少？（提示：最右端点坐标为 (a, 0)，两焦点在 (−c, 0) 和 (c, 0)）</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">最右端点 (a, 0) 到左焦点 F₁(−c,0) 的距离 = a + c；到右焦点 F₂(c,0) 的距离 = a − c。两者之和 = 2a，符合椭圆定义。<span class="tip">可视化：点"暂停动点"，把 P 停在最右端，读两条红虚线的长度。</span></div></details>
+          </div>
+        </div>
+      </section>
+      <aside class="panel">
+        <div class="pcard">
+          <h3>e（0 ≤ e < 1）：椭圆有多扁</h3>
+          <div class="slider-wrap">
+            <div class="slider-meta">
+              <span class="slider-label">e</span>
+              <span class="slider-val" id="e-readout2">0.50<small>（椭圆）</small></span>
+            </div>
+            <input type="range" id="e-slider2" class="slider-range track-ellipse" min="0" max="0.98" step="0.001" value="0.5" aria-label="椭圆段离心率">
+            <div class="slider-scale"><span>0 · 圆</span><span>e 越大越扁</span><span>0.98 · 极扁</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>实时参数（a = 1）</h3>
+          <div class="param-grid">
+            <div class="param-item"><div class="k">a</div><div class="v" id="p-a2">1.00</div></div>
+            <div class="param-item"><div class="k">b = √(1−e²)</div><div class="v blue" id="p-b2">0.87</div></div>
+            <div class="param-item"><div class="k">c = e · 焦点偏移</div><div class="v orange" id="p-c2">0.50</div></div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="dist-box">
+            <div class="lbl">动点 P 到两焦点距离之和（应恒为 2）</div>
+            <div class="val" id="dist2">2.000</div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>动点演示</h3>
+          <button class="action-btn" id="play2">暂停动点</button>
+        </div>
+        <details class="glossary-card">
+          <summary><span>名词小词典</span><span class="hint">点击展开</span></summary>
+          <div class="g-body">
+            <div class="glossary">
+              <div class="g-item"><div class="g-term">离心率 e</div><div class="g-desc">0 到 1 之间。e 越接近 1，椭圆越扁；e = 0 就是圆。</div></div>
+              <div class="g-item"><div class="g-term">焦点 F₁、F₂</div><div class="g-desc">椭圆内两个红点。e 越大，它们离中心越远、分得越开。</div></div>
+              <div class="g-item"><div class="g-term">椭圆定义 |PF₁|+|PF₂| = 2a</div><div class="g-desc">动点 P 到两焦点距离之和永远不变（本页 = 2）。看红色虚线，P 移动时它俩的长度和始终不变。</div></div>
+              <div class="g-item"><div class="g-term">半短轴 b</div><div class="g-desc">b = √(1−e²)。e 越大 b 越小，椭圆越"瘦"。</div></div>
+            </div>
+          </div>
+        </details>
+        <div class="teach-note">
+          圆就是 <b>e = 0</b> 的椭圆：两焦点重合在圆心。拖动 e，焦点向两端分离、椭圆被拉扁；但无论多扁，椭圆上每一点到两焦点距离之和都恒等于 <b>2a = 2</b>——这就是椭圆真正的定义。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== V3 抛物线分界点 ========== -->
+  <section class="view" data-view="v3">
+    <div class="view-row">
+      <section class="stage-card">
+        <div class="stage-head">
+          <span class="badge" id="badge3" style="background:#C4551E"><span class="eq">e = 1.00 · 抛物线</span></span>
+          <span class="stage-note">拖动 e 跨过 1，看曲线如何从闭合变开口</span>
+        </div>
+        <div class="canvas-hold"><canvas id="stage3"></canvas></div>
+        <div class="quiz">
+          <div class="quiz-title">课后小测</div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">1.</span>抛物线 y² = 4x 的焦点坐标和准线方程分别是什么？</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">标准形式 y² = 4px，对比得 4p = 4 → p = 1。焦点 (p, 0) = (1, 0)，准线 x = −p = −1。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">2.</span>e 从 0.99 变到 1.01 时，曲线经历了"闭合 → 开口 → 分叉"。请解释为什么 e 刚超过 1，曲线就"裂"成两支？</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">e &lt; 1 时 b = √(1−e²) 是实数，椭圆闭合；e = 1 时 b = 0，退化成开口的抛物线；e &gt; 1 时 1−e² &lt; 0，b 必须换成 √(e²−1)，方程变成双曲线，图形自然分成两支。<span class="tip">可视化：点"同屏对比 0.99 / 1.00 / 1.01"，三条曲线并排看。</span></div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">3.</span>任取抛物线 y² = 4x 上一点 (1, 2)，验证它到焦点 (1, 0) 的距离等于到准线 x = −1 的距离。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">到焦点距离 = √((1−1)² + (2−0)²) = 2；到准线距离 = |1 − (−1)| = 2。两者相等 ✓，这正是抛物线的定义。<span class="tip">可视化：在 V3 画布上数格子，(1,2) 到焦点和准线都是 2 格。</span></div></details>
+          </div>
+        </div>
+      </section>
+      <aside class="panel">
+        <div class="pcard">
+          <h3>e（0.9 ~ 1.1）：跨过分界线</h3>
+          <div class="slider-wrap">
+            <div class="slider-meta">
+              <span class="slider-label">e</span>
+              <span class="slider-val" id="e-readout3">1.00<small>（抛物线）</small></span>
+            </div>
+            <div class="para-mark p50"></div>
+            <input type="range" id="e-slider3" class="slider-range track-cross" min="0.90" max="1.10" step="0.001" value="1" aria-label="跨分界点离心率">
+            <div class="slider-scale"><span>0.9 · 椭圆</span><span>1 · 抛物线</span><span>1.1 · 双曲线</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>实时参数</h3>
+          <div class="param-grid">
+            <div class="param-item"><div class="k">a</div><div class="v" id="p-a3">—</div></div>
+            <div class="param-item"><div class="k">b</div><div class="v" id="p-b3">—</div></div>
+            <div class="param-item"><div class="k">c / p</div><div class="v orange" id="p-c3">p = 1</div></div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="eq-box" id="eq-box3">y² = 4x</div>
+        </div>
+        <div class="pcard">
+          <h3>为什么 e = 1 是分界线</h3>
+          <div class="preset-grid" id="presets3">
+            <button class="preset-btn" data-e="0.99">0.99 · 椭圆</button>
+            <button class="preset-btn active" data-e="1">1.00 · 抛物线</button>
+            <button class="preset-btn" data-e="1.01">1.01 · 双曲线</button>
+          </div>
+          <div style="height:10px"></div>
+          <button class="action-btn" id="compare3">同屏对比 0.99 / 1.00 / 1.01</button>
+          <div class="legend" id="legend3">
+            <div class="row"><span class="sw" style="background:#2E5E8C"></span>e = 0.99 · 椭圆（闭合）</div>
+            <div class="row"><span class="sw" style="background:#C4551E"></span>e = 1.00 · 抛物线（分界）</div>
+            <div class="row"><span class="sw" style="background:#6B4E8C"></span>e = 1.01 · 双曲线（两支）</div>
+          </div>
+        </div>
+        <details class="glossary-card">
+          <summary><span>名词小词典</span><span class="hint">点击展开</span></summary>
+          <div class="g-body">
+            <div class="glossary">
+              <div class="g-item"><div class="g-term">焦点 F</div><div class="g-desc">红色点 F，在抛物线顶点正前方 (1, 0) 处。</div></div>
+              <div class="g-item"><div class="g-term">准线</div><div class="g-desc">橙色虚线 x = −1，与焦点配套的一条辅助直线。抛物线上每一点到焦点的距离 = 到准线的距离。</div></div>
+              <div class="g-item"><div class="g-term">分界线 e = 1</div><div class="g-desc">焦点到顶点的距离 = 顶点到准线的距离。再大一点，曲线就"裂"成双曲线。</div></div>
+            </div>
+          </div>
+        </details>
+        <div class="teach-note">
+          e 从 0.99 到 1.01：<b>椭圆闭合 → 抛物线开口 → 双曲线分叉</b>。1.00 时焦点 (1, 0) 正好落在顶点上——这条"分界线"把三类曲线串在了一起。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== V4 双曲线段专题 ========== -->
+  <section class="view" data-view="v4">
+    <div class="view-row">
+      <section class="stage-card">
+        <div class="stage-head">
+          <span class="badge" id="badge4" style="background:#6B4E8C"><span class="eq">e = 1.20 · 双曲线</span></span>
+          <span class="stage-note">橙色弧 = 渐近线与 x 轴的张角 θ</span>
+        </div>
+        <div class="canvas-hold"><canvas id="stage4"></canvas></div>
+        <div class="quiz">
+          <div class="quiz-title">课后小测</div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">1.</span>对双曲线 x² − y² = 1，求 a、b、c、e 和渐近线方程，并判断它是不是等轴双曲线。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">a² = 1, b² = 1 → a = b = 1；c² = a² + b² = 2 → c = √2；e = c/a = √2；渐近线 y = ±(b/a)x = ±x。因为 a = b，所以是等轴双曲线。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">2.</span>为什么"等轴双曲线"叫"等轴"？它的两条渐近线夹角是多少？</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">"等轴"指实轴和虚轴等长，即 a = b。此时渐近线倾角 θ = arctan(b/a) = arctan(1) = 45°，两条渐近线夹角 2θ = 90°，正好互相垂直。<span class="tip">可视化：把 e 拖到 √2，看橙色张角 θ 显示 45°。</span></div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">3.</span>已知双曲线满足 c² = a² + b²，请据此说明为什么双曲线的 e 一定大于 1。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">c² = a² + b² &gt; a²（因为 b² &gt; 0），所以 c &gt; a，于是 e = c/a &gt; 1。这就是双曲线天然落在 e &gt; 1 区间的原因。</div></details>
+          </div>
+          <div class="quiz-item">
+            <div class="quiz-q"><span class="num">4.</span>双曲线"永远碰不到"渐近线，但 e 越大时它又"贴得越近"。结合张角 θ 的变化，说说你从可视化里看到了什么。</div>
+            <details class="quiz-answer"><summary>查看推导</summary><div class="a">双曲线上任意点满足 y²/b² = x²/a² − 1 &lt; x²/a²，所以 |y| &lt; (b/a)|x|，即曲线始终在渐近线 y = ±(b/a)x 的内侧，永远不相交；x 越大两者越接近。e 越大 b 越大，渐近线越陡（θ 越大），曲线张开得越开。<span class="tip">可视化：拖动 e 从 1.01 到 √2，看紫色曲线如何贴着渐近线跑、橙色张角如何变大。</span></div></details>
+          </div>
+        </div>
+      </section>
+      <aside class="panel">
+        <div class="pcard">
+          <h3>e（1.01 ~ 1.414）：双曲线有多开</h3>
+          <div class="slider-wrap">
+            <div class="slider-meta">
+              <span class="slider-label">e</span>
+              <span class="slider-val" id="e-readout4">1.20<small>（双曲线）</small></span>
+            </div>
+            <input type="range" id="e-slider4" class="slider-range track-hyper" min="1.01" max="1.414" step="0.001" value="1.2" aria-label="双曲线段离心率">
+            <div class="slider-scale"><span>1.01 · 刚分叉</span><span>e 越大越开</span><span>1.414 · 等轴</span></div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>实时参数（a = 1）</h3>
+          <div class="param-grid">
+            <div class="param-item"><div class="k">a</div><div class="v" id="p-a4">1.00</div></div>
+            <div class="param-item"><div class="k">b = √(e²−1)</div><div class="v violet" id="p-b4">0.66</div></div>
+            <div class="param-item"><div class="k">c = √(a²+b²)</div><div class="v orange" id="p-c4">1.20</div></div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="angle-box">
+            <div class="lbl">渐近线与 x 轴的夹角 θ = arctan√(e²−1)</div>
+            <div class="val" id="angle4">45.0°</div>
+            <div class="lbl2" id="angle24">两条渐近线夹角 2θ = 90.0°</div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>双曲线定义动点</h3>
+          <button class="action-btn" id="play4">暂停动点</button>
+          <div style="height:10px"></div>
+          <div class="dist-box">
+            <div class="lbl">右支上 |PF₁| − |PF₂|（应恒为 2）</div>
+            <div class="val" id="dist4">2.000</div>
+          </div>
+        </div>
+        <div class="pcard">
+          <h3>快捷定位</h3>
+          <div class="preset-grid" id="presets4">
+            <button class="preset-btn" data-e="1.05">1.05</button>
+            <button class="preset-btn active" data-e="1.2">1.20</button>
+            <button class="preset-btn" data-e="1.414">等轴 √2</button>
+          </div>
+          <div style="height:10px"></div>
+          <div class="teach-note2">双曲线 c² = a² + b²，椭圆 c² = a² − b²——这是两类曲线最根本的区别。</div>
+        </div>
+        <details class="glossary-card">
+          <summary><span>名词小词典</span><span class="hint">点击展开</span></summary>
+          <div class="g-body">
+            <div class="glossary">
+              <div class="g-item"><div class="g-term">渐近线</div><div class="g-desc">紫色虚线。双曲线"无限接近、但永远碰不到"的两条直线，是它张开方向的"路标"。</div></div>
+              <div class="g-item"><div class="g-term">张角 θ</div><div class="g-desc">渐近线与 x 轴的夹角（橙色弧）。e 越大，渐近线越陡、θ 越大。</div></div>
+              <div class="g-item"><div class="g-term">等轴双曲线</div><div class="g-desc">e = √2 时 θ = 45°，两条渐近线正好互相垂直，形状最"方正"的双曲线。</div></div>
+              <div class="g-item"><div class="g-term">双曲线定义 |PF₁|−|PF₂| = 2a</div><div class="g-desc">动点 P 到两焦点距离之差永远不变（本页 = 2）。</div></div>
+            </div>
+          </div>
+        </details>
+        <div class="teach-note">
+          双曲线定义：右支上任意点 <b>P</b>，到两焦点距离之差恒为 <b>2a = 2</b>（|PF₁| − |PF₂|）。<br>
+          e 越大渐近线越陡；到 <b>e = √2</b> 时两条渐近线正好互相垂直，就是等轴双曲线。
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer>所有图形按同一大小缩放（半长轴 a = 1），方便对比形状。V1 看全貌，V2 看椭圆定义，V3 看分界线，V4 看双曲线与渐近线。</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var WORLD_Y = 2.6;
+
+  // ===== 数学 =====
+  var COLORS = {circle:'#2E5E8C', ellipse:'#2E5E8C', parabola:'#C4551E', hyperbola:'#6B4E8C'};
+  var BADGE_BG = {circle:'#2E5E8C', ellipse:'#2E5E8C', parabola:'#C4551E', hyperbola:'#6B4E8C'};
+
+  function describe(e){
+    if (e < 1e-6) return {type:'circle', name:'圆', a:1, b:1, c:0};
+    if (e < 1) return {type:'ellipse', name:'椭圆', a:1, b:Math.sqrt(1-e*e), c:e};
+    if (e < 1+1e-6) return {type:'parabola', name:'抛物线', p:1};
+    return {type:'hyperbola', name:'双曲线', a:1, b:Math.sqrt(e*e-1), c:e};
+  }
+  function fmt(v, d){ d = d || 2; if (!isFinite(v)) return '∞'; return (+v.toFixed(d)).toFixed(d); }
+
+  // 曲线采样（标准方程视角：中心在原点，a=1）
+  function sampleCurve(info){
+    var N = 480, pts = [], i;
+    if (info.type === 'circle' || info.type === 'ellipse'){
+      var b = info.b;
+      for (i = 0; i <= N; i++){ var t = i / N * 2 * Math.PI; pts.push([Math.cos(t), b * Math.sin(t)]); }
+    } else if (info.type === 'hyperbola'){
+      var bh = info.b, T = 2.3;
+      for (i = 0; i <= N; i++){ var u1 = -T + i / N * 2 * T; pts.push([Math.cosh(u1), bh * Math.sinh(u1)]); }
+      for (i = 0; i <= N; i++){ var u2 = -T + i / N * 2 * T; pts.push([-Math.cosh(u2), bh * Math.sinh(u2)]); }
+    } else {
+      var Tp = 2.2;
+      for (i = 0; i <= N; i++){ var tt = -Tp + i / N * 2 * Tp; pts.push([tt * tt, 2 * tt]); }
+    }
+    return pts;
+  }
+
+  // ===== 画布基座 =====
+  function setupCanvas(canvas){
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return null;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var scale = h / (2 * WORLD_Y), cx = w / 2, cy = h / 2;
+    return {ctx:ctx, w:w, h:h, scale:scale,
+      X:function(x){ return cx + x * scale; },
+      Y:function(y){ return cy - y * scale; }};
+  }
+  function drawGrid(env){
+    var ctx = env.ctx, w = env.w, h = env.h, xWorld = w / 2 / env.scale;
+    ctx.lineWidth = 1; ctx.strokeStyle = '#E7E2D4'; ctx.beginPath();
+    var gx, gy;
+    for (gx = Math.floor(-xWorld); gx <= Math.ceil(xWorld); gx++){ if (gx === 0) continue; ctx.moveTo(env.X(gx), 0); ctx.lineTo(env.X(gx), h); }
+    for (gy = -3; gy <= 3; gy++){ if (gy === 0) continue; ctx.moveTo(0, env.Y(gy)); ctx.lineTo(w, env.Y(gy)); }
+    ctx.stroke();
+  }
+  function drawAxes(env){
+    var ctx = env.ctx, w = env.w, h = env.h, xWorld = w / 2 / env.scale;
+    ctx.strokeStyle = '#B9B3A4'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(0, env.Y(0)); ctx.lineTo(w, env.Y(0));
+    ctx.moveTo(env.X(0), 0); ctx.lineTo(env.X(0), h); ctx.stroke();
+    ctx.fillStyle = '#8A8476';
+    ctx.beginPath(); ctx.moveTo(w - 6, env.Y(0)); ctx.lineTo(w - 14, env.Y(0) - 5); ctx.lineTo(w - 14, env.Y(0) + 5); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(env.X(0), 6); ctx.lineTo(env.X(0) - 5, 14); ctx.lineTo(env.X(0) + 5, 14); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#9A9487'; ctx.font = '11px "Noto Sans SC", sans-serif';
+    var gx, gy;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (gx = Math.max(-Math.floor(xWorld), -3); gx <= Math.min(Math.ceil(xWorld), 3); gx++){
+      if (gx === 0) continue; ctx.fillText(gx, env.X(gx), env.Y(0) + 5);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (gy = -3; gy <= 3; gy++){
+      if (gy === 0) continue;
+      if (env.Y(gy) < -4 || env.Y(gy) > h + 4) continue;
+      ctx.fillText(gy, env.X(0) - 6, env.Y(gy));
+    }
+  }
+  function drawCurve(env, info, color, width){
+    var ctx = env.ctx, w = env.w, h = env.h, pts = sampleCurve(info);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 3;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.beginPath();
+    var pen = false, lastX = null, lastY = null;
+    for (var i = 0; i < pts.length; i++){
+      var sx = env.X(pts[i][0]), sy = env.Y(pts[i][1]);
+      if (sx < -40 || sx > w + 40 || sy < -40 || sy > h + 40){ pen = false; continue; }
+      if (!pen || (lastX !== null && Math.hypot(sx - lastX, sy - lastY) > 80)){ ctx.moveTo(sx, sy); pen = true; }
+      else ctx.lineTo(sx, sy);
+      lastX = sx; lastY = sy;
+    }
+    ctx.stroke();
+  }
+  function drawDot(env, x, y, r, fill, label){
+    var ctx = env.ctx;
+    ctx.beginPath(); ctx.arc(env.X(x), env.Y(y), r, 0, Math.PI * 2);
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+    if (label){
+      ctx.fillStyle = fill; ctx.font = '600 12px "Noto Sans SC", sans-serif';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText(label, env.X(x) + 8, env.Y(y) - 6);
+    }
+  }
+  function drawAsymptote(env, info){
+    if (info.type !== 'hyperbola') return;
+    var b = info.b, ctx = env.ctx, w = env.w, xWorld = w / 2 / env.scale;
+    ctx.save(); ctx.setLineDash([6,6]); ctx.strokeStyle = 'rgba(107,78,140,.35)'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    var xr = Math.min(xWorld, 8), xl = Math.max(-xWorld, -8);
+    ctx.moveTo(env.X(0), env.Y(0)); ctx.lineTo(env.X(xr), env.Y(-b * xr));
+    ctx.moveTo(env.X(0), env.Y(0)); ctx.lineTo(env.X(xr), env.Y(b * xr));
+    ctx.moveTo(env.X(0), env.Y(0)); ctx.lineTo(env.X(xl), env.Y(-b * xl));
+    ctx.moveTo(env.X(0), env.Y(0)); ctx.lineTo(env.X(xl), env.Y(b * xl));
+    ctx.stroke(); ctx.restore();
+  }
+  function drawDirectrix(env, info){
+    if (info.type !== 'parabola') return;
+    var ctx = env.ctx, h = env.h;
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle = 'rgba(196,85,30,.5)'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(env.X(-1), 0); ctx.lineTo(env.X(-1), h); ctx.stroke();
+    ctx.fillStyle = '#C4551E'; ctx.font = '12px "Noto Sans SC", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('准线 x = −1', env.X(-1) + 6, 14);
+    ctx.restore();
+  }
+  function drawFoci(env, e, info){
+    if (info.type === 'circle'){ drawDot(env, 0, 0, 5, '#C43E3E', 'O'); }
+    else if (info.type === 'parabola'){ drawDot(env, 1, 0, 5, '#C43E3E', 'F'); }
+    else {
+      drawDot(env, 0, 0, 4, '#8A8476', 'O');
+      if (e > 0.05){ drawDot(env, -e, 0, 5, '#C43E3E', 'F₁'); drawDot(env, e, 0, 5, '#C43E3E', 'F₂'); }
+      else drawDot(env, e, 0, 5, '#C43E3E', 'F');
+      var ctx = env.ctx;
+      ctx.fillStyle = 'rgba(36,39,44,.5)';
+      ctx.beginPath(); ctx.arc(env.X(1), env.Y(0), 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(env.X(-1), env.Y(0), 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // ===== 路由 =====
+  var views = ['v1', 'v2', 'v3', 'v4'], currentView = 'v1';
+  function route(){
+    var h = (location.hash || '').replace('#', '') || 'v1';
+    if (views.indexOf(h) < 0) h = 'v1';
+    currentView = h;
+    var els = document.querySelectorAll('.view');
+    for (var i = 0; i < els.length; i++) els[i].className = 'view' + (els[i].getAttribute('data-view') === h ? ' active' : '');
+    var tabs = document.querySelectorAll('.tab');
+    for (var j = 0; j < tabs.length; j++) tabs[j].className = 'tab' + (tabs[j].getAttribute('href') === '#' + h ? ' active' : '');
+    if (h === 'v1') renderV1();
+    else if (h === 'v2') renderV2();
+    else if (h === 'v3') renderV3();
+    else renderV4();
+  }
+
+  // ===== V1 全局总览 =====
+  var slider1 = document.getElementById('e-slider1');
+  var readout1 = document.getElementById('e-readout1');
+  var badge1 = document.getElementById('badge1');
+  var pA1 = document.getElementById('p-a1'), pB1 = document.getElementById('p-b1'), pC1 = document.getElementById('p-c1');
+  var eqBox1 = document.getElementById('eq-box1');
+  var presets1 = document.getElementById('presets1');
+
+  function highlightPreset(container, e){
+    var btns = container.querySelectorAll('.preset-btn'), closest = null, cd = 1e9;
+    for (var i = 0; i < btns.length; i++){ var dv = Math.abs(+btns[i].getAttribute('data-e') - e); if (dv < cd){ cd = dv; closest = btns[i]; } }
+    for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+    if (cd < 0.02 && closest) closest.classList.add('active');
+  }
+
+  function renderV1(){
+    var env = setupCanvas(document.getElementById('stage1'));
+    if (!env) return;
+    var e = +slider1.value, info = describe(e);
+    drawGrid(env); drawAxes(env);
+    drawAsymptote(env, info); drawDirectrix(env, info);
+    drawCurve(env, info, COLORS[info.type]);
+    drawFoci(env, e, info);
+
+    readout1.innerHTML = fmt(e, 2) + '<small>（' + info.name + '）</small>';
+    badge1.style.background = BADGE_BG[info.type];
+    var sign = (info.type === 'hyperbola') ? '−' : '+';
+    badge1.innerHTML = '<span class="eq">' + (info.type === 'parabola' ? 'y² = 4x' : 'x²/a² ' + sign + ' y²/b² = 1') + '</span>';
+    if (info.type === 'circle'){ pA1.textContent = '1.00'; pB1.textContent = '1.00'; pC1.textContent = '0'; eqBox1.innerHTML = 'x² + y² = 1'; }
+    else if (info.type === 'parabola'){ pA1.textContent = '—'; pB1.textContent = '—'; pC1.textContent = 'p = 1'; eqBox1.innerHTML = 'y² = 4x'; }
+    else {
+      pA1.textContent = fmt(info.a, 2); pB1.textContent = fmt(info.b, 2);
+      pB1.className = info.type === 'ellipse' ? 'v blue' : 'v violet';
+      pC1.textContent = 'c = ' + fmt(info.c, 2);
+      eqBox1.innerHTML = 'x² ' + (info.type === 'ellipse' ? '+' : '−') + ' y²/' + (info.b * info.b).toFixed(2) + ' = 1';
+    }
+    highlightPreset(presets1, e);
+  }
+  slider1.addEventListener('input', function(){ renderV1(); });
+  presets1.addEventListener('click', function(ev){
+    var btn = ev.target.closest('.preset-btn'); if (!btn) return;
+    slider1.value = btn.getAttribute('data-e'); renderV1();
+  });
+
+  // ===== V2 椭圆段专题 =====
+  var slider2 = document.getElementById('e-slider2');
+  var readout2 = document.getElementById('e-readout2');
+  var pA2 = document.getElementById('p-a2'), pB2 = document.getElementById('p-b2'), pC2 = document.getElementById('p-c2');
+  var distEl2 = document.getElementById('dist2');
+  var playBtn2 = document.getElementById('play2');
+  var anim2 = { t: 0, playing: true };
+
+  function renderV2(){
+    var env = setupCanvas(document.getElementById('stage2'));
+    if (!env) return;
+    var e = +slider2.value, info = describe(e);
+    drawGrid(env); drawAxes(env);
+    drawCurve(env, info, '#2E5E8C');
+    drawFoci(env, e, info);
+    readout2.innerHTML = fmt(e, 2) + '<small>（' + info.name + '）</small>';
+    pA2.textContent = '1.00'; pB2.textContent = fmt(info.b, 2); pC2.textContent = fmt(info.c, 2);
+
+    if (info.type === 'circle' || info.type === 'ellipse'){
+      var t = anim2.t;
+      var px = Math.cos(t), py = info.b * Math.sin(t);
+      var f1 = -e, f2 = e;
+      var ctx = env.ctx;
+      ctx.save();
+      ctx.setLineDash([4,4]);
+      ctx.strokeStyle = 'rgba(196,62,62,.8)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(env.X(f1), env.Y(0)); ctx.lineTo(env.X(px), env.Y(py));
+      ctx.lineTo(env.X(f2), env.Y(0));
+      ctx.stroke();
+      ctx.restore();
+      drawDot(env, px, py, 5.5, '#C43E3E', null);
+      var d1 = Math.hypot(px - f1, py), d2 = Math.hypot(px - f2, py);
+      distEl2.textContent = (d1 + d2).toFixed(3);
+    }
+  }
+  slider2.addEventListener('input', function(){ renderV2(); });
+  playBtn2.addEventListener('click', function(){
+    anim2.playing = !anim2.playing;
+    playBtn2.textContent = anim2.playing ? '暂停动点' : '继续动点';
+  });
+
+  // ===== V3 抛物线分界点 =====
+  var slider3 = document.getElementById('e-slider3');
+  var readout3 = document.getElementById('e-readout3');
+  var badge3 = document.getElementById('badge3');
+  var pA3 = document.getElementById('p-a3'), pB3 = document.getElementById('p-b3'), pC3 = document.getElementById('p-c3');
+  var eqBox3 = document.getElementById('eq-box3');
+  var presets3 = document.getElementById('presets3');
+  var compareBtn = document.getElementById('compare3');
+  var compareOn = false;
+
+  function renderV3(){
+    var env = setupCanvas(document.getElementById('stage3'));
+    if (!env) return;
+    var e = +slider3.value, info = describe(e);
+    drawGrid(env); drawAxes(env);
+
+    if (compareOn){
+      var triples = [{e:0.99, c:'#2E5E8C'}, {e:1.00, c:'#C4551E'}, {e:1.01, c:'#6B4E8C'}];
+      for (var k = 0; k < triples.length; k++){
+        var o = triples[k], inf = describe(o.e);
+        drawCurve(env, inf, o.c, 2.5);
+        if (inf.type === 'parabola') drawDot(env, 1, 0, 4, o.c, null);
+        else if (inf.type === 'circle') drawDot(env, 0, 0, 4, o.c, null);
+        else { drawDot(env, -o.e, 0, 4, o.c, null); drawDot(env, o.e, 0, 4, o.c, null); }
+      }
+      badge3.style.background = '#24272C';
+      badge3.innerHTML = '<span class="eq">对比：0.99 / 1.00 / 1.01</span>';
+    } else {
+      drawAsymptote(env, info); drawDirectrix(env, info);
+      drawCurve(env, info, COLORS[info.type]);
+      drawFoci(env, e, info);
+      badge3.style.background = BADGE_BG[info.type];
+      badge3.innerHTML = '<span class="eq">e = ' + fmt(e, 2) + ' · ' + info.name + '</span>';
+    }
+
+    readout3.innerHTML = fmt(e, 2) + '<small>（' + info.name + '）</small>';
+    if (info.type === 'parabola'){ pA3.textContent = '—'; pB3.textContent = '—'; pC3.textContent = 'p = 1'; eqBox3.innerHTML = 'y² = 4x'; }
+    else {
+      pA3.textContent = '1.00'; pB3.textContent = fmt(info.b, 2);
+      pB3.className = info.type === 'ellipse' ? 'v blue' : 'v violet';
+      pC3.textContent = 'c = ' + fmt(info.c, 2);
+      eqBox3.innerHTML = 'x² ' + (info.type === 'ellipse' ? '+' : '−') + ' y²/' + (info.b * info.b).toFixed(2) + ' = 1';
+    }
+    highlightPreset(presets3, e);
+  }
+  slider3.addEventListener('input', function(){ renderV3(); });
+  presets3.addEventListener('click', function(ev){
+    var btn = ev.target.closest('.preset-btn'); if (!btn) return;
+    slider3.value = btn.getAttribute('data-e'); renderV3();
+  });
+  compareBtn.addEventListener('click', function(){
+    compareOn = !compareOn;
+    compareBtn.textContent = compareOn ? '退出对比：回到单曲线' : '同屏对比 0.99 / 1.00 / 1.01';
+    compareBtn.classList.toggle('toggled', compareOn);
+    renderV3();
+  });
+
+  // ===== V4 双曲线段专题 =====
+  var slider4 = document.getElementById('e-slider4');
+  var readout4 = document.getElementById('e-readout4');
+  var badge4 = document.getElementById('badge4');
+  var pA4 = document.getElementById('p-a4'), pB4 = document.getElementById('p-b4'), pC4 = document.getElementById('p-c4');
+  var angleEl = document.getElementById('angle4');
+  var angle2El = document.getElementById('angle24');
+  var distEl4 = document.getElementById('dist4');
+  var playBtn4 = document.getElementById('play4');
+  var presets4 = document.getElementById('presets4');
+  var anim4 = { phase: 0, playing: true };
+
+  function renderV4(){
+    var env = setupCanvas(document.getElementById('stage4'));
+    if (!env) return;
+    var e = +slider4.value, info = describe(e);
+    drawGrid(env); drawAxes(env);
+    drawAsymptote(env, info);
+    drawCurve(env, info, '#6B4E8C');
+    drawFoci(env, e, info);
+
+    if (info.type === 'hyperbola'){
+      var b = info.b, theta = Math.atan(b), deg = theta * 180 / Math.PI;
+      var ctx = env.ctx;
+      // 渐近线张角弧（从 x 轴到第一象限渐近线）
+      ctx.save();
+      ctx.strokeStyle = '#C4551E'; ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(env.X(0), env.Y(0), 0.85 * env.scale, 0, -theta, true);
+      ctx.stroke();
+      ctx.fillStyle = '#C4551E';
+      ctx.font = '600 13px "Noto Sans SC", sans-serif';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText('θ = ' + deg.toFixed(1) + '°', env.X(1.42), env.Y(1.05));
+      ctx.restore();
+
+      angleEl.textContent = deg.toFixed(1) + '°';
+      angle2El.textContent = '两条渐近线夹角 2θ = ' + (2 * deg).toFixed(1) + '°';
+
+      // 双曲线定义动点（右支，往返运动）
+      var t = 1.65 * Math.sin(anim4.phase);
+      var px = Math.cosh(t), py = b * Math.sinh(t);
+      var f1 = -e, f2 = e;
+      ctx.save();
+      ctx.setLineDash([4,4]);
+      ctx.strokeStyle = 'rgba(196,62,62,.8)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(env.X(f1), env.Y(0)); ctx.lineTo(env.X(px), env.Y(py));
+      ctx.lineTo(env.X(f2), env.Y(0));
+      ctx.stroke();
+      ctx.restore();
+      drawDot(env, px, py, 5.5, '#C43E3E', null);
+      var d1 = Math.hypot(px - f1, py), d2 = Math.hypot(px - f2, py);
+      distEl4.textContent = (d1 - d2).toFixed(3);
+    }
+
+    readout4.innerHTML = fmt(e, 2) + '<small>（双曲线）</small>';
+    badge4.style.background = '#6B4E8C';
+    badge4.innerHTML = '<span class="eq">e = ' + fmt(e, 2) + ' · 双曲线</span>';
+    pA4.textContent = '1.00';
+    pB4.textContent = fmt(info.b, 2);
+    pC4.textContent = fmt(info.c, 2);
+    highlightPreset(presets4, e);
+  }
+  slider4.addEventListener('input', function(){ renderV4(); });
+  playBtn4.addEventListener('click', function(){
+    anim4.playing = !anim4.playing;
+    playBtn4.textContent = anim4.playing ? '暂停动点' : '继续动点';
+  });
+  presets4.addEventListener('click', function(ev){
+    var btn = ev.target.closest('.preset-btn'); if (!btn) return;
+    slider4.value = btn.getAttribute('data-e'); renderV4();
+  });
+
+  // ===== 动画循环 & 全局事件 =====
+  function loop(){
+    if (currentView === 'v2' && anim2.playing){
+      anim2.t += 0.016;
+      if (anim2.t > 2 * Math.PI) anim2.t -= 2 * Math.PI;
+      renderV2();
+    }
+    if (currentView === 'v4' && anim4.playing){
+      anim4.phase += 0.02;
+      renderV4();
+    }
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('hashchange', route);
+  window.addEventListener('resize', function(){
+    if (currentView === 'v1') renderV1();
+    else if (currentView === 'v2') renderV2();
+    else if (currentView === 'v3') renderV3();
+    else renderV4();
+  });
+
+  route();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

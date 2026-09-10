@@ -1,0 +1,436 @@
+[
+  {
+    "id": "earth",
+    "title": {
+      "zh-CN": "地球公转意义交互模拟器",
+      "en": "Earth & seasons simulator",
+      "zh-Hant": "地球公轉意義交互模擬器"
+    },
+    "source": "vibe coding库/傅可晗/earth-revolution-simulator.html",
+    "subject": "地理",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "从太阳直射点到昼夜长短，用一颗可以转动的地球解释四季。",
+      "en": "Explore seasons, daylight and the subsolar point with an interactive globe.",
+      "zh-Hant": "從太陽直射點到晝夜長短，用一顆可以轉動的地球解釋四季。"
+    },
+    "prior": {
+      "zh-CN": "经纬度、地球自转与公转的基本概念",
+      "en": "Latitude, longitude, rotation and revolution",
+      "zh-Hant": "經緯度、地球自轉與公轉的基本概念"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "傅可晗"
+    ],
+    "related": []
+  },
+  {
+    "id": "chemistry",
+    "title": {
+      "zh-CN": "化学 3D 微观反应实验室",
+      "en": "3D chemical reaction lab",
+      "zh-Hant": "化學 3D 微觀反應實驗室"
+    },
+    "source": "vibe coding库/林志凡/化学3D模型微观反应实验室/化学3D模型微观反应实验室.html",
+    "subject": "化学",
+    "stages": [
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "跟随球棍模型观察断键与成键，再用判断题辨别取代反应。",
+      "en": "Watch bonds break and form, then identify substitution reactions.",
+      "zh-Hant": "跟隨球棍模型觀察斷鍵與成鍵，再用判斷題辨別取代反應。"
+    },
+    "prior": {
+      "zh-CN": "原子、化学键与有机化合物基础",
+      "en": "Atoms, chemical bonds and basic organic chemistry",
+      "zh-Hant": "原子、化學鍵與有機化合物基礎"
+    },
+    "kind": "visual",
+    "promptSource": "vibe coding库/林志凡/化学3D模型微观反应实验室/项目Prompt汇总.md",
+    "contributors": [
+      "林志凡"
+    ],
+    "related": [],
+    "package": "vibe coding库/林志凡/化学3D模型微观反应实验室.zip"
+  },
+  {
+    "id": "mendel",
+    "title": {
+      "zh-CN": "孟德尔的豌豆杂交实验（一）",
+      "en": "Mendel’s pea-crossing experiment",
+      "zh-Hant": "孟德爾的豌豆雜交實驗（一）"
+    },
+    "source": "vibe coding库/卢永哲/孟德尔的豌豆杂交实验（一）/孟德尔的豌豆杂交实验（一）.html",
+    "subject": "生物",
+    "stages": [
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "选择亲本，组合配子，在棋盘格与豌豆花园中观察遗传规律。",
+      "en": "Choose parents and explore inheritance through a Punnett square and pea garden.",
+      "zh-Hant": "選擇親本，組合配子，在棋盤格與豌豆花園中觀察遺傳規律。"
+    },
+    "prior": {
+      "zh-CN": "相对性状、显性与隐性",
+      "en": "Contrasting traits, dominance and recessiveness",
+      "zh-Hant": "相對性狀、顯性與隱性"
+    },
+    "kind": "visual",
+    "promptSource": "vibe coding库/卢永哲/孟德尔的豌豆杂交实验（一）/mendel-experiment-prompt.md",
+    "contributors": [
+      "卢永哲"
+    ],
+    "related": [],
+    "package": "vibe coding库/卢永哲/孟德尔的豌豆杂交实验（一）.zip"
+  },
+  {
+    "id": "conics",
+    "title": {
+      "zh-CN": "圆锥曲线离心率演示",
+      "en": "Conic sections & eccentricity",
+      "zh-Hant": "圓錐曲線離心率演示"
+    },
+    "source": "vibe coding库/陈捷/圆锥曲线离心率演示(1)/圆锥曲线离心率演示.html",
+    "subject": "数学",
+    "stages": [
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "拖动离心率，在四个视图里比较椭圆、抛物线与双曲线。",
+      "en": "Adjust eccentricity and compare ellipses, parabolas and hyperbolas across four views.",
+      "zh-Hant": "拖動離心率，在四個視圖裏比較橢圓、拋物線與雙曲線。"
+    },
+    "prior": {
+      "zh-CN": "平面直角坐标系与圆锥曲线基础",
+      "en": "Cartesian coordinates and introductory conic sections",
+      "zh-Hant": "平面直角座標系與圓錐曲線基礎"
+    },
+    "kind": "visual",
+    "promptSource": "vibe coding库/陈捷/圆锥曲线离心率演示(1)/圆锥曲线可视化生成prompt.md",
+    "contributors": [
+      "陈捷"
+    ],
+    "related": [],
+    "package": "vibe coding库/陈捷/圆锥曲线离心率演示(1).zip"
+  },
+  {
+    "id": "cpp",
+    "title": {
+      "zh-CN": "C++ 变量与数组动画模拟器",
+      "en": "C++ variables & arrays",
+      "zh-Hant": "C++ 變量與數組動畫模擬器"
+    },
+    "source": "vibe coding库/傅可晗/C++变量数组动画模拟器.html",
+    "subject": "信息技术",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "把代码执行变成可以追踪的过程，看变量、数组和循环怎样变化。",
+      "en": "Trace code execution through changing variables, arrays and loops.",
+      "zh-Hant": "把代碼執行變成可以追蹤的過程，看變量、數組和循環怎樣變化。"
+    },
+    "prior": {
+      "zh-CN": "变量、输入输出与简单循环",
+      "en": "Variables, input/output and basic loops",
+      "zh-Hant": "變量、輸入輸出與簡單循環"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "傅可晗"
+    ],
+    "related": [
+      "recursion"
+    ]
+  },
+  {
+    "id": "lens",
+    "title": {
+      "zh-CN": "凸透镜成像光路实验室",
+      "en": "Convex lens optics lab",
+      "zh-Hant": "凸透鏡成像光路實驗室"
+    },
+    "source": "vibe coding库/郭尚玮/ai可视化平台及promt/dist/index.html",
+    "subject": "物理",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "移动蜡烛与焦点，让三条特殊光线解释像的大小、位置与虚实。",
+      "en": "Move the candle and focal point to explore image size, position and type.",
+      "zh-Hant": "移動蠟燭與焦點，讓三條特殊光線解釋像的大小、位置與虛實。"
+    },
+    "prior": {
+      "zh-CN": "光的直线传播与凸透镜",
+      "en": "Light propagation and convex lenses",
+      "zh-Hant": "光的直線傳播與凸透鏡"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "郭尚玮"
+    ],
+    "related": [
+      "pinhole"
+    ],
+    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip"
+  },
+  {
+    "id": "pinhole",
+    "title": {
+      "zh-CN": "小孔成像 · 3D 实验室",
+      "en": "3D pinhole camera lab",
+      "zh-Hant": "小孔成像 · 3D 實驗室"
+    },
+    "source": "vibe coding库/郭尚玮/ai可视化平台及promt/dist/pinhole.html",
+    "subject": "物理",
+    "stages": [
+      "初中"
+    ],
+    "summary": {
+      "zh-CN": "换一个观察视角，追踪光路，比较孔径与光屏距离如何影响倒像。",
+      "en": "Trace light in 3D and compare how aperture and screen distance affect the image.",
+      "zh-Hant": "換一個觀察視角，追蹤光路，比較孔徑與光屏距離如何影響倒像。"
+    },
+    "prior": {
+      "zh-CN": "光沿直线传播",
+      "en": "Light travels in straight lines",
+      "zh-Hant": "光沿直線傳播"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "郭尚玮"
+    ],
+    "related": [
+      "lens"
+    ],
+    "package": "vibe coding库/郭尚玮/ai可视化平台及promt/optics-v4.1-offline.zip"
+  },
+  {
+    "id": "gcd",
+    "title": {
+      "zh-CN": "矩形里的最大公因数",
+      "en": "Finding GCD through rectangle tiling",
+      "zh-Hant": "矩形裏的最大公因數"
+    },
+    "source": "vibe coding库/傅可晗/辗转相除法/辗转相除法-最大公因数.html",
+    "subject": "数学",
+    "stages": [
+      "小学",
+      "初中"
+    ],
+    "summary": {
+      "zh-CN": "不断切下正方形，把辗转相除的每一步变成可观察的面积变化。",
+      "en": "Tile rectangles with squares to visualize each step of the Euclidean algorithm.",
+      "zh-Hant": "不斷切下正方形，把輾轉相除的每一步變成可觀察的面積變化。"
+    },
+    "prior": {
+      "zh-CN": "整除、余数、矩形与正方形",
+      "en": "Divisibility, remainders, rectangles and squares",
+      "zh-Hant": "整除、餘數、矩形與正方形"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "傅可晗"
+    ],
+    "related": [
+      "recursion"
+    ]
+  },
+  {
+    "id": "recursion",
+    "title": {
+      "zh-CN": "辗转相除法与编程递归",
+      "en": "Euclid’s algorithm & recursion",
+      "zh-Hant": "輾轉相除法與編程遞歸"
+    },
+    "source": "vibe coding库/傅可晗/辗转相除法/辗转相除法与编程递归.html",
+    "subject": "信息技术",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "从矩形里的余数出发，跟踪函数调用、等待和答案逐层返回。",
+      "en": "Follow remainders into function calls, a waiting stack and returning answers.",
+      "zh-Hant": "從矩形裏的餘數出發，跟蹤函數調用、等待和答案逐層返回。"
+    },
+    "prior": {
+      "zh-CN": "函数、参数、取余与返回值",
+      "en": "Functions, arguments, remainders and return values",
+      "zh-Hant": "函數、參數、取餘與返回值"
+    },
+    "kind": "visual",
+    "promptSource": null,
+    "contributors": [
+      "傅可晗"
+    ],
+    "related": [
+      "gcd",
+      "cpp"
+    ]
+  },
+  {
+    "id": "pbl",
+    "title": {
+      "zh-CN": "AI 辅助 PBL 课程设计",
+      "en": "AI-assisted PBL course design",
+      "zh-Hant": "AI 輔助 PBL 課程設計"
+    },
+    "source": "vibe coding库/傅可晗/AI辅助PBL课程设计_提示词与使用说明_V1.1.md",
+    "subject": "综合实践活动",
+    "stages": [
+      "教师专业发展"
+    ],
+    "summary": {
+      "zh-CN": "从一个教学主题出发，分六步形成可检查、可试教的课程初稿。",
+      "en": "Turn a teaching topic into a reviewable course draft through six guided prompts.",
+      "zh-Hant": "從一個教學主題出發，分六步形成可檢查、可試教的課程初稿。"
+    },
+    "prior": {
+      "zh-CN": "准备学生情况、学习目标、课时与可用资源",
+      "en": "Prepare student context, learning goals, lesson time and resources",
+      "zh-Hant": "準備學生情況、學習目標、課時與可用資源"
+    },
+    "kind": "prompt",
+    "promptSource": null,
+    "contributors": [
+      "傅可晗"
+    ],
+    "related": []
+  },
+  {
+    "id": "poetry",
+    "title": {
+      "zh-CN": "古诗词课堂海报 Prompt",
+      "en": "Poetry classroom poster prompt",
+      "zh-Hant": "古詩詞課堂海報 Prompt"
+    },
+    "source": "vibe coding库/郭尚玮/中小学古诗词课堂海报提示词(1).md",
+    "subject": "语文",
+    "stages": [
+      "小学",
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "让诗中的关键字词落在画面上，用水墨与淡彩连接诗句和观察。",
+      "en": "Connect a poem’s words with observable details through ink and watercolor imagery.",
+      "zh-Hant": "讓詩中的關鍵字詞落在畫面上，用水墨與淡彩連接詩句和觀察。"
+    },
+    "prior": {
+      "zh-CN": "提供教材原文、作者与年级",
+      "en": "Provide the original poem, author and grade",
+      "zh-Hant": "提供教材原文、作者與年級"
+    },
+    "kind": "prompt",
+    "promptSource": null,
+    "contributors": [
+      "郭尚玮"
+    ],
+    "related": []
+  },
+  {
+    "id": "dynasty",
+    "title": {
+      "zh-CN": "朝代课堂知识海报 Prompt",
+      "en": "Dynasty knowledge poster prompt",
+      "zh-Hant": "朝代課堂知識海報 Prompt"
+    },
+    "source": "vibe coding库/郭尚玮/朝代课堂海报提示词.zip",
+    "subject": "历史",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "从时间轴到知识卡，把朝代主线、核心考点和记忆解析组织到一张海报。",
+      "en": "Organize a dynasty’s timeline, key concepts and explanations on one poster.",
+      "zh-Hant": "從時間軸到知識卡，把朝代主線、核心考點和記憶解析組織到一張海報。"
+    },
+    "prior": {
+      "zh-CN": "核对朝代、年代、史实与图片来源",
+      "en": "Verify dates, historical facts and image sources",
+      "zh-Hant": "覈對朝代、年代、史實與圖片來源"
+    },
+    "kind": "prompt",
+    "promptSource": null,
+    "contributors": [
+      "郭尚玮",
+      "林志凡"
+    ],
+    "related": []
+  },
+  {
+    "id": "history",
+    "title": {
+      "zh-CN": "趣味历史学习提纲 Prompt",
+      "en": "History inquiry outline prompt",
+      "zh-Hant": "趣味歷史學習提綱 Prompt"
+    },
+    "source": "vibe coding库/卢永哲/历史趣味提纲prompt(1).zip",
+    "subject": "历史",
+    "stages": [
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "把历史材料转为可观察、可比较、可讨论的学习提纲。",
+      "en": "Turn historical material into an outline for observation, comparison and discussion.",
+      "zh-Hant": "把歷史材料轉爲可觀察、可比較、可討論的學習提綱。"
+    },
+    "prior": {
+      "zh-CN": "提供历史材料、目标学段与教学重点",
+      "en": "Provide historical material, student stage and learning focus",
+      "zh-Hant": "提供歷史材料、目標學段與教學重點"
+    },
+    "kind": "prompt",
+    "promptSource": null,
+    "contributors": [
+      "卢永哲"
+    ],
+    "related": []
+  },
+  {
+    "id": "lesson",
+    "title": {
+      "zh-CN": "现代文教案通用格式",
+      "en": "Modern prose lesson-plan template",
+      "zh-Hant": "現代文教案通用格式"
+    },
+    "source": "vibe coding库/陈捷/现代文教案通用格式.md",
+    "subject": "语文",
+    "stages": [
+      "小学",
+      "初中",
+      "高中"
+    ],
+    "summary": {
+      "zh-CN": "从教材分析到迁移练习，用一份完整结构整理现代文阅读教学。",
+      "en": "Structure a reading lesson from text analysis to transfer tasks and reflection.",
+      "zh-Hant": "從教材分析到遷移練習，用一份完整結構整理現代文閱讀教學。"
+    },
+    "prior": {
+      "zh-CN": "提供课文、教材版本与课时安排",
+      "en": "Provide the text, textbook edition and lesson schedule",
+      "zh-Hant": "提供課文、教材版本與課時安排"
+    },
+    "kind": "prompt",
+    "promptSource": null,
+    "contributors": [
+      "陈捷"
+    ],
+    "related": []
+  }
+]

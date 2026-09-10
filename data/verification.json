@@ -1,0 +1,65 @@
+{
+  "earth": {
+    "status": "checked",
+    "scope": "季节按钮与参数更新",
+    "evidence": "点击冬至，日期切换至 2026-12-21；40°N 昼长显示 9小时09分。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "conics": {
+    "status": "needs-review",
+    "scope": "基础交互检查与概念复核",
+    "evidence": "双曲线快捷切换可更新离心率和方程；内容复核发现固定 a=1 的椭圆在 e 趋近 1 时被错误解释为抛物线。该极限应退化为线段，原页概念表述需修订。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "cpp": {
+    "status": "checked",
+    "scope": "示例执行步骤生成",
+    "evidence": "点击运行，数字统计示例生成 197 个执行步骤。未做完整 C++ 语法兼容性验证。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "chemistry": {
+    "status": "needs-review",
+    "scope": "判断题交互反馈",
+    "evidence": "点击第一题选项，分数由 0/3 变为 1/3，并显示解释。发现解释把溴乙烷误写成乙醇，教学文本需修订。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "pbl": {
+    "status": "pending",
+    "scope": "原始模板的完整复现检查待完成",
+    "evidence": "本次已生成可视示例并目视核对；主题参数、改写和编辑记录见示例作品。尚未完成原始模板的完整复现或课堂试教。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "poetry": {
+    "status": "pending",
+    "scope": "原始模板的完整复现检查待完成",
+    "evidence": "本次已生成可视示例并目视核对；主题参数、改写和编辑记录见示例作品。尚未完成原始模板的完整复现或课堂试教。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "dynasty": {
+    "status": "pending",
+    "scope": "原始模板的完整复现检查待完成",
+    "evidence": "本次已生成可视示例并目视核对；主题参数、改写和编辑记录见示例作品。尚未完成原始模板的完整复现或课堂试教。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "history": {
+    "status": "pending",
+    "scope": "原始模板的完整复现检查待完成",
+    "evidence": "本次已生成可视示例并目视核对；主题参数、改写和编辑记录见示例作品。尚未完成原始模板的完整复现或课堂试教。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  },
+  "lesson": {
+    "status": "pending",
+    "scope": "原始模板的完整复现检查待完成",
+    "evidence": "本次已生成可视示例并目视核对；主题参数、改写和编辑记录见示例作品。尚未完成原始模板的完整复现或课堂试教。",
+    "date": "2026-09-10",
+    "classroomVerified": false
+  }
+}

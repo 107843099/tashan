@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="可离线使用的 3D 小孔成像实验：移动物体和光屏，追踪光线，理解倒像。">
+  <title>小孔成像 · 3D 实验室</title>
+  <link rel="stylesheet" href="pinhole.css?v=4.1">
+  <script defer src="assets/pinhole.bundle.js?v=4.1.0"></script>
+</head>
+<body>
+<main class="app">
+  <header class="masthead">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true">◎</span><div><span class="eyebrow">光路实验室 <span class="version">V4.1</span></span><h1>小孔成像</h1></div></div>
+    <nav aria-label="实验模块"><a href="index.html">凸透镜实验 ↗</a><button id="reset">↺ 复位实验</button></nav>
+  </header>
+  <div class="workspace">
+    <section class="experiment" aria-label="小孔成像实验台">
+      <div class="viewbar"><div class="segmented" aria-label="观察视角">
+        <button data-view="apparatus" aria-pressed="true">① 看装置</button><button data-view="rays" aria-pressed="false">② 看光路</button><button data-view="screen" aria-pressed="false">③ 看光屏</button>
+      </div><button id="flat" aria-pressed="false">二维光路</button></div>
+      <div id="viewport" class="viewport">
+        <canvas id="scene" tabindex="0" aria-label="3D 实验装置。拖动空白处旋转视角，拖动物体或光屏底座调整距离。方向键旋转，加减键缩放。"></canvas>
+        <svg id="diagram" role="img" aria-labelledby="diagramTitle" hidden></svg>
+        <div class="scene-heading"><span class="live-dot"></span><span id="viewTitle">完整装置 · 不透光暗箱</span></div>
+        <div id="sceneLabels" aria-hidden="true"></div>
+        <div class="camera-tools" aria-label="视角工具"><button id="zoomIn" aria-label="拉近观察视角">＋</button><button id="zoomOut" aria-label="拉远观察视角">−</button><button id="homeView" aria-label="恢复当前观察视角">⌂</button></div>
+        <div class="gesture" id="gesture">拖动空白处旋转 · 滚轮缩放 · 拖动彩色底座调整距离</div>
+      </div>
+      <p class="scene-note" id="sceneNote">暗箱阻挡外界杂散光，光通过小孔到达光屏。点击“看光路”观察内部。</p>
+      <div class="distance-controls">
+        <div class="distance-control object-control"><label for="objectRange"><span class="number">01</span>物体 → 小孔 <small>物距 u</small></label><div class="input-row"><input type="range" id="objectRange" min="12" max="60" step="1" value="30"><label class="numeric"><input id="objectNumber" type="number" min="12" max="60" step="1" value="30" aria-label="物体到小孔的距离，厘米"> cm</label></div></div>
+        <div class="distance-control screen-control"><label for="screenRange"><span class="number">02</span>小孔 → 光屏 <small>孔屏距离 L</small></label><div class="input-row"><input type="range" id="screenRange" min="10" max="48" step="1" value="24"><label class="numeric"><input id="screenNumber" type="number" min="10" max="48" step="1" value="24" aria-label="小孔到光屏的距离，厘米"> cm</label></div></div>
+      </div>
+      <section class="aperture-control" aria-label="小孔大小实验">
+        <div class="aperture-heading"><label for="apertureRange">③ 改变小孔直径</label><span><output id="apertureValue">1.0</output> mm</span></div>
+        <div class="aperture-row"><span>小孔</span><input id="apertureRange" type="range" min="0.5" max="5" step="0.1" value="1" aria-describedby="apertureHint"><span>大孔</span></div>
+        <div class="aperture-presets"><button data-aperture="0.5">0.5 mm</button><button data-aperture="1">1 mm</button><button data-aperture="3">3 mm</button><button data-aperture="5">5 mm</button></div>
+        <p id="apertureHint">先固定两个距离，再比较孔变大后像的亮度与边缘。</p>
+        <div class="aperture-readings"><span>几何光斑直径 <strong id="blurValue">1.8 mm</strong></span><span>相对照度 <strong id="lightValue">1.00×</strong></span></div>
+        <p class="small">照度以 d = 1 mm、L = 24 cm 为参照；画面经提亮显示。此范围只比较几何模糊，不模拟衍射。</p>
+      </section>
+    </section>
+    <aside class="sidebar">
+      <section class="panel source-panel"><div class="panel-heading"><h2>选择成像物体</h2><span class="small">物面宽、高均为 12 cm</span></div>
+        <div class="segmented source-switch"><button data-object="letter" aria-pressed="true">字母 F</button><button data-object="candle" aria-pressed="false">蜡烛</button><button data-object="text" aria-pressed="false">写文字</button><button data-object="plane" aria-pressed="false">飞机图标</button><button data-object="pawn" aria-pressed="false">棋子剪影</button><button id="uploadedChoice" data-object="upload" aria-pressed="false" disabled>我的图片</button></div>
+        <div id="textControls" hidden><label for="customText">输入 1–8 个字或字母</label><input id="customText" maxlength="16" value="光" autocomplete="off"><button id="applyText">用这段文字成像</button></div>
+        <label class="upload-label" for="imageUpload">＋ 选择本机图片<input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp"></label>
+        <p class="small">PNG / JPG / WebP，最大 8 MB。仅本机处理，不会上传服务器。</p><p id="uploadStatus" role="status" class="upload-status"></p>
+        <div class="source-row"><canvas id="sourcePreview" width="256" height="256" aria-label="正立物体与可追踪的三个物点"></canvas><div><strong id="objectDescription">不对称的 F</strong><p id="sourceHint">比较上、下与左、右的位置。</p><span class="small">正面参考图</span></div></div>
+      </section>
+      <section class="panel trace-panel"><div class="panel-heading"><h2>追踪一个物点</h2><span class="small" id="stepName">完整成像</span></div>
+        <div class="point-buttons" aria-label="选择物点"><button data-point="0" aria-pressed="true">A 点</button><button data-point="1" aria-pressed="false">B 点</button><button data-point="2" aria-pressed="false">C 点</button></div>
+        <div class="trace-switch" aria-label="光路显示阶段"><button data-trace="one" aria-pressed="false">一个点</button><button data-trace="two" aria-pressed="false">两个点</button><button data-trace="all" aria-pressed="true">完整像</button></div>
+        <p id="pointExplanation">每个物点各自成像，所有像点共同组成倒像。</p><p class="small">单点彩色光斑用于追踪位置，不用于亮度比较。</p>
+      </section>
+      <section class="panel image-panel"><div class="panel-heading"><h2>光屏上的像</h2><span class="screen-size">18 × 18 cm</span></div>
+        <canvas id="screenPreview" width="384" height="384" aria-label="固定大小的光屏，从接收光的一面观察"></canvas>
+        <div class="result"><strong id="ratio">0.80 倍</strong><span id="resultText">倒立 · 缩小</span></div>
+        <p id="cropNote" class="small" aria-live="polite">像完整落在光屏上。</p><p class="small">固定从接收光的一面观察，不从背面看。</p>
+      </section>
+    </aside>
+  </div>
+  <section class="learning-strip" aria-label="实验中的发现">
+    <div><span class="eyebrow">动手试一试</span><h2>怎样让像变大？</h2><p>固定物体，只把光屏往后移，再观察光屏上的像。</p></div>
+    <div class="relationship"><span>像的大小 / 物体大小</span><strong>= <span class="teal">孔屏距离 L</span> / <span class="orange">物距 u</span></strong><p id="calculation">24 ÷ 30 = 0.80</p></div>
+    <div><span class="eyebrow">再试一试</span><p>把自己的文字换到物面上，观察倒像。<br>固定距离，比较 0.5 mm 与 5 mm 的小孔。</p></div>
+  </section>
+  <details class="teacher-note"><summary>教学说明与模型范围</summary><p>物面、孔板和光屏互相平行。V4.1 用圆孔采样模拟有限孔径的几何模糊：单个物点的光斑直径约为 d × (1 + L/u)，几何像中心和放大比例仍由 L/u 决定。改变孔径不会改变这个放大比例。实际孔极小时还会发生衍射，不能据此推断孔越小就永远越清晰。</p><p>相对照度采用同一物体与照明条件下的近轴估计，与 d²/L² 成正比，不表示实际照度单位或不同图片之间的亮度比较。屏幕作非线性提亮，便于观察；忽略衍射、渐晕与厚孔板效应。孔的可见尺寸被放大用于教学，数值与计算使用真实设置。彩色物点、光线及剖开的箱壁均为辅助示意。</p><p>文字、图标、剪影和上传图片模拟同一平面上的发光图案板。图片保持比例缩放到物面内，透明背景保留；复位会清除本次上传。蜡烛火焰发光，烛身需被照亮才能成像。单点模式显示的是有限大小的光斑，完整模式由所有物点的光斑叠加形成图像。二维图是正侧面投影，重叠光线可在 3D 中分辨。</p><p>拉近观察视角不会改变实验中的像。离线使用：将完整文件夹复制到电脑，打开 pinhole.html。3D 不可用时自动切换二维。图标采用系统符号字体，不依赖在线字体。</p></details>
+  <p id="fallbackNotice" role="status" hidden></p>
+  <noscript><p>请启用浏览器 JavaScript 后使用交互实验。</p></noscript>
+</main>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>辗转相除法与编程递归</title>
+  <style>
+    :root { --ink:#202946; --soft:#6c7690; --blue:#4b7bec; --blue-soft:#eaf1ff; --violet:#8867e8; --violet-soft:#f0ebff; --orange:#ff9c52; --orange-soft:#fff0e3; --mint:#46be9c; --mint-soft:#e7faf4; --line:#e6e9f3; --card:#fff; --shadow:0 18px 42px rgba(44,58,105,.12); }
+    * { box-sizing:border-box; } body { margin:0; min-width:320px; color:var(--ink); font-family:ui-rounded,"PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:linear-gradient(150deg,#f5f8ff,#fff9f0 54%,#f0fffb); }
+    .page { width:min(1120px,calc(100% - 32px)); margin:auto; padding:29px 0 52px; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:26px; } .brand { display:flex; gap:10px; align-items:center; font-weight:900; color:#35477a; } .brand-icon { display:grid; place-items:center; width:39px; height:39px; border-radius:12px; color:#fff; background:var(--blue); box-shadow:0 6px 14px #b7cbfb; font-size:1.2rem; } .tag { padding:7px 12px; border-radius:999px; color:#5d49a1; background:var(--violet-soft); font-size:.82rem; font-weight:800; }
+    .hero { text-align:center; max-width:700px; margin:0 auto 20px; } h1 { margin:0; font-size:clamp(1.7rem,3.8vw,2.55rem); letter-spacing:-.055em; } h1 span { color:var(--violet); } .hero p { margin:10px 0 0; color:var(--soft); line-height:1.7; font-size:.96rem; }
+    .input-card { display:flex; align-items:center; justify-content:center; gap:9px; max-width:540px; margin:0 auto 22px; padding:10px 13px; border-radius:15px; background:rgba(255,255,255,.9); box-shadow:0 9px 24px rgba(44,58,105,.1); } label { display:flex; align-items:center; gap:6px; color:var(--soft); font-size:.8rem; font-weight:800; white-space:nowrap; } input { width:72px; min-width:0; border:2px solid #dce5fb; border-radius:9px; padding:7px 8px; color:var(--ink); background:#fbfcff; font:inherit; font-size:.96rem; font-weight:900; outline:none; } input:focus { border-color:var(--blue); box-shadow:0 0 0 3px #e8efff; } button { border:0; cursor:pointer; font:inherit; font-weight:900; transition:transform .16s; } button:hover { transform:translateY(-2px); } button:active { transform:translateY(1px); } .start { padding:8px 12px; border-radius:9px; color:#fff; background:var(--blue); box-shadow:0 3px 0 #3060c9; white-space:nowrap; font-size:.86rem; }
+    .lesson { overflow:hidden; border-radius:25px; background:var(--card); box-shadow:var(--shadow); } .lesson-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:18px 23px; border-bottom:1px solid var(--line); } .lesson-head h2 { margin:0; font-size:1.08rem; } .step { padding:7px 10px; border-radius:9px; color:#5d49a1; background:var(--violet-soft); font-size:.8rem; font-weight:900; }
+    .content { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr); } .main-pane { padding:23px; background:linear-gradient(145deg,#fbfcff,#f8f5ff); } .side-pane { padding:24px; border-left:1px solid var(--line); }
+    .phase { display:inline-flex; align-items:center; gap:7px; padding:6px 9px; border-radius:8px; color:#4666b9; background:var(--blue-soft); font-size:.78rem; font-weight:900; } .phase.returning { color:#9d6231; background:var(--orange-soft); } .current-title { margin:12px 0 6px; font-size:clamp(1.45rem,3vw,2rem); letter-spacing:-.04em; } .explain { margin:0; color:var(--soft); line-height:1.7; }
+    .flow { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; margin:21px 0 14px; } .function-card { padding:14px 10px; border:2px solid #b8cdfd; border-radius:15px; text-align:center; color:#355fbf; background:#fff; box-shadow:0 5px 12px rgba(69,112,207,.08); animation:appear .38s both; } .function-card.next { border-color:#c5b6fb; color:#634cb7; background:#fdfcff; animation-delay:.16s; } .function-card small { display:block; margin-bottom:5px; color:var(--soft); font-size:.7rem; font-weight:800; } .function-card code, .formula code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:clamp(.86rem,2vw,1.05rem); font-weight:900; } .arrow { color:#9da6c2; font-size:1.65rem; font-weight:900; animation:arrow-move .75s ease-in-out infinite alternate; }
+    .calculation { display:flex; align-items:center; gap:12px; padding:14px; border-radius:14px; color:#874e1b; background:var(--orange-soft); } .calc-icon { display:grid; place-items:center; flex:0 0 auto; width:35px; height:35px; border-radius:10px; color:#fff; background:var(--orange); font-weight:900; } .calculation small { display:block; color:#a07149; font-weight:800; } .calculation strong { display:block; margin-top:2px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:1rem; }
+    .rect-bridge { display:grid; gap:9px; margin-top:16px; padding:13px; border:2px solid #e0dafc; border-radius:16px; background:#fff; animation:appear .4s both; } .bridge-title { color:#5c50a7; font-size:.78rem; font-weight:900; } .rectangle-stage { position:relative; padding:15px 13px 8px; border-radius:11px; background:linear-gradient(145deg,#fffdf9,#f7f4ff); } #recursiveRect { display:block; width:100%; max-height:150px; } #recursiveRect .piece { transform-box:fill-box; transform-origin:center; animation:piece-in .42s cubic-bezier(.2,.85,.35,1.15) both; } #recursiveRect .rest { transform-box:fill-box; transform-origin:left center; animation:rest-in .5s .35s both; } #recursiveRect .division { stroke-dasharray:2 1.3; animation:dash 1s linear infinite; } .rect-dimension { position:absolute; color:#73708c; font-size:.67rem; font-weight:900; } .rect-dimension.top { top:1px; left:50%; transform:translateX(-50%); } .rect-dimension.side { top:50%; right:-5px; transform:translateY(-50%) rotate(-90deg); } .rect-map { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:7px; font-size:.73rem; font-weight:900; } .rect-map span { padding:8px; border-radius:9px; text-align:center; } .cut-part { color:#895418; background:#fff2c6; } .left-part { color:#5948a5; background:#eee9ff; } .rect-map b { color:#9693a8; font-size:1rem; } .rect-note { margin:0; color:#66718d; font-size:.75rem; line-height:1.55; } .rect-note strong { color:#5d4eab; }
+    .base-card { display:none; align-items:center; gap:13px; margin-top:17px; padding:15px; border:2px solid #95dec9; border-radius:15px; color:#277d67; background:var(--mint-soft); animation:appear .45s both; } .base-card.show { display:flex; } .base-icon { display:grid; place-items:center; flex:0 0 auto; width:39px; height:39px; border-radius:11px; background:var(--mint); color:#fff; font-size:1.22rem; } .base-card strong { display:block; } .base-card span { font-size:.82rem; }
+    .return-card { display:none; align-items:center; gap:12px; margin-top:17px; padding:14px; border:2px solid #ffc797; border-radius:15px; color:#9a5c28; background:#fff8ef; animation:return-in .48s both; } .return-card.show { display:flex; } .return-arrow { font-size:1.55rem; animation:up .7s ease-in-out infinite alternate; } .return-card strong { display:block; } .return-card span { font-size:.82rem; }
+    .controls { display:flex; gap:10px; margin-top:19px; } .next-button { flex:1; padding:12px; border:2px solid #d7d0fb; border-radius:11px; color:#5d49a1; background:#fff; } .auto-button { flex:1.2; padding:12px; border-radius:11px; color:#fff; background:var(--violet); box-shadow:0 4px 0 #654ac2; } button:disabled { cursor:default; opacity:.48; transform:none !important; box-shadow:none; }
+    .side-pane h3 { margin:0 0 4px; font-size:1.08rem; } .stack-tip { margin:0 0 15px; color:var(--soft); font-size:.83rem; line-height:1.55; } .stack { display:flex; min-height:222px; flex-direction:column-reverse; gap:8px; padding:12px; border:2px dashed #dce1ee; border-radius:16px; background:#fafbff; } .frame { position:relative; padding:11px 37px 11px 12px; border-radius:10px; color:#4c5a7c; background:#e9edf7; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.85rem; font-weight:800; animation:stack-in .38s both; } .frame.active { color:#244fba; background:#dbe8ff; outline:2px solid #78a0fa; } .frame.waiting { color:#6752ad; background:#eee9ff; } .frame.exiting { color:#267b65; background:#dff8ef; } .frame .state { position:absolute; top:50%; right:9px; transform:translateY(-50%); font-family:ui-rounded,"PingFang SC",sans-serif; font-size:.66rem; font-weight:900; } .stack-empty { align-self:center; margin:auto; color:#8190aa; font-size:.82rem; font-weight:800; }
+    .code-box { margin-top:20px; padding:15px; overflow:auto; border-radius:15px; color:#dce8ff; background:#222b43; font:700 .78rem/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre; } .code-box .focus { color:#ffce75; } .code-box .base-focus { color:#70e2bf; } .code-caption { margin:9px 0 0; color:var(--soft); font-size:.76rem; line-height:1.5; }
+    .final-result { display:none; margin-top:16px; padding:14px; border-radius:14px; color:#287c67; background:var(--mint-soft); font-weight:900; } .final-result.show { display:block; animation:appear .45s both; } .final-result small { display:block; margin-bottom:2px; font-weight:700; } .final-result b { font-size:1.25rem; }
+    @keyframes appear { from { opacity:0; transform:translateY(7px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } } @keyframes stack-in { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:translateX(0); } } @keyframes arrow-move { to { transform:translateX(5px); } } @keyframes return-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } } @keyframes up { to { transform:translateY(-5px); } } @keyframes piece-in { from { opacity:0; transform:scale(.72); } to { opacity:1; transform:scale(1); } } @keyframes rest-in { from { opacity:0; transform:scaleX(.3); } to { opacity:1; transform:scaleX(1); } } @keyframes dash { to { stroke-dashoffset:-6; } }
+    @media(max-width:760px) { .page { width:min(100% - 22px,1120px); padding-top:18px; } .tag { display:none; } .content { grid-template-columns:1fr; } .side-pane { border-left:0; border-top:1px solid var(--line); } } @media(max-width:500px) { .input-card { flex-wrap:wrap; } .start { width:100%; } } @media(max-width:430px) { .flow { grid-template-columns:1fr; } .flow .arrow { transform:rotate(90deg); text-align:center; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header><div class="brand"><span class="brand-icon">↻</span>编程思维小课堂</div><span class="tag">看懂递归调用</span></header>
+    <section class="hero"><h1>函数自己调用自己，<span>递归到底发生了什么？</span></h1><p>跟着函数一层层“往下调用”，再一层层“把答案带回来”，你会看见递归的完整旅程。</p></section>
+    <form class="input-card" id="numberForm"><label>a = <input id="numA" type="number" min="1" max="500" value="84" required></label><label>b = <input id="numB" type="number" min="1" max="500" value="36" required></label><button class="start" type="submit">重新演示 ▶</button></form>
+
+    <section class="lesson">
+      <div class="lesson-head"><h2>递归调用追踪</h2><span class="step" id="stepBadge">调用第 1 步</span></div>
+      <div class="content">
+        <section class="main-pane" aria-live="polite">
+          <div class="phase" id="phase">↓ 正在调用下一层</div>
+          <h2 class="current-title" id="currentTitle">当前：gcd(84, 36)</h2>
+          <p class="explain" id="explain">这一层函数还没有答案，它需要调用下一层来帮忙。</p>
+          <div class="flow"><div class="function-card"><small>当前函数参数</small><code id="currentCall">gcd(84, 36)</code></div><div class="arrow" id="flowArrow">→</div><div class="function-card next"><small id="nextCaption">下一层函数参数</small><code id="nextCall">gcd(36, 12)</code></div></div>
+          <div class="calculation" id="calculation"><span class="calc-icon">%</span><div><small>a % b 的计算</small><strong id="calculationText">84 % 36 = 12</strong></div></div>
+          <div class="rect-bridge" id="rectBridge"><div class="bridge-title">把这一层的 a % b 画成矩形：紫色部分就是下一层带走的数据</div><div class="rectangle-stage"><span class="rect-dimension top" id="rectWidth">84</span><span class="rect-dimension side" id="rectHeight">36</span><svg id="recursiveRect" viewBox="0 0 84 36" role="img" aria-label="当前函数余数对应的矩形分割"></svg></div><div class="rect-map"><span class="cut-part" id="cutPart">黄色：切下 2 个边长 36 的正方形</span><b>→</b><span class="left-part" id="leftPart">紫色：留下 36 × 12</span></div><p class="rect-note" id="rectNote">因此下一层调用 <strong>gcd(36, 12)</strong>。</p></div>
+          <div class="base-card" id="baseCard"><span class="base-icon">✓</span><div><strong>递归出口：b 等于 0</strong><span id="baseText">不用再调用，直接返回 a = 12。</span></div></div>
+          <div class="return-card" id="returnCard"><span class="return-arrow">↑</span><div><strong id="returnTitle">答案开始往上返回</strong><span id="returnText">把 12 交回给上一层函数。</span></div></div>
+          <div class="controls"><button class="next-button" id="nextButton" type="button">下一步 →</button><button class="auto-button" id="autoButton" type="button">自动演示 ▶</button></div>
+          <div class="final-result" id="finalResult"><small>最外层函数最终得到</small><b id="resultText">gcd(84, 36) = 12</b></div>
+        </section>
+        <aside class="side-pane"><h3>调用栈</h3><p class="stack-tip" id="stackTip">每调用一次函数，就把这一层放到栈顶；它要等下一层返回答案。</p><div class="stack" id="stack"></div><div class="code-box">int gcd(int a, int b) {
+  <span class="base-focus">if (b == 0) return a;</span>
+  <span class="focus">return gcd(b, a % b);</span>
+}</div><p class="code-caption">黄色行：继续调用下一层；绿色行：递归出口，开始返回答案。</p></aside>
+      </div>
+    </section>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const app = { stages: [], index: 0, timer: null, original: [84, 36] };
+    const callText = frame => `gcd(${frame.a}, ${frame.b})`;
+    function svgRect(x, y, w, h, fill, className, delay, stroke = '#ffffff') { return `<rect class="${className}" x="${x}" y="${y}" width="${w}" height="${h}" rx=".35" fill="${fill}" stroke="${stroke}" stroke-width=".55" style="animation-delay:${delay}"></rect>`; }
+    function drawRectangle(call) {
+      const {a,b} = call, q = Math.floor(a / b), r = a % b, svg = $('recursiveRect');
+      const compact = q > 5; svg.innerHTML = '';
+      if (!compact) {
+        svg.setAttribute('viewBox', `0 0 ${a} ${b}`);
+        for (let i = 0; i < q; i++) svg.innerHTML += svgRect(i*b, 0, b, b, '#ffd864', 'piece', `${Math.min(i*.12,.6)}s`);
+        if (r) { svg.innerHTML += svgRect(q*b, 0, r, b, '#b9b0ff', 'rest', '.38s', '#6251aa'); svg.innerHTML += `<path class="division" d="M ${q*b} 0 V ${b}" stroke="#6251aa" stroke-width=".75"></path>`; }
+      } else {
+        const side = 100, shown = 3, gap = 48, rest = r ? Math.max(40, r / b * side) : 0, width = shown*side + gap + rest;
+        svg.setAttribute('viewBox', `0 0 ${width} ${side}`);
+        for (let i = 0; i < shown; i++) svg.innerHTML += svgRect(i*side,0,side,side,'#ffd864','piece',`${i*.12}s`);
+        svg.innerHTML += `<circle cx="${shown*side+13}" cy="50" r="4" fill="#9b97b2"></circle><circle cx="${shown*side+25}" cy="50" r="4" fill="#9b97b2"></circle><circle cx="${shown*side+37}" cy="50" r="4" fill="#9b97b2"></circle>`;
+        if (r) { const x=shown*side+gap; svg.innerHTML += svgRect(x,0,rest,side,'#b9b0ff','rest','.38s','#6251aa'); svg.innerHTML += `<path class="division" d="M ${x} 0 V ${side}" stroke="#6251aa" stroke-width="1"></path>`; }
+      }
+      $('rectWidth').textContent = a; $('rectHeight').textContent = b;
+      $('cutPart').textContent = `黄色：切下 ${q} 个边长 ${b} 的正方形`;
+      $('leftPart').textContent = `紫色：留下 ${b} × ${r}`;
+      $('rectNote').innerHTML = compact ? `中间省略了同样的正方形；紫色的两条边仍是 <strong>${b} 和 ${r}</strong>，所以下一层调用 <strong>gcd(${b}, ${r})</strong>。` : `紫色的两条边是 <strong>${b} 和 ${r}</strong>，所以它直接变成下一层 <strong>gcd(${b}, ${r})</strong> 的两个参数。`;
+    }
+    function makeStages(x, y) {
+      const frames = [], stages = []; let a = x, b = y;
+      while (true) {
+        frames.push({a, b});
+        if (b === 0) { stages.push({type:'base', frames:[...frames], active:frames.length - 1, value:a}); break; }
+        const r = a % b;
+        stages.push({type:'call', frames:[...frames], active:frames.length - 1, current:{a,b}, next:{a:b,b:r}, remainder:r});
+        [a,b] = [b,r];
+      }
+      const value = a;
+      for (let i = frames.length - 1; i >= 0; i--) stages.push({type:'return', frames:frames.slice(0, i + 1), active:i, value, receiver:i > 0 ? frames[i - 1] : null});
+      return stages;
+    }
+    function drawStack(stage) {
+      const box = $('stack'); box.innerHTML = '';
+      stage.frames.forEach((frame, i) => {
+        const el = document.createElement('div');
+        let cls = 'frame';
+        if (i === stage.active) cls += stage.type === 'base' ? ' exiting' : ' active';
+        else if (i < stage.active) cls += ' waiting';
+        el.className = cls; el.style.animationDelay = `${i * .07}s`;
+        const stateLabel = i === stage.active ? (stage.type === 'return' ? '返回中' : stage.type === 'base' ? '出口' : '当前') : '等待';
+        el.innerHTML = `${callText(frame)}<span class="state">${stateLabel}</span>`; box.appendChild(el);
+      });
+    }
+    function render() {
+      const s = app.stages[app.index], isCall = s.type === 'call', isBase = s.type === 'base', isReturn = s.type === 'return';
+      const current = s.frames[s.active]; drawStack(s);
+      $('stepBadge').textContent = isCall ? `向下调用 · 第 ${app.index + 1} 步` : isBase ? '到达递归出口' : `答案返回 · 第 ${app.index + 1} 步`;
+      $('phase').className = `phase${isReturn ? ' returning' : ''}`;
+      $('phase').textContent = isCall ? '↓ 正在调用下一层' : isBase ? '✓ 找到递归出口' : '↑ 正在把答案返回上一层';
+      $('currentTitle').textContent = isCall ? `当前：${callText(s.current)}` : isBase ? `当前：${callText(current)}` : `正在返回：${callText(current)}`;
+      $('currentCall').textContent = callText(current);
+      $('baseCard').classList.toggle('show', isBase); $('returnCard').classList.toggle('show', isReturn); $('finalResult').classList.toggle('show', isReturn && !s.receiver);
+      $('calculation').style.display = isCall ? 'flex' : 'none';
+      $('rectBridge').style.display = isCall ? 'grid' : 'none';
+      if (isCall) {
+        $('explain').textContent = '这一层还没有答案。它把新的参数交给下一层函数，自己留在调用栈里等待。';
+        $('nextCaption').textContent = '下一层函数参数'; $('nextCall').textContent = callText(s.next); $('flowArrow').textContent = '→'; $('calculationText').textContent = `${s.current.a} % ${s.current.b} = ${s.remainder}`; drawRectangle(s.current);
+      } else if (isBase) {
+        $('explain').textContent = 'b 已经变成 0，函数终于可以停止调用，并把 a 当作答案交出去。';
+        $('nextCaption').textContent = '这里不再调用'; $('nextCall').textContent = '直接返回'; $('flowArrow').textContent = '✓'; $('baseText').textContent = `不用再调用，直接返回 a = ${s.value}。`;
+      } else {
+        const target = s.receiver ? callText(s.receiver) : '最外层调用者';
+        $('explain').textContent = s.receiver ? '这一层已经收到下一层给出的答案。它不需要修改答案，继续把它向上交回。' : '答案终于回到最外层调用，整个递归过程完成。';
+        $('nextCaption').textContent = '交回给'; $('nextCall').textContent = target; $('flowArrow').textContent = '↑'; $('returnTitle').textContent = s.receiver ? `把 ${s.value} 交回给 ${target}` : `最外层收到答案 ${s.value}`; $('returnText').textContent = s.receiver ? '这一层的 return 会把收到的值原样交给上一层。' : '调用栈清空，递归完成！'; $('resultText').textContent = `gcd(${app.original[0]}, ${app.original[1]}) = ${s.value}`;
+      }
+      const done = app.index === app.stages.length - 1;
+      $('nextButton').disabled = done; $('nextButton').textContent = done ? '演示完成 ✓' : '下一步 →';
+      $('autoButton').disabled = done; $('autoButton').textContent = done ? '演示完成 ✓' : app.timer ? '暂停演示 ⏸' : '自动演示 ▶';
+    }
+    function stop() { if (app.timer) { clearInterval(app.timer); app.timer = null; } }
+    function advance() { if (app.index < app.stages.length - 1) { app.index++; render(); } else stop(); }
+    function reset(a,b) { stop(); app.original=[a,b]; app.stages=makeStages(a,b); app.index=0; render(); }
+    $('numberForm').addEventListener('submit', e => { e.preventDefault(); const a=Number($('numA').value), b=Number($('numB').value); if (!Number.isInteger(a)||!Number.isInteger(b)||a<1||b<1||a>500||b>500) return alert('请输入 1 到 500 之间的整数。'); reset(a,b); });
+    $('nextButton').addEventListener('click', () => { stop(); advance(); render(); });
+    $('autoButton').addEventListener('click', () => { if (app.timer) { stop(); render(); return; } app.timer=setInterval(() => { advance(); if (app.index === app.stages.length - 1) stop(); render(); }, 1600); render(); });
+    reset(84,36);
+  </script>
+</body>
+</html>

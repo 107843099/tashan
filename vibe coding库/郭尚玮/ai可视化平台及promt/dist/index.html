@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="通过拖动物体和观察光路，探索凸透镜成像规律。">
+  <title>光路实验室｜凸透镜成像</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f8ff;
+      --panel: rgba(255, 255, 255, .9);
+      --panel-strong: #ffffff;
+      --line: rgba(61, 91, 128, .16);
+      --text: #203650;
+      --muted: #63758e;
+      --cyan: #168bb3;
+      --yellow: #d99a12;
+      --pink: #d84f91;
+      --orange: #df6b32;
+      --purple: #765ac8;
+      --green: #208b6e;
+      --danger: #d74c62;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(109, 211, 244, .28), transparent 32rem),
+        radial-gradient(circle at 92% 18%, rgba(185, 166, 244, .22), transparent 30rem),
+        var(--bg);
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      width: min(1440px, 100%);
+      margin: auto;
+      padding: clamp(18px, 3vw, 38px);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--cyan);
+      font-size: .78rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 3vw, 2.55rem);
+      line-height: 1.18;
+      font-weight: 700;
+    }
+
+    .formula {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .74);
+      font-family: Cambria, "Times New Roman", serif;
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      box-shadow: 0 10px 30px rgba(76, 107, 145, .1);
+    }
+
+    .fraction { display: inline-grid; place-items: center; line-height: 1; }
+    .fraction span:first-child { padding: 0 6px 4px; border-bottom: 1px solid currentColor; }
+    .fraction span:last-child { padding-top: 4px; }
+    .f { color: var(--purple); }
+    .u { color: var(--orange); }
+    .v { color: var(--cyan); }
+
+    .modebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: -4px 0 18px;
+    }
+
+    .mode-switch, .tools { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mode-switch button { min-width: 104px; }
+    .tool-button { display: inline-flex; align-items: center; gap: 6px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 18px;
+    }
+
+    .lab, .side-card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 20px 55px rgba(66, 100, 140, .13);
+      backdrop-filter: blur(16px);
+    }
+
+    .lab { border-radius: 24px; overflow: hidden; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(240,247,255,.68);
+    }
+
+    .toolbar strong { font-size: .98rem; }
+    .hint { color: var(--muted); font-size: .86rem; }
+
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    button {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      background: rgba(255,255,255,.82);
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--text); background: #edf6ff; }
+    button:focus-visible, input:focus-visible { outline: 3px solid rgba(73,217,255,.5); outline-offset: 2px; }
+    button[aria-pressed="true"] { color: #fff; border-color: var(--cyan); background: var(--cyan); font-weight: 700; }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+    [hidden] { display: none !important; }
+
+    .stage-wrap { position: relative; }
+
+    #stage {
+      display: block;
+      width: 100%;
+      min-height: 360px;
+      touch-action: none;
+      user-select: none;
+      background:
+        linear-gradient(rgba(70,100,135,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(70,100,135,.055) 1px, transparent 1px),
+        linear-gradient(180deg, #f9fcff, #eef7ff);
+      background-size: 26px 26px;
+    }
+
+    .drag-tip {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: var(--orange);
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 8px 22px rgba(64,94,130,.12);
+      font-size: .8rem;
+      pointer-events: none;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+      padding: 16px 20px 20px;
+      border-top: 1px solid var(--line);
+      background: rgba(250,252,255,.76);
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: auto minmax(120px, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .control label { font-weight: 700; }
+    .control output { min-width: 72px; color: var(--orange); text-align: right; font-variant-numeric: tabular-nums; }
+
+    input[type="range"] {
+      width: 100%;
+      height: 28px;
+      accent-color: var(--orange);
+      cursor: ew-resize;
+    }
+
+    .sidebar { display: grid; align-content: start; gap: 14px; }
+    .side-card { border-radius: 20px; padding: 18px; }
+
+    .status {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #e5f7ff, #f0ebff);
+    }
+
+    .status::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -44px;
+      bottom: -62px;
+      border-radius: 50%;
+      background: var(--cyan);
+      filter: blur(50px);
+      opacity: .1;
+    }
+
+    .label { margin: 0 0 8px; color: var(--muted); font-size: .78rem; letter-spacing: .08em; }
+    #caseTitle { margin: 0 0 6px; font-size: 1.35rem; }
+    #caseText { margin: 0; color: var(--muted); line-height: 1.65; }
+
+    .values { display: grid; gap: 13px; margin: 0; }
+    .values div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .values dt { color: var(--muted); }
+    .values dd { margin: 0; font-size: 1.12rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    .equation {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: Cambria, "Times New Roman", serif;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .legend { display: grid; gap: 10px; }
+    .legend span { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .86rem; }
+    .swatch { width: 22px; height: 3px; border-radius: 9px; background: currentColor; box-shadow: 0 0 9px currentColor; }
+
+    .footer-note { margin: 12px 2px 0; color: var(--muted); font-size: .78rem; }
+
+    .guide { background: linear-gradient(145deg, #fff8e6, #fff); }
+    .guide-progress { display: flex; gap: 6px; margin: 2px 0 14px; }
+    .guide-progress i { width: 26px; height: 5px; border-radius: 5px; background: #dfe7f1; }
+    .guide-progress i.done { background: var(--green); }
+    .guide-progress i.current { background: var(--orange); }
+    #guideQuestion { margin: 0 0 12px; font-size: 1.02rem; line-height: 1.55; }
+    .choices { display: grid; gap: 8px; }
+    .choices button { width: 100%; text-align: left; }
+    .choices button.selected { color: #fff; border-color: var(--purple); background: var(--purple); }
+    .guide-action { width: 100%; margin-top: 12px; color: #fff; border-color: var(--orange); background: var(--orange); font-weight: 700; }
+    .guide-feedback { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); line-height: 1.55; }
+    .guide-feedback strong { color: var(--green); }
+    .predicting .status h2 { color: var(--purple); }
+
+    @media (max-width: 920px) {
+      header { align-items: flex-start; }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { grid-template-columns: repeat(3, 1fr); }
+      .guide { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 680px) {
+      .app { padding: 14px; }
+      header { display: block; }
+      .formula { margin-top: 15px; width: max-content; }
+      .modebar { align-items: flex-start; flex-direction: column; }
+      .toolbar { align-items: flex-start; flex-direction: column; }
+      .sidebar { grid-template-columns: 1fr; }
+      .control { grid-template-columns: 1fr auto; }
+      .control input { grid-column: 1 / -1; grid-row: 2; }
+      #stage { min-height: 300px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+
+    .lab { align-self: start; }
+    #stage { min-height: 0; height: 480px; }
+    .drag-tip { position: static; display: inline-block; margin: 8px 12px; font-size: .875rem; box-shadow: none; }
+    .view-note { margin: 0 16px 12px; font-size: .875rem; color: var(--muted); }
+    .guide { margin: 12px; box-shadow: none; padding: 14px; }
+    .guide-progress { margin-bottom: 8px; }
+    .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+    .choices button { width: auto; min-height: 40px; font-size: .875rem; }
+    .guide-action { width: auto; min-width: 140px; min-height: 44px; }
+    .guide-instruction { margin: 10px 0 0; line-height: 1.55; font-weight: 600; }
+    .precise { display: flex; align-items: center; gap: 4px; font-size: .875rem; }
+    .precise input { width: 80px; padding: 7px; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; background: white; color: var(--text); }
+    #focalDistance { accent-color: var(--purple); }
+    .teaching { margin-top: 18px; display: grid; gap: 10px; }
+    .teaching details { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; line-height: 1.65; }
+    .teaching summary { cursor: pointer; font-weight: 700; }
+    .teaching p { margin: 10px 0 0; }
+    .control label { white-space: nowrap; }
+    @media(max-width:680px) {
+      #stage { height: 400px; }
+      .toolbar { padding: 10px; gap: 8px; }
+      .toolbar .hint { display: none; }
+      .guide { margin: 8px; padding: 10px; }
+      .guide-progress { display: none; }
+      .choices button { min-height: 44px; }
+      .control input[type=range] { grid-column: 1 / -1; grid-row: 2; }
+      .precise input { grid-column: auto; grid-row: auto; }
+      .controls { gap: 8px; padding: 10px; }
+      .teaching details { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <nav aria-label="实验模块" style="margin-bottom:16px"><a href="pinhole.html" style="color:#087e8b;font-weight:700">进入 V4.1 · 3D 小孔成像实验室 →</a></nav>
+    <header>
+      <div>
+        <p class="eyebrow">Optics Lab · 光学实验室 · V3.1 教学修正版</p>
+        <h1>凸透镜成像：光线在哪里相遇？</h1>
+      </div>
+      <div class="formula" aria-label="透镜公式：一除以焦距等于一除以物距加一除以像距">
+        <span class="fraction f"><span>1</span><span>f</span></span>
+        <span>=</span>
+        <span class="fraction u"><span>1</span><span>u</span></span>
+        <span>+</span>
+        <span class="fraction v"><span>1</span><span>v</span></span>
+      </div>
+    </header>
+
+    <nav class="modebar" aria-label="学习模式与课堂工具">
+      <div class="mode-switch" aria-label="学习模式">
+        <button id="freeMode" type="button" aria-pressed="true">自由探索</button>
+        <button id="guideMode" type="button" aria-pressed="false">课堂探究</button>
+      </div>
+      <div class="tools">
+        <button id="resetButton" class="tool-button" type="button">↺ 重置实验</button>
+        <button id="fullscreenButton" class="tool-button" type="button">⛶ 全屏演示</button>
+      </div>
+    </nav>
+
+    <section class="layout">
+      <div class="lab">
+        <section id="guideCard" class="side-card guide" hidden aria-live="polite">
+          <p class="label" id="guideStep">探究 1 / 3</p>
+          <div class="guide-progress" id="guideProgress" aria-hidden="true"></div>
+          <h2 id="guideQuestion">先预测：当物距大于二倍焦距时，会形成什么像？</h2>
+          <div class="choices" id="guideChoices"></div>
+          <button id="guideAction" class="guide-action" type="button" disabled>开始验证</button>
+          <p id="guideInstruction" class="guide-instruction"></p>
+          <p id="guideFeedback" class="guide-feedback" hidden></p>
+        </section>
+        <div class="toolbar">
+          <div>
+            <strong>移动蜡烛或焦点，观察像的变化</strong><br>
+            <span class="hint">蜡烛改变物距，紫色焦点改变焦距</span>
+          </div>
+          <div class="presets" aria-label="典型物距">
+            <button type="button" data-ratio="2.2">大于 2f</button>
+            <button type="button" data-ratio="2">等于 2f</button>
+            <button type="button" data-ratio="1.5">f 与 2f 之间</button>
+            <button type="button" data-ratio="1">等于 f</button>
+            <button type="button" data-ratio="0.7">小于 f</button>
+          </div>
+        </div>
+
+        <div class="stage-wrap">
+          <svg id="stage" viewBox="0 0 1000 520" role="img" aria-labelledby="stageTitle stageDesc">
+            <title id="stageTitle">凸透镜成像动态光路图</title>
+            <desc id="stageDesc">物体位于凸透镜左侧，三条特殊光线展示像的位置与性质。</desc>
+          </svg>
+          <div class="drag-tip" id="dragTip">↔ 拖动蜡烛或紫色 F</div>
+          <p id="viewNote" class="view-note"></p>
+        </div>
+
+        <div class="controls">
+          <div class="control">
+            <label for="distance">物距 <span class="u">u</span></label>
+            <input id="distance" type="range" min="5" max="36" step="0.1" value="22" aria-describedby="distanceHelp">
+            <label class="precise"><input id="distanceValue" type="number" min="5" max="36" step="0.1" value="22" aria-label="精确物距，厘米"> cm</label>
+            <span id="distanceHelp" hidden>调整蜡烛到透镜光心的距离</span>
+          </div>
+          <div class="control">
+            <label for="focalDistance">焦距 <span class="f">f</span></label>
+            <input id="focalDistance" type="range" min="6" max="16" step="0.1" value="10" aria-describedby="focalHelp">
+            <label class="precise"><input id="focalValue" type="number" min="6" max="16" step="0.1" value="10" aria-label="精确焦距，厘米"> cm</label>
+            <span id="focalHelp" hidden>调整凸透镜的焦距</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+
+
+        <section class="side-card status" aria-live="polite">
+          <p class="label">当前成像</p>
+          <h2 id="caseTitle">倒立 · 缩小 · 实像</h2>
+          <p id="caseText">物体在二倍焦距以外，像落在焦点与二倍焦距之间。</p>
+        </section>
+
+        <section class="side-card">
+          <p class="label">实时计算</p>
+          <dl class="values">
+            <div><dt class="f">焦距 f</dt><dd id="fValue">10.0 cm</dd></div>
+            <div><dt class="u">物距 u</dt><dd id="uValue">22.0 cm</dd></div>
+            <div><dt class="v">像距 v</dt><dd id="vValue">18.3 cm</dd></div>
+            <div><dt>放大倍数 |m|</dt><dd id="mValue">0.83×</dd></div>
+          </dl>
+          <div class="equation" id="calculation">v = fu ÷ (u − f)<br>= 10 × 22 ÷ 12 = 18.3 cm</div>
+        </section>
+
+        <section class="side-card legend" aria-label="光线图例">
+          <p class="label">三条特殊光线</p>
+          <span style="color:var(--yellow)"><i class="swatch"></i>平行主轴 → 过焦点</span>
+          <span style="color:var(--cyan)"><i class="swatch"></i>经过光心 → 方向不变</span>
+          <span style="color:var(--pink)"><i class="swatch"></i>过近焦点 → 平行主轴</span>
+        </section>
+      </aside>
+    </section>
+
+    <section class="teaching" aria-label="读懂光路和公式">
+      <details open><summary>距离与正负号怎么读？</summary>
+        <p><b class="u">u</b>：物体到光心 O 的距离；<b class="f">f</b>：光心 O 到焦点 F 的距离。<b class="v">v</b> 采用带符号像距：实像在透镜另一侧为正，虚像在物体一侧为负；实际距离是 |v|。</p>
+        <p>固定 f 时，可用 v = fu ÷ (u − f) 计算像距。|m| = |v/u| 表示像与物体的高度之比。u = f 时没有有限像距，不能把“除以 0”当成普通数值计算。</p>
+      </details>
+      <details><summary>为什么几条光线就能画出一支蜡烛的像？</summary>
+        <p>图中选取火焰顶端的一个点。这个点发出许多光线，我们只画便于作图的特殊光线；每个物点分别成像，所有像点组合成完整的像。两条不重合光线就能定位一个像点。</p>
+        <p>实线表示光的实际传播路径，虚线仅为反向延长线，并没有光沿虚线倒着传播。近焦点时第三条特殊光线可能超出示意范围，此时只显示两条。</p>
+      </details>
+      <details><summary>怎样用光屏区分实像与虚像？</summary>
+        <p>实像处有实际光线会聚，把光屏放在正确像距处可以承接清晰的像。虚像处没有实际光线会聚，不能直接用光屏承接，但可以通过透镜观察。</p>
+        <p>本图采用理想薄透镜、近轴光线模型，不模拟像差和亮度。调节 f 相当于更换不同焦距的透镜，不是移动焦点本身改变同一透镜。</p>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const slider = document.getElementById('distance');
+    const focalSlider = document.getElementById('focalDistance');
+    const presets = [...document.querySelectorAll('[data-ratio]')];
+    const el = id => document.getElementById(id);
+    let mode='free', guideIndex=0, guidePhase='predict', selectedAnswer='', operated=false, dragging='', dragMap=null;
+    const answers=['倒立 · 缩小 · 实像','倒立 · 放大 · 实像','正立 · 放大 · 虚像','倒立 · 等大 · 实像','无有限距离的像'];
+    const tasks=[
+      {u:22, answer:0, condition:'u > 2f', why:'像在 f 与 2f 之间，倒立且缩小。'},
+      {u:15, answer:1, condition:'f < u < 2f', why:'像在另一侧 2f 以外，倒立且放大。'},
+      {u:7, answer:2, condition:'u < f', why:'反向延长线在物体一侧相交，形成正立放大的虚像。'},
+      {u:20, answer:3, condition:'u = 2f', why:'另一侧 v = 2f，像与物体等大。'},
+      {u:10, answer:4, condition:'u = f', why:'同一物点的折射光线平行，光屏在有限距离不能得到清晰像。'}
+    ];
+    const fmt=n=>Number.isFinite(n)?n.toFixed(1):'—';
+    const imageDistance=(f,u)=>f*u/(u-f);
+    function category(u,f) {
+      if(Math.abs(u-f)<.051) return 4;
+      if(u<f) return 2;
+      if(Math.abs(u-2*f)<.051) return 3;
+      return u>2*f?0:1;
+    }
+    function geometry(u,f,width) {
+      const w=Math.max(280,width), h=w<600?400:480, pad=w<600?24:44;
+      const c=category(u,f), v=c===4?Infinity:imageDistance(f,u), m=-v/u;
+      const left=Math.max(u,2*f,Number.isFinite(v)&&v<0?-v:0)*1.16;
+      const right=Math.max(2*f,Number.isFinite(v)&&v>0?v:0)*1.16;
+      const s=(w-2*pad)/(left+right), x=pad+left*s, y=w<600?155:195;
+      const height=Math.min(w<600?55:82,(w<600?102:142)/Math.max(1,Number.isFinite(m)?Math.abs(m):1));
+      return {w,h,pad,s,x,y,height,v,m,c,objX:x-u*s,imgX:x+v*s};
+    }
+    const line=(x1,y1,x2,y2,color,extra='')=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" '+extra+'/>';
+    const label=(x,y,t,color='#536a86',anchor='middle')=>'<text x="'+x+'" y="'+y+'" fill="'+color+'" text-anchor="'+anchor+'">'+t+'</text>';
+    function candle(x,y,h,inverted=false,opacity=1) {
+      return '<image href="assets/candle-v2.png" x="'+(x-h/3)+'" y="'+(y-h)+'" width="'+(h*2/3)+'" height="'+h+'" opacity="'+opacity+'" '+(inverted?'transform="translate(0 '+(y*2)+') scale(1 -1)"':'')+'/>';
+    }
+    let currentGeometry;
+    function render() {
+      const u=Number(slider.value), f=Number(focalSlider.value);
+      const g=geometry(u,f,stage.clientWidth||900); currentGeometry=g;
+      const {w,h,pad,s,x,y,height,v,m,c,objX,imgX}=g, top=y-height;
+      const reveal=mode==='free'||guidePhase==='result', raysVisible=mode==='free'||guidePhase!=='predict';
+      stage.setAttribute('viewBox','0 0 '+w+' '+h);
+      stage.style.height=h+'px';
+      const colors=['#bb8000','#168bb3','#d84f91'], end=w-8, imageY=y+v/u*height;
+      const third=c===4?null:y+height*f/(u-f), thirdVisible=third!==null&&third>55&&third<h-112;
+      let rays='';
+      if(raysVisible) {
+        rays=line(objX,top,x,top,colors[0])+line(x,top,end,top+(end-x)*height/(f*s),colors[0])
+          +line(objX,top,end,y+(end-x)*height/(u*s),colors[1]);
+        if(thirdVisible)
+          rays+=line(objX,top,x,third,colors[2])+line(x,third,end,third,colors[2]);
+        if(v<0) {
+          rays+=line(x,top,imgX,imageY,colors[0],'stroke-dasharray="5 5"')
+            +line(x,y,imgX,imageY,colors[1],'stroke-dasharray="5 5"');
+          if(thirdVisible) rays+=line(x,third,imgX,imageY,colors[2],'stroke-dasharray="5 5"');
+        }
+      }
+      let marks='';
+      if(f*s>28) for(const n of [-2,-1,1,2]) {
+        const px=x+n*f*s;
+        marks+=line(px,48,px,y,'#c6d3e2','stroke-dasharray="3 5"')+label(px,34,Math.abs(n)===1?'F':'2F');
+      }
+      const focusHandles=[-1,1].map(n=>'<g class="focusHandle"><circle cx="'+(x+n*f*s)+'" cy="'+y+'" r="7" fill="#765ac8"/><circle cx="'+(x+n*f*s)+'" cy="'+y+'" r="22" fill="transparent"/></g>').join('');
+      function measure(a,b,yy,t,color) {
+        return line(a,yy,b,yy,color)+line(a,yy-4,a,yy+4,color)+line(b,yy-4,b,yy+4,color)+label(Math.max(60,Math.min(w-60,(a+b)/2)),yy-7,t,color);
+      }
+      const measures=measure(objX,x,h-70,'u = '+fmt(u)+' cm','#c45b24')
+        +(reveal&&Number.isFinite(v)?measure(x,imgX,h-40,'|v| = '+fmt(Math.abs(v))+' cm','#168bb3'):'')
+        +measure(x,x+f*s,h-10,'f = '+fmt(f)+' cm','#765ac8');
+      const imageMarkup=raysVisible&&Number.isFinite(v)?candle(imgX,y,Math.abs(m)*height,v>0,v<0?.7:.9)
+        +label(imgX,v>0?imageY+20:y+51,reveal?(v>0?'实像':'虚像'):'像','#168bb3'):'';
+      stage.innerHTML='<title id="stageTitle">凸透镜光路图</title><desc id="stageDesc">'+ (reveal?answers[c]:'请按任务观察物体和光路')+'</desc>'
+        +'<defs><linearGradient id="glass"><stop stop-color="#c8effa" stop-opacity=".5"/><stop offset=".5" stop-color="white" stop-opacity=".5"/><stop offset="1" stop-color="#c8effa" stop-opacity=".5"/></linearGradient></defs>'
+        +'<style>text{font:12px "Microsoft YaHei",sans-serif;paint-order:stroke;stroke:#f6fbff;stroke-width:3px;stroke-linejoin:round}line{stroke-width:1.8}.focusHandle,#objectHandle{cursor:ew-resize}</style>'
+        +marks+line(8,y,w-8,y,'#8194aa')
+        +'<g>'+rays+'</g>'
+        +'<path d="M '+x+' 55 Q '+(x-28)+' '+y+' '+x+' '+(h-105)+' Q '+(x+28)+' '+y+' '+x+' 55" fill="url(#glass)" stroke="#48aecd" stroke-width="2"/>'
+        +label(x,16,'光心 O','#168bb3')+line(x,43,x,y,'#a5bfcc','stroke-dasharray="3 4"')
+        +imageMarkup
+        +'<g id="objectHandle">'+candle(objX,y,height)+label(objX,y+29,'蜡烛','#c45b24')+'<rect x="'+(objX-20)+'" y="'+(top-8)+'" width="40" height="'+(height+16)+'" fill="transparent"/></g>'
+        +focusHandles+measures;
+      el('distanceValue').value=fmt(u); el('focalValue').value=fmt(f);
+      el('uValue').textContent=fmt(u)+' cm'; el('fValue').textContent=fmt(f)+' cm';
+      el('vValue').textContent=reveal?(c===4?'无有限值':fmt(v)+' cm'):'待验证';
+      el('mValue').textContent=reveal?(c===4?'不适用':Math.abs(m).toFixed(2)+'×'):'待验证';
+      el('caseTitle').textContent=reveal?answers[c]:guidePhase==='predict'?'先预测，再操作':'观察后提交验证';
+      el('caseText').textContent=reveal?(c===4?'折射光线平行，有限距离的光屏不能承接清晰像。':v<0?'v 为负：虚像与物体同侧，不能直接用光屏承接。':'v 为正：实像在透镜另一侧，可在像的位置用光屏承接。'):'预测与操作期间暂不显示结论。';
+      el('calculation').innerHTML=!reveal?'v = fu ÷ (u − f)<br>完成操作后显示代入结果':c===4?'u − f = 0<br>公式在此无有限值；接近焦点时 |v| 越来越大。':'v = fu ÷ (u − f)<br>= '+fmt(f)+' × '+fmt(u)+' ÷ ('+fmt(u)+' − '+fmt(f)+')<br>= '+fmt(v)+' cm';
+      el('viewNote').textContent='光从左向右传播，水平线为主光轴。全景自动缩放；横、纵缩放分别调整，像与物的高度比保持不变。'+(raysVisible&&!thirdVisible?' 此时显示两条特殊光线，已足够判断成像。':'')+(f*s<=28?' 像距很大，F/2F 文字暂时收起，距离请看读数。':'');
+      presets.forEach(b=>b.setAttribute('aria-pressed',Math.abs(Number(b.dataset.ratio)-u/f)<.01));
+      syncGuide();
+    }
+    function syncGuide() {
+      const guided=mode==='guide', task=tasks[guideIndex], operating=guided&&guidePhase==='operate';
+      el('guideCard').hidden=!guided;
+      el('freeMode').setAttribute('aria-pressed',!guided); el('guideMode').setAttribute('aria-pressed',guided);
+      presets.forEach(b=>b.disabled=guided);
+      slider.disabled=el('distanceValue').disabled=guided&&!operating;
+      focalSlider.disabled=el('focalValue').disabled=guided;
+      el('dragTip').textContent=!guided?'↔ 拖动蜡烛或紫色 F':operating?'↔ 拖动蜡烛，或输入精确物距':'按上方任务选择预测或进入下一题';
+      if(!guided) return;
+      el('guideStep').textContent='探究 '+(guideIndex+1)+' / '+tasks.length+' · '+({predict:'① 预测',operate:'② 操作',result:'③ 验证'}[guidePhase]);
+      el('guideProgress').innerHTML=tasks.map((_,i)=>'<i class="'+(i<guideIndex?'done':i===guideIndex?'current':'')+'"></i>').join('');
+      el('guideQuestion').textContent='f = 10 cm；若 '+task.condition+'，将形成什么像？';
+      el('guideChoices').hidden=guidePhase!=='predict';
+      el('guideChoices').innerHTML=answers.map((a,i)=>'<button type="button" data-answer="'+i+'" aria-pressed="'+(selectedAnswer===String(i))+'">'+a+'</button>').join('');
+      document.querySelectorAll('[data-answer]').forEach(b=>b.addEventListener('click',()=>{selectedAnswer=b.dataset.answer;syncGuide();}));
+      const ready=operated&&Math.abs(Number(slider.value)-task.u)<.051;
+      el('guideAction').disabled=guidePhase==='predict'?!selectedAnswer:operating?!ready:false;
+      el('guideAction').textContent=guidePhase==='predict'?'开始操作':operating?'提交验证':guideIndex===tasks.length-1?'重新挑战':'下一题';
+      el('guideInstruction').textContent=operating?'请亲手把物距调到 '+task.u.toFixed(1)+' cm，观察像的位置、大小和正倒。当前 '+fmt(Number(slider.value))+' cm。'+(ready?'已到达目标，可以提交。':'可使用滑块、拖动或数字输入。'):guidePhase==='predict'?'先独立预测，光路和结论暂时隐藏。':'对照光线会聚位置与公式结果，解释你的判断。';
+      el('guideFeedback').hidden=guidePhase!=='result';
+      el('guideFeedback').textContent=guidePhase==='result'?(Number(selectedAnswer)===task.answer?'回答正确。':'本次预测需要修正。正确结果：'+answers[task.answer]+'。')+task.why:'';
+    }
+    function setMode(next) {
+      mode=next;guideIndex=0;guidePhase='predict';selectedAnswer='';operated=false;dragging='';
+      if(mode==='guide'){focalSlider.value=10;slider.value=30;}
+      render();
+    }
+    function updateInput() { if(mode==='guide'&&guidePhase==='operate') operated=true;render(); }
+    slider.addEventListener('input',updateInput);focalSlider.addEventListener('input',updateInput);
+    for(const [id,input,min,max] of [['distanceValue',slider,5,36],['focalValue',focalSlider,6,16]]) {
+      const commit=()=>{const n=Number(el(id).value);if(!Number.isFinite(n)||el(id).value===''){render();return;}input.value=Math.max(min,Math.min(max,Math.round(n*10)/10));updateInput();};
+      el(id).addEventListener('change',commit);el(id).addEventListener('blur',commit);
+      el(id).addEventListener('keydown',e=>{if(e.key==='Enter')commit();});
+    }
+    presets.forEach(b=>b.addEventListener('click',()=>{slider.value=Math.max(5,Math.min(36,Number(focalSlider.value)*Number(b.dataset.ratio)));render();}));
+    el('freeMode').addEventListener('click',()=>setMode('free'));
+    el('guideMode').addEventListener('click',()=>setMode('guide'));
+    el('resetButton').addEventListener('click',()=>{slider.value=22;focalSlider.value=10;setMode(mode);});
+    el('guideAction').addEventListener('click',()=>{
+      if(guidePhase==='predict'){if(!selectedAnswer)return;guidePhase='operate';operated=false;}
+      else if(guidePhase==='operate'){if(!operated||Math.abs(Number(slider.value)-tasks[guideIndex].u)>.051)return;guidePhase='result';}
+      else{guideIndex=(guideIndex+1)%tasks.length;guidePhase='predict';selectedAnswer='';operated=false;slider.value=30;}
+      render();
+    });
+    el('fullscreenButton').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{el('viewNote').textContent='当前浏览器不支持页面全屏，请使用浏览器的全屏功能。';}});
+    document.addEventListener('fullscreenchange',()=>{el('fullscreenButton').textContent=document.fullscreenElement?'⛶ 退出全屏':'⛶ 全屏演示';render();});
+    stage.addEventListener('pointerdown',e=>{
+      if(mode==='guide'&&guidePhase!=='operate')return;
+      dragging=e.target.closest('#objectHandle')?'object':mode==='free'&&e.target.closest('.focusHandle')?'focus':'';
+      if(!dragging)return;dragMap={...currentGeometry};stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+      const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(stage.getScreenCTM().inverse()).x;
+      if(dragging==='object') slider.value=Math.max(5,Math.min(36,(dragMap.x-p)/dragMap.s));
+      else focalSlider.value=Math.max(6,Math.min(16,Math.abs(dragMap.x-p)/dragMap.s));
+      updateInput();
+    });
+    stage.addEventListener('pointerup',()=>dragging='');stage.addEventListener('pointercancel',()=>dragging='');
+    if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>render()).observe(stage);
+    render();
+
+  </script>
+</body>
+</html>

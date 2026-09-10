@@ -1,0 +1,8 @@
+{
+  "name": "optics-classroom",
+  "private": true,
+  "version": "4.1.0",
+  "scripts": { "build": "node build.cjs", "test": "node test-v4.mjs && node test-v3.cjs" },
+  "dependencies": { "three": "0.185.1" },
+  "devDependencies": { "esbuild": "0.28.2" }
+}

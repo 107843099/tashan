@@ -1,0 +1,141 @@
+{
+  "pbl": {
+    "cover": "./assets/covers/pbl-example.png",
+    "imageHref": "./vibe%20coding%E5%BA%93/%E5%82%85%E5%8F%AF%E6%99%97/%E7%BA%B8%E6%A1%A5PBL-%E8%AF%BE%E7%A8%8B%E6%B5%B7%E6%8A%A5-%E7%94%9F%E6%88%90%E7%A4%BA%E4%BE%8B.png",
+    "title": {
+      "zh-CN": "纸桥，藏着什么力量？",
+      "zh-Hant": "紙橋，藏著什麼力量？",
+      "en": "What gives a paper bridge its strength?"
+    },
+    "caption": {
+      "zh-CN": "沿用原文四年级纸桥案例制作的课程展示板：保留公平测试、修改与反思，并将结果区留给真实课堂填写。桥体为结构示意，15厘米为示例参数，需教师试做；图中载荷不代表测试结果。",
+      "zh-Hant": "沿用原文四年級紙橋案例製作的課程展示板：保留公平測試、修改與反思，並將結果區留給真實課堂填寫。橋體為結構示意，15厘米為示例參數，需教師試做；圖中載荷不代表測試結果。",
+      "en": "A display board using the source's Grade 4 paper-bridge example, with fair tests, revision and reflection. The results area is deliberately blank. The bridge and 15 cm span are design illustrations requiring teacher trials; the pictured load is not a test result."
+    },
+    "prompt": "Use case: scientific-educational.\nCreate a finished landscape 16:9 Chinese project-based learning classroom poster based on the original “AI辅助PBL课程设计” six-step workflow, specifically its supplied Grade 4 paper-bridge example and optional visualization step. Theme: compare paper bridge structures using fair tests; not real classroom results. This is a polished teaching display, not an app mockup or a generic stock image.\nMain visual: elegant tactile cut-paper and fine watercolor illustration of an A4 paper bridge folded into a strong accordion profile, spanning two stable low tabletop wooden supports. A small set of identical wooden blocks above it, a ruler beneath marking a span labelled exactly “15厘米”. Also show a plain flat paper sample and a folded sample as candidate structures, without claiming measured results. No people. Generous warm white background with pencil construction lines, sage and deep forest green, warm ochre accents. Editorial composition: large left title, highly detailed bridge scene occupying upper right and middle, orderly five-step pathway below. Premium children's science museum information design, readable adult-teacher typography, soft natural shadows.\nText (render exactly in simplified Chinese and only this text, clean complete strokes):\n“纸桥，藏着什么力量？”\n“一张A4纸 · 一次有证据的设计”\n“观察”\n“提问”\n“探究”\n“创造”\n“反思”\n“相同纸张”\n“相同跨度”\n“相同载荷”\n“我们的测试结果”\n“留给真实课堂填写”\n“15厘米”\n“设计示例 · 待试教”\nCreate a deliberately blank, ruled “我们的测试结果” area, with no fabricated measurements, names, scores, or quotes. The five pathway labels are connected in order with fine arrows; a return arrow from reflect to explore communicates iteration. Entire poster visible with generous margins, no clipping, no heavy borders, no logos, no watermark. Paper-bridge and blank evidence panel should feel useful and inviting.",
+    "editPrompts": [
+      "Edit the supplied paper bridge educational poster. Preserve its exact overall layout, colors, all major Chinese text, five-step learning path, blank results panel, and beautiful paper texture. Correct two scientific-diagram details only: (1) Remove the wooden ruler entirely; leave clean tabletop under the existing double-ended arrow and exact text “15厘米”. This is an illustration, not a measuring instrument. (2) Reorient the corrugation folds of the central paper bridge so its parallel ridge lines run lengthwise from the left support all the way to the right support, aligned with the span, like strong parallel paper beams. The corrugated zigzag cross-section should be visible at its short ends resting on the supports, not running across the unsupported span. Keep the same white paper and small wooden block loads, no added glue or extra materials. Remove the small explanatory sketch and assertion at the top above the bridge; replace it with the exact concise label “结构示意 · 需实际测试”. All other regions unchanged. No extra text or ruler numbers. Maintain landscape aspect ratio and image quality."
+    ],
+    "generatedAt": "2026-09-10",
+    "source": "vibe coding库/傅可晗/AI辅助PBL课程设计_提示词与使用说明_V1.1.md",
+    "savedPath": "vibe coding库/傅可晗/纸桥PBL-课程海报-生成示例.png",
+    "generationMode": "built-in image_gen",
+    "classroomVerified": false,
+    "parameters": "沿用原文现成案例：小学四年级；4课时，每课时40分钟；A4纸桥、15厘米示例跨度；以公平测试和依据证据修改为核心。图像对应可选第六步，不替代前五步课程设计。",
+    "adaptation": "原图工具补充了少量说明性短句；已逐项目视检查。未生成任何真实学生、测试数据或课堂成效。二次编辑去除了错刻度尺，并使主桥折痕沿跨度方向排列；桥体仍仅为设计意向示意。",
+    "width": 1672,
+    "height": 941,
+    "bytes": 2160948,
+    "sha256": "b30315baede515edfaadd359bedb07dc8b1b7476014dfa26124601221aee71e5"
+  },
+  "poetry": {
+    "cover": "./assets/covers/poetry-example.png",
+    "imageHref": "./vibe%20coding%E5%BA%93/%E9%83%AD%E5%B0%9A%E7%8E%AE/%E5%8F%A4%E8%AF%97%E8%AF%8D%E8%AF%BE%E5%A0%82%E6%B5%B7%E6%8A%A5-%E6%98%A5%E6%99%93-%E7%94%9F%E6%88%90%E7%A4%BA%E4%BE%8B.png",
+    "title": {
+      "zh-CN": "《春晓》：从画面回到诗句",
+      "zh-Hant": "《春曉》：從畫面回到詩句",
+      "en": "Spring Dawn: from the picture to the poem"
+    },
+    "caption": {
+      "zh-CN": "填入孟浩然《春晓》、小学低年级、全文模式，生成水墨淡彩海报。晨光、鸟鸣与落花对应诗中线索；夜雨通过湿润环境暗示，未画成同时发生的情节。",
+      "zh-Hant": "填入孟浩然《春曉》、小學低年級、全文模式，生成水墨淡彩海報。晨光、鳥鳴與落花對應詩中線索；夜雨透過濕潤環境暗示，未畫成同時發生的情節。",
+      "en": "A worked example using Meng Haoran's Spring Dawn, early primary pupils and full-poem mode. Morning light, birds and fallen petals provide visual clues; wet surfaces suggest the remembered rain rather than a simultaneous storm."
+    },
+    "prompt": "Use case: scientific-educational.\nGenerate one finished Chinese classical poetry classroom poster using the original “中小学古诗词课堂海报提示词 V2” with these teacher inputs:\n诗题：春晓\n作者与朝代：孟浩然 · 唐\n原文：\n春眠不觉晓，\n处处闻啼鸟。\n夜来风雨声，\n花落知多少。\n适用年级：小学低年级。\n画面比例：横版16:9。\n画风：中国水墨与淡彩插画结合。\n文字模式：全文。\nTeaching intention: help pupils distinguish the morning they can see from the remembered night rain; observe birds and fallen petals then return to the exact poem.\nCreate a beautiful serene spring dawn garden after overnight rain, with fresh washed pale green branches, two or three small songbirds perched naturally, a few delicate pink blossoms still on branches, scattered fallen petals on moist earth and a small reflective puddle in the foreground. Dew and softly illuminated mist show the quiet morning. No person or poet portrait. Do not depict a simultaneous nighttime storm; the fallen petals and wet surfaces suggest the prior night. No invented palace, boats, pagodas, cranes, lanterns, seals, or elaborate borders. Chinese ink plus delicate translucent watercolor on fine almost-white paper, strong poetic atmosphere, clear natural scale, restrained jade green and soft petal pink. Illustration naturally fills the right two-thirds, extending delicate branches into the whole composition; the left area is clean and quiet for text. The text should be large, precise Song-style/Kai-style Chinese with complete strokes, not loose unreadable calligraphy. Title much larger than poem; preserve each supplied line. Do not add pinyin, translation, teaching instructions, labels, logo, watermark, or ANY words beyond:\n“春晓”\n“孟浩然 · 唐”\n“春眠不觉晓，”\n“处处闻啼鸟。”\n“夜来风雨声，”\n“花落知多少。”\nPremium classroom-poster polish, beautiful balanced white space, all margins intact, landscape 16:9.",
+    "editPrompts": [],
+    "generatedAt": "2026-09-10",
+    "source": "vibe coding库/郭尚玮/中小学古诗词课堂海报提示词(1).md",
+    "savedPath": "vibe coding库/郭尚玮/古诗词课堂海报-春晓-生成示例.png",
+    "generationMode": "built-in image_gen",
+    "classroomVerified": false,
+    "parameters": "诗题：春晓；作者与朝代：孟浩然·唐；小学低年级；横版16:9；中国水墨与淡彩；全文模式。诗文保留四行与标点。",
+    "adaptation": "将原提示词填参后改写为等义图像规格，保留一个主体场景、诗意、全文及准确分行。画面为诗意想象，不作为作者生平或作诗地点的证据。",
+    "width": 1672,
+    "height": 941,
+    "bytes": 2598505,
+    "sha256": "38015c0ffb0e7c42835374c375fa8af144897753a9cafd764a9db9be29a16b7b"
+  },
+  "dynasty": {
+    "cover": "./assets/covers/dynasty-example.png",
+    "imageHref": "./vibe%20coding%E5%BA%93/%E9%83%AD%E5%B0%9A%E7%8E%AE/%E5%94%90%E6%9C%9D%E8%AF%BE%E5%A0%82%E6%B5%B7%E6%8A%A5-%E7%AE%80%E6%98%8E%E6%8F%92%E7%94%BB-%E7%94%9F%E6%88%90%E7%A4%BA%E4%BE%8B.png",
+    "title": {
+      "zh-CN": "唐朝：盛世气象与开放文明",
+      "zh-Hant": "唐朝：盛世氣象與開放文明",
+      "en": "Tang China: prosperity and cultural exchange"
+    },
+    "caption": {
+      "zh-CN": "依据唐朝范例制作的简明插画版，保留年代、四个主题及转折线索。城坊与人物均为教学想象，非文物照片；原模板要求的真实资料图模块已省略，正式使用完整模板时需另补有来源与授权的真实资料图。",
+      "zh-Hant": "依據唐朝範例製作的簡明插畫版，保留年代、四個主題及轉折線索。城坊與人物均為教學想像，非文物照片；原模板要求的真實資料圖模組已省略，正式使用完整模板時需另補有來源與授權的真實資料圖。",
+      "en": "An abridged illustrated adaptation of the Tang example with dates, four topics and a turning point. The city and people are imagined teaching scenes, not artifact photographs. The source's real historical-image modules are omitted; a full-template version requires sourced, licensed reference images."
+    },
+    "prompt": "Use case: scientific-educational.\nGenerate a premium Chinese history classroom knowledge poster, A4 portrait aspect ratio, based on the local “朝代课堂海报提示词” Tang-dynasty example. This is a clearly simplified visual demonstration for lower secondary students, preserving chronology and the four subject modules, not pretending to reproduce real museum photography.\nSubject: Tang dynasty, 618–907, prosperity and cultural exchange. Cream paper, deep indigo text, restrained vermilion and muted antique gold. Refined modern Chinese educational editorial design: enormous confident “唐朝” typography top left, subtitle and date below; a beautiful wide isometric ink-and-gouache drawing of ancient Chang'an-inspired walled wards and busy urban streets in the center, clearly a schematic imagining, not a real artifact or exact archaeological reconstruction. Fine small people only as period scene elements, no modern objects. Architecture inspired by Chinese Tang wooden halls and regular city wards, not Japanese pagodas. Surrounding generous typography and clear grid. Below are four compact knowledge modules with short facts plus their meaning. End with a very readable timeline and one thinking prompt. Do not generate fake museum relic photos, fake inscriptions, fake historian quotes, or real-looking artifact catalogues. No logos or watermark.\nExact simplified Chinese text to render (no extra words):\n“唐朝”\n“盛世气象与开放文明”\n“618—907 年”\n“长安城坊市格局 · 想象示意”\n“贞观之治 → 开元盛世”\n“经济”\n“农业与手工业发展｜支撑社会生活”\n“民族关系”\n“文成公主入藏｜促进交流”\n“对外交往”\n“遣唐使与玄奘西行｜推动文化交流”\n“文化”\n“唐诗繁荣｜留下丰富的文学遗产”\n“618 建立”\n“755 安史之乱开始”\n“907 灭亡”\n“想一想：哪些线索体现了开放？”\n“简明设计示例”\nKeep every fact in its own line, pairing fact and explanation separated by ｜. Timeline is schematic event order, not proportional. No decorative faux text. Imagery about 40 percent, avoid dense textbook paragraphs. Print-worthy, high readability and sophisticated balance.",
+    "editPrompts": [],
+    "generatedAt": "2026-09-10",
+    "source": "vibe coding库/郭尚玮/朝代课堂海报提示词.zip",
+    "savedPath": "vibe coding库/郭尚玮/唐朝课堂海报-简明插画-生成示例.png",
+    "generationMode": "built-in image_gen",
+    "classroomVerified": false,
+    "parameters": "主题沿用原文唐朝范例；初中历史；A4竖版；选择经济、民族关系、对外交往、文化四区；建立—转折—灭亡时间线。",
+    "adaptation": "明确不完整符合原模板：原文要求真实文物/遗址图片，不准AI虚构文物。本次省略实物资料图模块，改为标注“想象示意”的城坊与课堂插画；大幅精简逐条考点。完整课堂版应补真实资料图并保留来源。",
+    "width": 1054,
+    "height": 1492,
+    "bytes": 2822806,
+    "sha256": "808b5b8e3995c2fac5dc89b112a1cea3ed117e8f0a178dafb2c3600357341720"
+  },
+  "history": {
+    "cover": "./assets/covers/history-example.png",
+    "imageHref": "./vibe%20coding%E5%BA%93/%E5%8D%A2%E6%B0%B8%E5%93%B2/%E5%8E%86%E5%8F%B2%E8%B6%A3%E5%91%B3%E6%8F%90%E7%BA%B2-%E5%BC%A0%E9%AA%9E%E4%B8%8E%E4%B8%9D%E7%BB%B8%E4%B9%8B%E8%B7%AF-%E7%94%9F%E6%88%90%E7%A4%BA%E4%BE%8B.png",
+    "title": {
+      "zh-CN": "张骞与丝绸之路：读懂交流网络",
+      "zh-Hant": "張騫與絲綢之路：讀懂交流網絡",
+      "en": "Zhang Qian and the Silk Roads"
+    },
+    "caption": {
+      "zh-CN": "填入七年级“张骞与丝绸之路”，以双时间点、地区联系与分层问题组织一页白板。前138年、前119年已核对；路线和人物均为教学示意，交流网络并非由一次出使凭空建立。",
+      "zh-Hant": "填入七年級「張騫與絲綢之路」，以雙時間點、地區聯繫與分層問題組織一頁白板。前138年、前119年已核對；路線和人物均為教學示意，交流網絡並非由一次出使憑空建立。",
+      "en": "A Grade 7 whiteboard example combining two verified dates, regional connections and tiered questions. 138 BCE and 119 BCE were checked against the National Museum of China. Routes and people are illustrative; exchange networks developed over time."
+    },
+    "prompt": "Use case: scientific-educational.\nProduce one finished landscape 16:9 historical learning-outline whiteboard image based on the original “通用趣味历史学习提纲 Prompt”.\nTeacher inputs: Grade 7 lower secondary; topic 张骞与丝绸之路; new-lesson exploration; pupils can sequence BCE dates with guidance; Chinese; one chapter on one page; select key facts for the specific goal. The board must fill the frame, no classroom or physical board frame. Clean off-white surface, exceptionally legible dark ink lettering, delicate hand-drawn teaching diagrams, teal, rust and ochre markers, professional and engaging without looking childish.\nLarge title top left. Dominant middle scene: an evocative but explicitly schematic caravan silhouette moving through pale desert dunes, small route diagram beneath connecting four region labels from left to right. This is a conceptual connection diagram, not a geographically accurate map. Two-date timeline at upper right, generous comparison/question panel at bottom. Use compass-like marks sparingly, no false scale or arbitrary national borders. Core idea: Silk Roads are a developing network of exchanges, not a single road created from nothing by one person. Images are educational imagination, not real historical artifacts.\nText, verbatim simplified Chinese, no extra text:\n“张骞与丝绸之路”\n“从一次出使，读懂交流的网络”\n“学习目标：按序说事，用线索解释交流”\n“公元前138年”\n“张骞第一次出使西域”\n“公元前119年”\n“张骞第二次出使西域”\n“长安”\n“河西走廊”\n“西域”\n“更远的地区”\n“联系示意 · 非精确地图”\n“丝绸之路是逐步发展的交通与交流网络”\n“看图找线索”\n“除了商品，还有什么会随人流动？”\n“基础：排一排两次出使的时间”\n“进阶：说明交通怎样帮助文化交流”\n“教学想象示意”\nUse only a few camel and human silhouettes for the small caravan, no caricatures or stereotypes, no fabricated artifact details. Prioritize correct Chinese, timeline order 138 BCE before 119 BCE, clearly visible arrows labeled by context. Beautiful balance of historical atmosphere, real learning structure, and clean whiteboard readability.",
+    "editPrompts": [
+      "Correct the supplied educational whiteboard image while preserving all Chinese wording verbatim, typography, all arrows, the 138 BCE / 119 BCE timeline, colors, composition, caravan, and bottom teaching activities. The image is about Zhang Qian in the Han dynasty. Remove every Islamic mosque, minaret, onion dome and Islamic crescent, which are anachronistic to this Han-dynasty context: this includes the large city scene on the far right of the dunes and the small blue icon above the words “更远的地区”. Replace the large far-right city with simple neutral low mud-brick flat-roofed buildings at a desert oasis with palm trees, no distinctive religious or later architectural style. Replace the small blue icon with a quiet mountain pass and a small oasis tree. The small green “西域” landscape may remain simple tents and a tree. Do not add any new dates, symbols, labels or words. Do not modify any other parts. Keep “联系示意 · 非精确地图” and “教学想象示意” fully visible, preserve fine clean artwork and wide aspect ratio."
+    ],
+    "generatedAt": "2026-09-10",
+    "source": "vibe coding库/卢永哲/历史趣味提纲prompt(1).zip",
+    "savedPath": "vibe coding库/卢永哲/历史趣味提纲-张骞与丝绸之路-生成示例.png",
+    "generationMode": "built-in image_gen",
+    "classroomVerified": false,
+    "parameters": "七年级；张骞与丝绸之路；新课导入/探究；单章一页；中文白板图片；围绕时间排序与交通交流关系筛选重点；基础与进阶两层问题。",
+    "adaptation": "概念联系图不按比例，不作精确地理路线。图像初版混入后世伊斯兰建筑，已通过二次生成编辑移除，替换为无特定宗教风格的低矮绿洲聚落。底部灯泡等为当代教学图标，不代表汉代物品。",
+    "width": 1672,
+    "height": 941,
+    "bytes": 2175011,
+    "sha256": "0b3d26b9ea353e76fa280e474af911588728b3f9a00869dc41d1cbc26e6a632d"
+  },
+  "lesson": {
+    "cover": "./assets/covers/lesson-example.png",
+    "imageHref": "./vibe%20coding%E5%BA%93/%E9%99%88%E6%8D%B7/%E7%8E%B0%E4%BB%A3%E6%96%87%E6%95%99%E6%A1%88-%E6%9C%B1%E8%87%AA%E6%B8%85%E6%98%A5-%E8%AE%BE%E8%AE%A1%E6%A6%82%E8%A7%88%E7%A4%BA%E4%BE%8B.png",
+    "title": {
+      "zh-CN": "《春》：从感官描写走向读写迁移",
+      "zh-Hant": "《春》：從感官描寫走向讀寫遷移",
+      "en": "Spring: sensory reading and writing"
+    },
+    "caption": {
+      "zh-CN": "原文是教案结构模板，本图是填入朱自清《春》后制作的七年级一课时设计概览，串起朗读、细读、迁移与学习证据。未代替完整教案，也未编造实际课堂表现。",
+      "zh-Hant": "原文是教案結構模板，本圖是填入朱自清《春》後製作的七年級一課時設計概覽，串起朗讀、細讀、遷移與學習證據。未代替完整教案，也未編造實際課堂表現。",
+      "en": "The source is a lesson-plan template. This Grade 7 visual example applies it to Zhu Ziqing's Spring, connecting reading, close analysis, writing transfer and learning evidence. It is an overview rather than a complete lesson plan or classroom record."
+    },
+    "prompt": "Use case: scientific-educational.\nCreate an elegant landscape 16:9 modern Chinese reading-lesson design overview, a visual worked example based on the original “现代文教案通用格式” with topic 朱自清《春》, Grade 7, one 40-minute example lesson focused on sensory language and descriptive writing. This template is for teaching plans; visualize an example plan and board design, do not present it as the original text output or an already taught successful lesson.\nPremium editorial education poster on luminous cream-white paper: left third dominated by an exceptionally beautiful small ink-and-watercolor spring meadow vignette, with new grass, rain-softened budding branches, and a flowing pale green landscape that subtly blends into the page. A crisp open notebook with a pencil integrates at the bottom edge, but do not fill the notebook with illegible fake text. Right two-thirds clear structured typography with thin quiet dividers and three core steps, plus a broad lower strip for practice and evidence. Sophisticated emerald, muted celadon, and a little coral. No person, no student portrait, no invented quotes, no stock-photo look. Give the subject “春” a large distinctive literary treatment while all supporting Chinese remains precise and readable.\nRender exactly these supplied words and no extra words:\n“春”\n“朱自清”\n“七年级现代文 · 一课时设计示例”\n“从感官描写，读出春天”\n“01 朗读与感知”\n“圈画景物，梳理画面”\n“02 文本细读”\n“寻找视觉、听觉与触觉描写”\n“03 读写迁移”\n“写一段校园春景，并说明用词”\n“学习证据”\n“批注 → 交流 → 修改后的片段”\n“评价关注”\n“有文本依据 · 描写具体 · 修改有理由”\n“设计示例 · 待试教”\nDo not quote or invent sentences from the literary work. Ensure the learning objective, activity, and evidence visually relate, with a modest flow line linking reading, evidence, and writing. Ample negative space, no dense full lesson plan, no ratings, no fake classroom data, no app UI framing, no logo, no watermark.",
+    "editPrompts": [],
+    "generatedAt": "2026-09-10",
+    "source": "vibe coding库/陈捷/现代文教案通用格式.md",
+    "savedPath": "vibe coding库/陈捷/现代文教案-朱自清春-设计概览示例.png",
+    "generationMode": "built-in image_gen",
+    "classroomVerified": false,
+    "parameters": "朱自清《春》；七年级；一课时40分钟设计示例；围绕感官描写组织朗读—文本细读—读写迁移；学习证据为批注、交流与修改后的片段。",
+    "adaptation": "原文件并非直接生图Prompt。本次依据其目标、教学过程、板书与评价要求追加图像规格，生成教学设计概览；未生成全部十二部分教案，未引用或虚构原作句子。",
+    "width": 1672,
+    "height": 940,
+    "bytes": 2271060,
+    "sha256": "2d19bb5a943062ddc1b7bdf98f5791e35f8f921fcec86e59d0074491d39f9629"
+  }
+}

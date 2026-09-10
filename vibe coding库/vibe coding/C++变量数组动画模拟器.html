@@ -1,0 +1,2524 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>C++ 变量与数组动画模拟器</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232563eb'/%3E%3Cpath d='M18 22h28v6H18zm0 14h18v6H18z' fill='white'/%3E%3Ccircle cx='46' cy='39' r='7' fill='%23f7c948'/%3E%3C/svg%3E" />
+    <style>
+:root {
+  color-scheme: light;
+  --bg: #f4f1ea;
+  --panel: #ffffff;
+  --ink: #1e293b;
+  --muted: #64748b;
+  --line: #d7dee8;
+  --soft-line: #e8edf4;
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --green: #12845f;
+  --teal: #0f766e;
+  --amber: #b45309;
+  --yellow: #f7c948;
+  --red: #dc2626;
+  --violet: #7c3aed;
+  --shadow: 0 18px 45px rgba(30, 41, 59, 0.12);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(120deg, rgba(37, 99, 235, 0.08), transparent 32%),
+    linear-gradient(300deg, rgba(15, 118, 110, 0.08), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, transparent 34%),
+    var(--bg);
+  color: var(--ink);
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.app-shell {
+  width: min(1500px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.78fr) minmax(620px, 1.22fr);
+  gap: 20px;
+  min-height: calc(100vh - 48px);
+}
+
+.editor-pane,
+.visual-pane {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(215, 222, 232, 0.9);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-top: 4px solid #2563eb;
+}
+
+.pane-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.example-tools {
+  display: grid;
+  grid-template-columns: minmax(116px, 1fr) 68px;
+  gap: 8px;
+  min-width: 220px;
+}
+
+#exampleSelect {
+  height: 42px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #1f2937;
+  font-weight: 800;
+  outline: none;
+}
+
+#exampleSelect:focus {
+  border-color: rgba(37, 99, 235, 0.86);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.13);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.2vw, 2.2rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.code-label {
+  margin-bottom: 8px;
+  color: #334155;
+  font-weight: 700;
+}
+
+#codeInput {
+  flex: 1;
+  width: 100%;
+  min-height: 310px;
+  resize: none;
+  padding: 16px 16px 16px 58px;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(148, 163, 184, 0.1) 0 44px, transparent 44px),
+    #101827;
+  color: #e5edf7;
+  outline: none;
+  line-height: 1.58;
+  tab-size: 2;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.96rem;
+}
+
+#codeInput:focus {
+  border-color: rgba(37, 99, 235, 0.86);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.13);
+}
+
+.io-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.io-panel {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #334155;
+  font-weight: 800;
+}
+
+#inputData,
+#outputBox {
+  width: 100%;
+  min-height: 82px;
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #172033;
+  outline: none;
+  resize: vertical;
+  white-space: pre-wrap;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+#inputData:focus {
+  border-color: rgba(18, 132, 95, 0.82);
+  box-shadow: 0 0 0 4px rgba(18, 132, 95, 0.12);
+}
+
+#outputBox {
+  overflow: auto;
+  background: #101827;
+  color: #e5edf7;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: minmax(92px, 1.2fr) 46px 46px 46px minmax(82px, 1fr) minmax(150px, 1.5fr);
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.primary-button,
+.ghost-button,
+.icon-button {
+  height: 42px;
+  border-radius: 8px;
+  font-weight: 800;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.primary-button {
+  color: white;
+  background: var(--blue);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.26);
+}
+
+.primary-button:hover {
+  background: var(--blue-dark);
+}
+
+.ghost-button,
+.icon-button {
+  color: #1f2937;
+  background: #edf2f7;
+  border: 1px solid #dbe3ee;
+}
+
+.ghost-button:hover,
+.icon-button:hover {
+  background: #e2eaf5;
+}
+
+.primary-button:not(:disabled):hover,
+.ghost-button:not(:disabled):hover,
+.icon-button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.primary-button:not(:disabled):active,
+.ghost-button:not(:disabled):active,
+.icon-button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.speed-control {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+}
+
+.speed-control input {
+  width: 100%;
+  accent-color: var(--green);
+}
+
+.hint-strip {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  line-height: 1.7;
+  font-size: 0.92rem;
+}
+
+code {
+  padding: 0.12rem 0.28rem;
+  border-radius: 5px;
+  background: #eaf0f7;
+  color: #1e3a8a;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.visual-pane {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(420px, 1fr) auto auto;
+  overflow: hidden;
+  border-top: 4px solid #0f766e;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(90deg, rgba(15, 118, 110, 0.08), transparent 48%),
+    #fbfdff;
+}
+
+.status-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+#stepTitle {
+  display: block;
+  max-width: min(58vw, 720px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+#stepCounter {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #c7d7fe;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+
+.active-code {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
+}
+
+#currentCode {
+  min-height: 38px;
+  max-height: 86px;
+  margin: 6px 0 0;
+  padding: 10px 12px;
+  overflow: auto;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  background: #101827;
+  color: #e5edf7;
+  white-space: pre-wrap;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.flow-insight {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.flow-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.flow-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.flow-copy strong,
+.flow-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-copy strong {
+  color: #0f172a;
+  font-size: 0.98rem;
+}
+
+.flow-copy small {
+  color: #64748b;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.flow-result {
+  min-width: 52px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.flow-true {
+  background: linear-gradient(90deg, #ecfdf5, #ffffff);
+}
+
+.flow-true .flow-icon,
+.flow-true .flow-result {
+  border-color: rgba(18, 132, 95, 0.35);
+  background: #dcfce7;
+  color: #047857;
+}
+
+.flow-false {
+  background: linear-gradient(90deg, #fff7ed, #ffffff);
+}
+
+.flow-false .flow-icon,
+.flow-false .flow-result {
+  border-color: rgba(220, 38, 38, 0.24);
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.flow-loop-on {
+  background: linear-gradient(90deg, #eef4ff, #ffffff);
+}
+
+.flow-loop-on .flow-icon,
+.flow-loop-on .flow-result {
+  border-color: rgba(37, 99, 235, 0.28);
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.flow-loop-off {
+  background: linear-gradient(90deg, #f8fafc, #ffffff);
+}
+
+.flow-loop-off .flow-icon,
+.flow-loop-off .flow-result {
+  border-color: #cbd5e1;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.flow-neutral .flow-result {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.memory-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.overview-chip {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  height: 38px;
+  border: 1px solid var(--soft-line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.overview-chip strong {
+  color: #0f172a;
+  font-size: 1.08rem;
+}
+
+.array-chip {
+  border-color: rgba(37, 99, 235, 0.22);
+  background: #eff6ff;
+}
+
+.iterator-chip {
+  border-color: rgba(15, 118, 110, 0.22);
+  background: #f0fdfa;
+}
+
+.loop-chip {
+  border-color: rgba(180, 83, 9, 0.22);
+  background: #fff7ed;
+}
+
+.stage {
+  position: relative;
+  min-height: 460px;
+  padding: 20px;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 24px 24px, rgba(37, 99, 235, 0.06) 2px, transparent 2px),
+    linear-gradient(#edf2f7 1px, transparent 1px),
+    linear-gradient(90deg, #edf2f7 1px, transparent 1px),
+    #f8fafc;
+  background-size: 32px 32px;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  min-height: 100%;
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty-state strong {
+  color: #334155;
+  font-size: 1.2rem;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+  gap: 14px;
+  align-content: start;
+}
+
+.memory-block {
+  min-width: 0;
+  border: 1px solid #d6dfeb;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 22px rgba(30, 41, 59, 0.07);
+  overflow: hidden;
+}
+
+.array-block {
+  grid-column: 1 / -1;
+}
+
+.loop-symbol {
+  border-color: rgba(180, 83, 9, 0.42);
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.98), rgba(255, 255, 255, 0.94));
+}
+
+.iterator-symbol {
+  border-color: rgba(15, 118, 110, 0.42);
+  background: linear-gradient(180deg, rgba(240, 253, 250, 0.98), rgba(255, 255, 255, 0.94));
+}
+
+.block-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 0.98));
+}
+
+.block-title strong {
+  overflow-wrap: anywhere;
+}
+
+.pill-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.type-pill {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.role-pill {
+  flex: 0 0 auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.loop-pill {
+  background: #fff7ed;
+  color: var(--amber);
+}
+
+.iterator-pill {
+  background: #ccfbf1;
+  color: var(--teal);
+}
+
+.scalar-body {
+  padding: 12px;
+}
+
+.array-body {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  padding: 16px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  background:
+    linear-gradient(180deg, #f8fafc, #ffffff);
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 62px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fbff;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.array-body .cell {
+  flex: 0 0 74px;
+  min-height: 70px;
+  border-radius: 0;
+  border-right-width: 0;
+}
+
+.array-body .cell:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.array-body .cell:last-child {
+  border-radius: 0 8px 8px 0;
+  border-right-width: 2px;
+}
+
+.scalar-body .cell {
+  min-height: 68px;
+}
+
+.cell.loop-symbol {
+  border-color: rgba(180, 83, 9, 0.5);
+  background: #fffbeb;
+}
+
+.cell.iterator-symbol {
+  border-color: rgba(15, 118, 110, 0.5);
+  background: #f0fdfa;
+}
+
+.cell-label {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.cell-value {
+  max-width: 100%;
+  padding: 10px 7px 4px;
+  overflow-wrap: anywhere;
+  color: #0f172a;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 1.28rem;
+  font-weight: 900;
+}
+
+.cell.changed {
+  border-color: var(--green);
+  background: #ecfdf5;
+  animation: cellPulse 760ms ease both;
+}
+
+.cell.source {
+  border-color: var(--yellow);
+  background: #fffbeb;
+}
+
+.timeline {
+  display: flex;
+  gap: 6px;
+  padding: 12px 18px;
+  overflow-x: auto;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.timeline button {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #edf2f7;
+  color: #475569;
+  font-weight: 900;
+}
+
+.timeline button.branch-true-step {
+  border: 1px solid rgba(18, 132, 95, 0.28);
+  background: #dcfce7;
+  color: #047857;
+}
+
+.timeline button.branch-false-step {
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.timeline button.loop-continue-step {
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.timeline button.loop-exit-step {
+  border: 1px solid #cbd5e1;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.timeline button.active {
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.22);
+}
+
+.timeline-gap {
+  display: grid;
+  place-items: center;
+  flex: 0 0 28px;
+  height: 34px;
+  color: #94a3b8;
+  font-weight: 900;
+}
+
+.message-box {
+  min-height: 42px;
+  max-height: 120px;
+  margin: 0;
+  padding: 12px 18px;
+  overflow: auto;
+  border-top: 1px solid var(--line);
+  background: #fff7ed;
+  color: #9a3412;
+  white-space: pre-wrap;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+}
+
+.message-box:empty {
+  display: none;
+}
+
+.moving-token {
+  position: fixed;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 42px;
+  border-radius: 8px;
+  background: var(--violet);
+  color: white;
+  box-shadow: 0 14px 28px rgba(124, 58, 237, 0.28);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.moving-token.alt {
+  background: #f97316;
+  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.28);
+}
+
+@keyframes cellPulse {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  #codeInput {
+    min-height: 300px;
+  }
+
+  .visual-pane {
+    grid-template-rows: auto auto auto auto minmax(420px, 60vh) auto auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .pane-header,
+  .status-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .example-tools {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+
+  .control-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .memory-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flow-insight {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .flow-result {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .io-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-button,
+  .ghost-button,
+  .speed-control {
+    grid-column: span 2;
+  }
+
+  .speed-control {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 9px 12px;
+  }
+
+  .stage {
+    padding: 14px;
+  }
+
+  .memory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <div class="editor-pane">
+          <div class="pane-header">
+            <div>
+              <h1>C++ 变量与数组动画模拟器</h1>
+              <p>写入一小段 C++ 代码，逐步观察变量、数组、输入输出和循环中的值变化。</p>
+            </div>
+            <div class="example-tools">
+              <select id="exampleSelect" aria-label="选择示例"></select>
+              <button class="ghost-button" id="loadExample" type="button">载入</button>
+            </div>
+          </div>
+
+          <label class="code-label" for="codeInput">代码</label>
+          <textarea id="codeInput" spellcheck="false"></textarea>
+
+          <div class="io-grid">
+            <label class="io-panel" for="inputData">
+              <span>输入数据</span>
+              <textarea id="inputData" spellcheck="false"></textarea>
+            </label>
+            <div class="io-panel">
+              <span>程序输出</span>
+              <pre id="outputBox"></pre>
+            </div>
+          </div>
+
+          <div class="control-grid">
+            <button class="primary-button" id="runButton" type="button">运行</button>
+            <button class="icon-button" id="backButton" type="button" title="上一步" aria-label="上一步">‹</button>
+            <button class="icon-button" id="playButton" type="button" title="播放" aria-label="播放">▶</button>
+            <button class="icon-button" id="nextButton" type="button" title="下一步" aria-label="下一步">›</button>
+            <button class="ghost-button" id="resetButton" type="button">重置</button>
+            <label class="speed-control" for="speedInput">
+              <span>速度</span>
+              <input id="speedInput" type="range" min="350" max="1400" value="850" />
+            </label>
+          </div>
+
+          <div class="hint-strip">
+            支持：<code>cin &gt;&gt; a &gt;&gt; b;</code>、<code>cout &lt;&lt; t;</code>、<code>for(...)</code>、<code>while(...)</code>、<code>if/else</code>、<code>++</code>、<code>+=</code>、多变量声明、数组和 <code>swap(...)</code>
+          </div>
+        </div>
+
+        <div class="visual-pane">
+          <div class="status-bar">
+            <div>
+              <span class="status-kicker">当前步骤</span>
+              <strong id="stepTitle">等待运行</strong>
+            </div>
+            <span id="stepCounter">0 / 0</span>
+          </div>
+
+          <div class="active-code">
+            <span class="status-kicker">执行语句</span>
+            <pre id="currentCode">等待运行</pre>
+          </div>
+
+          <div class="flow-insight" id="flowInsight" aria-label="流程判断"></div>
+
+          <div class="memory-overview" id="memoryOverview" aria-label="内存概览"></div>
+
+          <div class="stage" id="stage">
+            <div class="empty-state">
+              <strong>点击“运行”开始</strong>
+              <span>内存格会在这里出现，赋值与交换会用移动动画显示。</span>
+            </div>
+          </div>
+
+          <div class="timeline" id="timeline"></div>
+          <pre class="message-box" id="messageBox" aria-live="polite"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script>
+const examples = [
+  {
+    id: "digit-count",
+    name: "数字统计",
+    input: "220 230",
+    code: `#include <iostream>
+using namespace std;
+int main()
+{
+    long long a, b;
+    cin >> a >> b;
+    long t = 0;
+    for (int i = a; i <= b; i++)
+    {
+        int k = i;
+        int q = 0;
+        while (k)
+        {
+            if (k % 10 == 2)
+            {
+                q++;
+            }
+            k = k / 10;
+        }
+        if (q == 3)
+        {
+            t++;
+        }
+    }
+    cout << t;
+    return 0;
+}`,
+  },
+  {
+    id: "bubble-sort",
+    name: "数组排序",
+    input: "",
+    code: `#include <iostream>
+using namespace std;
+int main()
+{
+    int a[5] = {5, 1, 4, 2, 3};
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            if (a[j] > a[j + 1])
+            {
+                swap(a[j], a[j + 1]);
+            }
+        }
+    }
+    cout << a[0] << " " << a[1] << " " << a[2] << " " << a[3] << " " << a[4];
+    return 0;
+}`,
+  },
+  {
+    id: "prefix-sum",
+    name: "前缀和",
+    input: "3 1 4 1 5",
+    code: `#include <iostream>
+using namespace std;
+int main()
+{
+    int a[5];
+    int s[5];
+    cin >> a[0] >> a[1] >> a[2] >> a[3] >> a[4];
+    s[0] = a[0];
+    for (int i = 1; i < 5; i++)
+    {
+        s[i] = s[i - 1] + a[i];
+    }
+    cout << s[4];
+    return 0;
+}`,
+  },
+];
+
+const codeInput = document.querySelector("#codeInput");
+const inputData = document.querySelector("#inputData");
+const outputBox = document.querySelector("#outputBox");
+const stage = document.querySelector("#stage");
+const stepTitle = document.querySelector("#stepTitle");
+const stepCounter = document.querySelector("#stepCounter");
+const currentCode = document.querySelector("#currentCode");
+const flowInsight = document.querySelector("#flowInsight");
+const memoryOverview = document.querySelector("#memoryOverview");
+const messageBox = document.querySelector("#messageBox");
+const timeline = document.querySelector("#timeline");
+const runButton = document.querySelector("#runButton");
+const backButton = document.querySelector("#backButton");
+const nextButton = document.querySelector("#nextButton");
+const playButton = document.querySelector("#playButton");
+const resetButton = document.querySelector("#resetButton");
+const loadExample = document.querySelector("#loadExample");
+const exampleSelect = document.querySelector("#exampleSelect");
+const speedInput = document.querySelector("#speedInput");
+const MAX_EXECUTION_STEPS = 50000;
+const MAX_RENDERED_FRAMES = 15000;
+
+let frames = [emptyFrame()];
+let currentIndex = 0;
+let playing = false;
+let playTimer = null;
+let animating = false;
+
+populateExamples();
+loadSelectedExample(false);
+renderFrame(frames[0]);
+setControls();
+
+runButton.addEventListener("click", () => {
+  compileAndRun();
+});
+
+loadExample.addEventListener("click", () => {
+  loadSelectedExample(true);
+});
+
+exampleSelect.addEventListener("change", () => {
+  loadSelectedExample(false);
+});
+
+resetButton.addEventListener("click", () => {
+  pause();
+  currentIndex = 0;
+  renderFrame(frames[currentIndex]);
+  setControls();
+});
+
+nextButton.addEventListener("click", () => {
+  pause();
+  goToStep(currentIndex + 1, true);
+});
+
+backButton.addEventListener("click", () => {
+  pause();
+  goToStep(currentIndex - 1, false);
+});
+
+playButton.addEventListener("click", () => {
+  if (playing) {
+    pause();
+    return;
+  }
+  if (currentIndex >= frames.length - 1) {
+    currentIndex = 0;
+    renderFrame(frames[currentIndex]);
+  }
+  playing = true;
+  playButton.textContent = "Ⅱ";
+  schedulePlay();
+});
+
+timeline.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-step]");
+  if (!button) return;
+  pause();
+  goToStep(Number(button.dataset.step), false);
+});
+
+function compileAndRun() {
+  pause();
+  try {
+    frames = buildFrames(codeInput.value, inputData.value);
+    currentIndex = 0;
+    messageBox.textContent = "";
+    renderFrame(frames[currentIndex]);
+  } catch (error) {
+    frames = [emptyFrame()];
+    currentIndex = 0;
+    renderFrame(frames[0]);
+    messageBox.textContent = error.message;
+  }
+  setControls();
+}
+
+function populateExamples() {
+  examples.forEach((example) => {
+    const option = document.createElement("option");
+    option.value = example.id;
+    option.textContent = example.name;
+    exampleSelect.append(option);
+  });
+}
+
+function loadSelectedExample(shouldRun) {
+  const example = examples.find((item) => item.id === exampleSelect.value) ?? examples[0];
+  codeInput.value = example.code;
+  inputData.value = example.input;
+  if (shouldRun) {
+    compileAndRun();
+    return;
+  }
+  pause();
+  frames = [emptyFrame()];
+  currentIndex = 0;
+  messageBox.textContent = "";
+  renderFrame(frames[0]);
+  setControls();
+}
+
+function schedulePlay() {
+  clearTimeout(playTimer);
+  if (!playing) return;
+  if (currentIndex >= frames.length - 1) {
+    pause();
+    return;
+  }
+  const delay = Number(speedInput.value) + 120;
+  goToStep(currentIndex + 1, true).then(() => {
+    if (playing) {
+      playTimer = setTimeout(schedulePlay, delay);
+    }
+  });
+}
+
+function pause() {
+  playing = false;
+  playButton.textContent = "▶";
+  clearTimeout(playTimer);
+}
+
+async function goToStep(nextIndex, animate) {
+  if (animating) return;
+  if (nextIndex < 0 || nextIndex >= frames.length) return;
+
+  const previous = frames[currentIndex];
+  const next = frames[nextIndex];
+  currentIndex = nextIndex;
+
+  if (animate && nextIndex > 0) {
+    animating = true;
+    setControls();
+    renderFrame(previous, next.event);
+    await animateEvent(previous, next);
+    renderFrame(next);
+    animating = false;
+  } else {
+    renderFrame(next);
+  }
+  setControls();
+}
+
+function buildFrames(source, inputText = "") {
+  const tokens = tokenizeProgram(sanitizeSource(source));
+  const program = parseProgram(tokens);
+  const runtime = {
+    state: createState(),
+    frames: [emptyFrame()],
+    inputValues: inputText.trim() ? inputText.trim().split(/\s+/) : [],
+    inputCursor: 0,
+    loopDepth: 0,
+    declarationRole: null,
+    steps: 0,
+  };
+
+  executeNodes(program, runtime);
+  return runtime.frames;
+}
+
+function sanitizeSource(source) {
+  let clean = source.replace(/\/\/.*$/gm, "");
+  clean = clean.replace(/^\s*#.*$/gm, "");
+  clean = clean.replace(/^\s*using\s+namespace\s+\w+\s*;\s*$/gm, "");
+
+  if (/\b(?:int|void)\s+main\s*\(\s*\)/.test(clean)) {
+    clean = clean.replace(/^[\s\S]*?\b(?:int|void)\s+main\s*\(\s*\)\s*\{?/, "");
+    clean = clean.replace(/}\s*$/, "");
+  }
+
+  return clean;
+}
+
+function tokenizeProgram(source) {
+  const tokens = [];
+  let current = "";
+  let line = 1;
+  let startLine = 1;
+  let parenDepth = 0;
+  let initializerDepth = 0;
+
+  const flushStatement = () => {
+    const text = current.trim();
+    if (text) tokens.push({ type: "stmt", text, line: startLine });
+    current = "";
+  };
+
+  for (let cursor = 0; cursor < source.length; cursor += 1) {
+    const char = source[cursor];
+    if (char === "\n") {
+      if (!current.trim()) startLine = line + 1;
+      current += char;
+      line += 1;
+      continue;
+    }
+
+    if (char === "(") parenDepth += 1;
+    if (char === ")") parenDepth = Math.max(0, parenDepth - 1);
+
+    if ((char === "{" || char === "}" || char === ";") && !current.trim()) {
+      startLine = line;
+    }
+
+    if (char === "{" && parenDepth === 0) {
+      if (!isBlockHeader(current.trim())) {
+        initializerDepth += 1;
+        current += char;
+        continue;
+      }
+      flushStatement();
+      tokens.push({ type: "open", line });
+      startLine = line;
+      continue;
+    }
+
+    if (char === "}" && parenDepth === 0) {
+      if (initializerDepth > 0) {
+        initializerDepth -= 1;
+        current += char;
+        continue;
+      }
+      flushStatement();
+      tokens.push({ type: "close", line });
+      startLine = line;
+      continue;
+    }
+
+    if (char === ";" && parenDepth === 0 && initializerDepth === 0) {
+      flushStatement();
+      startLine = line;
+      continue;
+    }
+
+    if (!current.trim() && !/\s/.test(char)) startLine = line;
+    current += char;
+  }
+
+  flushStatement();
+  return tokens;
+}
+
+function isBlockHeader(text) {
+  return /^(?:for|while|if)\s*\(/.test(text) || text === "else" || text === "";
+}
+
+function parseProgram(tokens) {
+  const parsed = parseBlock(tokens, 0);
+  if (parsed.index < tokens.length) {
+    throw new Error(`第 ${tokens[parsed.index].line} 行多余的 }`);
+  }
+  return parsed.nodes;
+}
+
+function parseBlock(tokens, index) {
+  const nodes = [];
+  let cursor = index;
+
+  while (cursor < tokens.length && tokens[cursor].type !== "close") {
+    if (tokens[cursor].type !== "stmt") {
+      throw new Error(`第 ${tokens[cursor].line} 行缺少语句`);
+    }
+
+    const parsed = parseNode(tokens, cursor);
+    nodes.push(parsed.node);
+    cursor = parsed.index;
+  }
+
+  return { nodes, index: cursor };
+}
+
+function parseNode(tokens, index) {
+  const token = tokens[index];
+  const forMatch = token.text.match(/^for\s*\(([\s\S]+)\)$/);
+  if (forMatch) {
+    const body = parseBracedBody(tokens, index + 1, token.line, "for");
+    const parts = splitForParts(forMatch[1], token.line);
+    return {
+      node: {
+        type: "for",
+        init: parts[0],
+        condition: parts[1],
+        update: parts[2],
+        body: body.nodes,
+        line: token.line,
+        text: token.text,
+      },
+      index: body.index,
+    };
+  }
+
+  const whileMatch = token.text.match(/^while\s*\(([\s\S]+)\)$/);
+  if (whileMatch) {
+    const body = parseBracedBody(tokens, index + 1, token.line, "while");
+    return {
+      node: { type: "while", condition: whileMatch[1], body: body.nodes, line: token.line, text: token.text },
+      index: body.index,
+    };
+  }
+
+  const ifMatch = token.text.match(/^if\s*\(([\s\S]+)\)$/);
+  if (ifMatch) {
+    const thenBody = parseBracedBody(tokens, index + 1, token.line, "if");
+    let elseBody = [];
+    let cursor = thenBody.index;
+    if (tokens[cursor]?.type === "stmt" && tokens[cursor].text === "else") {
+      const parsedElse = parseBracedBody(tokens, cursor + 1, tokens[cursor].line, "else");
+      elseBody = parsedElse.nodes;
+      cursor = parsedElse.index;
+    }
+    return {
+      node: {
+        type: "if",
+        condition: ifMatch[1],
+        thenBody: thenBody.nodes,
+        elseBody,
+        line: token.line,
+        text: token.text,
+      },
+      index: cursor,
+    };
+  }
+
+  if (token.text === "else") {
+    throw new Error(`第 ${token.line} 行 else 前面没有可匹配的 if`);
+  }
+
+  return { node: { type: "stmt", text: token.text, line: token.line }, index: index + 1 };
+}
+
+function splitForParts(text, line) {
+  const parts = [];
+  let current = "";
+  let depth = 0;
+
+  for (const char of text) {
+    if (char === "(" || char === "[") depth += 1;
+    if (char === ")" || char === "]") depth -= 1;
+    if (char === ";" && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  parts.push(current.trim());
+
+  if (parts.length !== 3) {
+    throw new Error(`第 ${line} 行 for 需要写成 for(初始化; 条件; 步进)`);
+  }
+  return parts;
+}
+
+function parseBracedBody(tokens, index, line, keyword) {
+  if (tokens[index]?.type !== "open") {
+    throw new Error(`第 ${line} 行 ${keyword} 后面需要使用 { } 包住代码块`);
+  }
+  const parsed = parseBlock(tokens, index + 1);
+  if (tokens[parsed.index]?.type !== "close") {
+    throw new Error(`第 ${line} 行 ${keyword} 代码块缺少 }`);
+  }
+  return { nodes: parsed.nodes, index: parsed.index + 1 };
+}
+
+function executeNodes(nodes, runtime) {
+  for (const node of nodes) {
+    executeNode(node, runtime);
+  }
+}
+
+function executeNode(node, runtime) {
+  guardStep(runtime, node.line);
+
+  if (node.type === "stmt") {
+    const executions = executeStatement(node.text, runtime, node.line);
+    executions.forEach((execution) => pushExecution(runtime, execution, node.text, node.line));
+    return;
+  }
+
+  if (node.type === "if") {
+    const conditionValue = evaluateExpression(node.condition, runtime.state, node.line);
+    const passed = Boolean(conditionValue);
+    pushFrame(runtime, {
+      title: `第 ${node.line} 行：if(${node.condition}) ${passed ? "成立" : "不成立"}`,
+      line: node.line,
+      code: node.text,
+      event: {
+        type: "branch",
+        keyword: "if",
+        expression: node.condition,
+        passed,
+        destination: passed ? "then" : node.elseBody.length > 0 ? "else" : "skip",
+      },
+    });
+    executeNodes(passed ? node.thenBody : node.elseBody, runtime);
+    return;
+  }
+
+  if (node.type === "while") {
+    while (true) {
+      guardStep(runtime, node.line);
+      const conditionValue = evaluateExpression(node.condition, runtime.state, node.line);
+      const passed = Boolean(conditionValue);
+      pushFrame(runtime, {
+        title: `第 ${node.line} 行：while(${node.condition}) ${passed ? "继续" : "结束"}`,
+        line: node.line,
+        code: node.text,
+        event: {
+          type: "loop",
+          keyword: "while",
+          expression: node.condition,
+          passed,
+        },
+      });
+      if (!passed) break;
+      executeLoopBody(node.body, runtime);
+    }
+    return;
+  }
+
+  if (node.type === "for") {
+    if (node.init) {
+      const executions = withDeclarationRole(runtime, "iterator", () => executeStatement(node.init, runtime, node.line));
+      executions.forEach((execution) => pushExecution(runtime, execution, node.init, node.line));
+    }
+
+    while (true) {
+      guardStep(runtime, node.line);
+      const conditionValue = node.condition ? evaluateExpression(node.condition, runtime.state, node.line) : 1;
+      const passed = Boolean(conditionValue);
+      pushFrame(runtime, {
+        title: `第 ${node.line} 行：for 条件 ${node.condition || "true"} ${passed ? "继续" : "结束"}`,
+        line: node.line,
+        code: node.text,
+        event: {
+          type: "loop",
+          keyword: "for",
+          expression: node.condition || "true",
+          passed,
+        },
+      });
+      if (!passed) break;
+      executeLoopBody(node.body, runtime);
+      if (node.update) {
+        const executions = executeStatement(node.update, runtime, node.line);
+        executions.forEach((execution) => pushExecution(runtime, execution, node.update, node.line));
+      }
+    }
+  }
+}
+
+function executeLoopBody(nodes, runtime) {
+  runtime.loopDepth += 1;
+  try {
+    executeNodes(nodes, runtime);
+  } finally {
+    runtime.loopDepth -= 1;
+  }
+}
+
+function withDeclarationRole(runtime, role, callback) {
+  const previousRole = runtime.declarationRole;
+  runtime.declarationRole = role;
+  try {
+    return callback();
+  } finally {
+    runtime.declarationRole = previousRole;
+  }
+}
+
+function guardStep(runtime, line) {
+  runtime.steps += 1;
+  if (runtime.steps > MAX_EXECUTION_STEPS) {
+    throw new Error(`第 ${line} 行附近循环次数过多，已停止执行。请检查是否出现死循环。`);
+  }
+}
+
+function pushExecution(runtime, execution, code, line) {
+  runtime.state = execution.state;
+  pushFrame(runtime, { ...execution, code, line });
+}
+
+function pushFrame(runtime, frame) {
+  if (runtime.frames.length >= MAX_RENDERED_FRAMES) {
+    throw new Error(`演示步骤超过 ${MAX_RENDERED_FRAMES} 步，已停止。教学演示时建议缩小输入范围，或先讲解核心循环。`);
+  }
+  runtime.frames.push({
+    state: cloneState(runtime.state),
+    title: frame.title,
+    line: frame.line,
+    code: frame.code,
+    event: frame.event,
+  });
+}
+
+function executeStatement(statement, runtime, line) {
+  const state = runtime.state;
+
+  if (/^return\b/.test(statement)) {
+    return [
+      {
+        state: cloneState(state),
+        title: "遇到 return，结束当前演示语句",
+        event: { type: "none" },
+      },
+    ];
+  }
+
+  const input = statement.match(/^cin\s*>>\s*([\s\S]+)$/);
+  if (input) {
+    return executeInput(input[1], runtime, line);
+  }
+
+  const output = statement.match(/^cout\s*<<\s*([\s\S]+)$/);
+  if (output) {
+    return [executeOutput(output[1], state, line)];
+  }
+
+  const declaration = statement.match(/^(?:long\s+long|long|int)\s+([\s\S]+)$/);
+  if (declaration) {
+    const role = runtime.declarationRole ?? (runtime.loopDepth > 0 ? "loop" : "standard");
+    return executeDeclarations(declaration[1], state, line, role);
+  }
+
+  const swapCall = statement.match(/^(?:std::)?swap\s*\((.+),(.+)\)$/);
+  if (swapCall) {
+    return [executeSwap(swapCall[1], swapCall[2], state, line)];
+  }
+
+  const compound = statement.match(/^(.+?)\s*([+\-*/%])=\s*(.+)$/);
+  if (compound) {
+    return [executeCompoundAssignment(compound[1], compound[2], compound[3], state, line)];
+  }
+
+  const postfixIncrement = statement.match(/^(.+?)(\+\+|--)$/);
+  if (postfixIncrement) {
+    return [executeIncrement(postfixIncrement[1], postfixIncrement[2], state, line)];
+  }
+
+  const prefixIncrement = statement.match(/^(\+\+|--)(.+)$/);
+  if (prefixIncrement) {
+    return [executeIncrement(prefixIncrement[2], prefixIncrement[1], state, line)];
+  }
+
+  const assignment = statement.match(/^(.+?)\s*=\s*(.+)$/);
+  if (assignment) {
+    return [executeAssignment(assignment[1], assignment[2], state, line)];
+  }
+
+  throw new Error(`暂不支持：${statement}`);
+}
+
+function executeInput(text, runtime, line) {
+  const targets = text.split(">>").map((part) => part.trim()).filter(Boolean);
+  const executions = [];
+  let state = runtime.state;
+
+  targets.forEach((targetText) => {
+    if (runtime.inputCursor >= runtime.inputValues.length) {
+      throw new Error(`第 ${line} 行 cin 需要更多输入数据：${targetText}`);
+    }
+    const target = parseReference(targetText, state, line);
+    const value = Number(runtime.inputValues[runtime.inputCursor]);
+    if (!Number.isFinite(value)) {
+      throw new Error(`输入数据不是数字：${runtime.inputValues[runtime.inputCursor]}`);
+    }
+    runtime.inputCursor += 1;
+    const next = cloneState(state);
+    setReferenceValue(target, next, value, line);
+    executions.push({
+      state: next,
+      title: `第 ${line} 行：输入 ${target.label} = ${value}`,
+      event: { type: "assign", source: null, sourceText: "cin", target: target.label, value },
+    });
+    state = next;
+  });
+
+  return executions;
+}
+
+function executeOutput(text, state, line) {
+  const next = cloneState(state);
+  const chunks = text.split("<<").map((part) => part.trim()).filter(Boolean);
+  const output = chunks
+    .map((chunk) => {
+      if (chunk === "endl") return "\n";
+      const stringMatch = chunk.match(/^"([\s\S]*)"$/);
+      if (stringMatch) return stringMatch[1];
+      return String(evaluateExpression(chunk, state, line));
+    })
+    .join("");
+  next.output += output;
+  return {
+    state: next,
+    title: `第 ${line} 行：输出 ${output || "换行"}`,
+    event: { type: "output" },
+  };
+}
+
+function executeDeclarations(text, state, line, role) {
+  const items = splitComma(text);
+  const executions = [];
+  let current = state;
+
+  items.forEach((item) => {
+    const declaration = item.match(/^([A-Za-z_]\w*)\s*(?:\[\s*(.*?)\s*\])?\s*(?:=\s*(.+))?$/);
+    if (!declaration) {
+      throw new Error(`第 ${line} 行声明格式暂不支持：${item}`);
+    }
+    const execution = executeDeclaration(declaration, current, line, role);
+    executions.push(execution);
+    current = execution.state;
+  });
+
+  return executions;
+}
+
+function executeDeclaration(match, state, line, role) {
+  const [, name, sizeExpression, initializer] = match;
+  const next = cloneState(state);
+
+  if (sizeExpression !== undefined) {
+    const initialValues = initializer ? parseInitializer(initializer, state, line) : [];
+    const size = sizeExpression.trim()
+      ? toArraySize(evaluateExpression(sizeExpression, state, line), line)
+      : initialValues.length;
+
+    if (size <= 0) {
+      throw new Error(`第 ${line} 行数组长度必须大于 0：${name}`);
+    }
+    if (!sizeExpression.trim() && initialValues.length === 0) {
+      throw new Error(`第 ${line} 行省略数组长度时需要初始化列表：${name}`);
+    }
+
+    const values = Array.from({ length: size }, (_, index) => initialValues[index] ?? 0);
+    if (initialValues.length > size) {
+      throw new Error(`第 ${line} 行初始化值数量超过数组长度：${name}`);
+    }
+    upsertSymbol(next, { name, kind: "array", values, role });
+    return {
+      state: next,
+      title: `第 ${line} 行：声明数组 ${name}`,
+      event: {
+        type: "create-array",
+        targets: values.map((_, index) => `${name}[${index}]`),
+        value: values.join(", "),
+      },
+    };
+  }
+
+  const value = initializer ? evaluateExpression(initializer, state, line) : 0;
+  upsertSymbol(next, { name, kind: "scalar", value, role });
+  return {
+    state: next,
+    title: `第 ${line} 行：声明变量 ${name} = ${value}`,
+    event: { type: "create", target: name, value },
+  };
+}
+
+function executeAssignment(leftSide, rightSide, state, line) {
+  const target = parseReference(leftSide, state, line);
+  const value = evaluateExpression(rightSide, state, line);
+  const sourceRef = parseReferenceIfSimple(rightSide, state, line);
+  const next = cloneState(state);
+  setReferenceValue(target, next, value, line);
+  return {
+    state: next,
+    title: `第 ${line} 行：${target.label} = ${value}`,
+    event: {
+      type: "assign",
+      source: sourceRef?.label ?? null,
+      sourceText: rightSide.trim(),
+      target: target.label,
+      value,
+    },
+  };
+}
+
+function executeCompoundAssignment(leftSide, operator, rightSide, state, line) {
+  const target = parseReference(leftSide, state, line);
+  const currentValue = getReferenceValue(target, state, line);
+  const rightValue = evaluateExpression(rightSide, state, line);
+  let value = currentValue;
+
+  if (operator === "+") value += rightValue;
+  if (operator === "-") value -= rightValue;
+  if (operator === "*") value *= rightValue;
+  if (operator === "/") {
+    if (rightValue === 0) throw new Error(`第 ${line} 行不能除以 0`);
+    value = Math.trunc(value / rightValue);
+  }
+  if (operator === "%") {
+    if (rightValue === 0) throw new Error(`第 ${line} 行不能对 0 取模`);
+    value %= rightValue;
+  }
+
+  const next = cloneState(state);
+  setReferenceValue(target, next, value, line);
+  return {
+    state: next,
+    title: `第 ${line} 行：${target.label} ${operator}= ${rightValue}，结果 ${value}`,
+    event: {
+      type: "assign",
+      source: target.label,
+      sourceText: rightSide.trim(),
+      target: target.label,
+      value,
+    },
+  };
+}
+
+function executeIncrement(targetText, operator, state, line) {
+  const target = parseReference(targetText, state, line);
+  const currentValue = getReferenceValue(target, state, line);
+  const value = operator === "++" ? currentValue + 1 : currentValue - 1;
+  const next = cloneState(state);
+  setReferenceValue(target, next, value, line);
+  return {
+    state: next,
+    title: `第 ${line} 行：${target.label}${operator}，结果 ${value}`,
+    event: {
+      type: "assign",
+      source: target.label,
+      sourceText: operator,
+      target: target.label,
+      value,
+    },
+  };
+}
+
+function executeSwap(firstText, secondText, state, line) {
+  const first = parseReference(firstText, state, line);
+  const second = parseReference(secondText, state, line);
+  const firstValue = getReferenceValue(first, state, line);
+  const secondValue = getReferenceValue(second, state, line);
+  const next = cloneState(state);
+  setReferenceValue(first, next, secondValue, line);
+  setReferenceValue(second, next, firstValue, line);
+  return {
+    state: next,
+    title: `第 ${line} 行：交换 ${first.label} 和 ${second.label}`,
+    event: {
+      type: "swap",
+      tokens: [
+        { source: first.label, target: second.label, value: firstValue },
+        { source: second.label, target: first.label, value: secondValue },
+      ],
+      targets: [first.label, second.label],
+    },
+  };
+}
+
+function parseInitializer(text, state, line) {
+  const trimmed = text.trim();
+  if (!/^\{[\s\S]*\}$/.test(trimmed)) {
+    throw new Error(`第 ${line} 行数组初始化需要使用 { ... }`);
+  }
+  const inner = trimmed.slice(1, -1).trim();
+  if (!inner) return [];
+  return splitComma(inner).map((part) => evaluateExpression(part, state, line));
+}
+
+function splitComma(text) {
+  const parts = [];
+  let depth = 0;
+  let current = "";
+  for (const char of text) {
+    if (char === "(" || char === "[" || char === "{") depth += 1;
+    if (char === ")" || char === "]" || char === "}") depth -= 1;
+    if (char === "," && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+function createState() {
+  return { symbols: [], output: "" };
+}
+
+function emptyFrame() {
+  return {
+    state: createState(),
+    title: "等待运行",
+    line: 0,
+    code: "",
+    event: { type: "none" },
+  };
+}
+
+function cloneState(state) {
+  return {
+    symbols: state.symbols.map((symbol) =>
+      symbol.kind === "array"
+        ? { name: symbol.name, kind: "array", values: [...symbol.values], role: symbol.role ?? "standard" }
+        : { name: symbol.name, kind: "scalar", value: symbol.value, role: symbol.role ?? "standard" },
+    ),
+    output: state.output ?? "",
+  };
+}
+
+function findSymbol(state, name) {
+  return state.symbols.find((symbol) => symbol.name === name);
+}
+
+function ensureNameAvailable(state, name, line) {
+  if (findSymbol(state, name)) {
+    throw new Error(`第 ${line} 行变量已存在：${name}`);
+  }
+}
+
+function upsertSymbol(state, nextSymbol) {
+  const index = state.symbols.findIndex((symbol) => symbol.name === nextSymbol.name);
+  if (index >= 0) {
+    state.symbols[index] = nextSymbol;
+  } else {
+    state.symbols.push(nextSymbol);
+  }
+}
+
+function parseReference(text, state, line) {
+  const trimmed = text.trim();
+  const match = trimmed.match(/^([A-Za-z_]\w*)\s*(?:\[\s*(.+)\s*\])?$/);
+  if (!match) {
+    throw new Error(`第 ${line} 行左侧必须是变量或数组元素：${trimmed}`);
+  }
+  const [, name, indexExpression] = match;
+  const symbol = findSymbol(state, name);
+  if (!symbol) {
+    throw new Error(`第 ${line} 行未声明变量：${name}`);
+  }
+  if (indexExpression === undefined) {
+    if (symbol.kind !== "scalar") {
+      throw new Error(`第 ${line} 行数组需要指定下标：${name}`);
+    }
+    return { name, kind: "scalar", label: name };
+  }
+
+  if (symbol.kind !== "array") {
+    throw new Error(`第 ${line} 行普通变量不能使用下标：${name}`);
+  }
+  const index = toArrayIndex(evaluateExpression(indexExpression, state, line), symbol.values.length, line, name);
+  return { name, kind: "array", index, label: `${name}[${index}]` };
+}
+
+function parseReferenceIfSimple(text, state, line) {
+  try {
+    const trimmed = text.trim();
+    if (!/^([A-Za-z_]\w*)(\s*\[[^\]]+\])?$/.test(trimmed)) return null;
+    return parseReference(trimmed, state, line);
+  } catch {
+    return null;
+  }
+}
+
+function getReferenceValue(reference, state, line) {
+  const symbol = findSymbol(state, reference.name);
+  if (!symbol) {
+    throw new Error(`第 ${line} 行未声明变量：${reference.name}`);
+  }
+  if (reference.kind === "scalar") return symbol.value;
+  return symbol.values[reference.index];
+}
+
+function setReferenceValue(reference, state, value, line) {
+  const symbol = findSymbol(state, reference.name);
+  if (!symbol) {
+    throw new Error(`第 ${line} 行未声明变量：${reference.name}`);
+  }
+  if (reference.kind === "scalar") {
+    symbol.value = value;
+  } else {
+    symbol.values[reference.index] = value;
+  }
+}
+
+function toArraySize(value, line) {
+  if (!Number.isInteger(value)) {
+    throw new Error(`第 ${line} 行数组长度必须是整数`);
+  }
+  return value;
+}
+
+function toArrayIndex(value, length, line, name) {
+  if (!Number.isInteger(value)) {
+    throw new Error(`第 ${line} 行数组下标必须是整数：${name}[${value}]`);
+  }
+  if (value < 0 || value >= length) {
+    throw new Error(`第 ${line} 行数组下标越界：${name}[${value}]`);
+  }
+  return value;
+}
+
+function evaluateExpression(expression, state, line) {
+  const parser = new ExpressionParser(expression, state, line);
+  const value = parser.parse();
+  if (!Number.isFinite(value)) {
+    throw new Error(`第 ${line} 行表达式结果无效：${expression}`);
+  }
+  return Object.is(value, -0) ? 0 : value;
+}
+
+class ExpressionParser {
+  constructor(expression, state, line) {
+    this.expression = expression;
+    this.tokens = tokenize(expression, line);
+    this.index = 0;
+    this.state = state;
+    this.line = line;
+  }
+
+  parse() {
+    const value = this.parseEquality();
+    if (!this.isAtEnd()) {
+      throw new Error(`第 ${this.line} 行表达式无法解析：${this.expression}`);
+    }
+    return value;
+  }
+
+  parseEquality() {
+    let value = this.parseComparison();
+    while (this.match("==") || this.match("!=")) {
+      const operator = this.previous().value;
+      const right = this.parseComparison();
+      value = operator === "==" ? Number(value === right) : Number(value !== right);
+    }
+    return value;
+  }
+
+  parseComparison() {
+    let value = this.parseAddSub();
+    while (this.match("<") || this.match("<=") || this.match(">") || this.match(">=")) {
+      const operator = this.previous().value;
+      const right = this.parseAddSub();
+      if (operator === "<") value = Number(value < right);
+      if (operator === "<=") value = Number(value <= right);
+      if (operator === ">") value = Number(value > right);
+      if (operator === ">=") value = Number(value >= right);
+    }
+    return value;
+  }
+
+  parseAddSub() {
+    let value = this.parseMulDiv();
+    while (this.match("+") || this.match("-")) {
+      const operator = this.previous().value;
+      const right = this.parseMulDiv();
+      value = operator === "+" ? value + right : value - right;
+    }
+    return value;
+  }
+
+  parseMulDiv() {
+    let value = this.parseUnary();
+    while (this.match("*") || this.match("/") || this.match("%")) {
+      const operator = this.previous().value;
+      const right = this.parseUnary();
+      if ((operator === "/" || operator === "%") && right === 0) {
+        throw new Error(`第 ${this.line} 行不能除以 0`);
+      }
+      if (operator === "*") value *= right;
+      if (operator === "/") value = Math.trunc(value / right);
+      if (operator === "%") value %= right;
+    }
+    return value;
+  }
+
+  parseUnary() {
+    if (this.match("+")) return this.parseUnary();
+    if (this.match("-")) return -this.parseUnary();
+    return this.parsePrimary();
+  }
+
+  parsePrimary() {
+    if (this.matchType("number")) return this.previous().value;
+
+    if (this.matchType("identifier")) {
+      const name = this.previous().value;
+      const symbol = findSymbol(this.state, name);
+      if (!symbol) {
+        throw new Error(`第 ${this.line} 行未声明变量：${name}`);
+      }
+      if (this.match("[")) {
+        if (symbol.kind !== "array") {
+          throw new Error(`第 ${this.line} 行普通变量不能使用下标：${name}`);
+        }
+        const index = toArrayIndex(this.parseAddSub(), symbol.values.length, this.line, name);
+        this.consume("]", `第 ${this.line} 行数组下标缺少 ]：${name}`);
+        return symbol.values[index];
+      }
+      if (symbol.kind !== "scalar") {
+        throw new Error(`第 ${this.line} 行数组需要指定下标：${name}`);
+      }
+      return symbol.value;
+    }
+
+    if (this.match("(")) {
+      const value = this.parseEquality();
+      this.consume(")", `第 ${this.line} 行表达式缺少 )`);
+      return value;
+    }
+
+    throw new Error(`第 ${this.line} 行表达式无法解析：${this.expression}`);
+  }
+
+  match(value) {
+    if (this.check(value)) {
+      this.index += 1;
+      return true;
+    }
+    return false;
+  }
+
+  matchType(type) {
+    if (this.checkType(type)) {
+      this.index += 1;
+      return true;
+    }
+    return false;
+  }
+
+  consume(value, message) {
+    if (this.match(value)) return;
+    throw new Error(message);
+  }
+
+  check(value) {
+    if (this.isAtEnd()) return false;
+    return this.peek().value === value;
+  }
+
+  checkType(type) {
+    if (this.isAtEnd()) return false;
+    return this.peek().type === type;
+  }
+
+  previous() {
+    return this.tokens[this.index - 1];
+  }
+
+  peek() {
+    return this.tokens[this.index];
+  }
+
+  isAtEnd() {
+    return this.peek()?.type === "eof";
+  }
+}
+
+function tokenize(expression, line) {
+  const tokens = [];
+  let cursor = 0;
+  while (cursor < expression.length) {
+    const char = expression[cursor];
+    if (/\s/.test(char)) {
+      cursor += 1;
+      continue;
+    }
+    if (/\d/.test(char)) {
+      let end = cursor + 1;
+      while (end < expression.length && /\d/.test(expression[end])) end += 1;
+      tokens.push({ type: "number", value: Number(expression.slice(cursor, end)) });
+      cursor = end;
+      continue;
+    }
+    if (/[A-Za-z_]/.test(char)) {
+      let end = cursor + 1;
+      while (end < expression.length && /[A-Za-z0-9_]/.test(expression[end])) end += 1;
+      tokens.push({ type: "identifier", value: expression.slice(cursor, end) });
+      cursor = end;
+      continue;
+    }
+    const twoChar = expression.slice(cursor, cursor + 2);
+    if (["==", "!=", "<=", ">="].includes(twoChar)) {
+      tokens.push({ type: "symbol", value: twoChar });
+      cursor += 2;
+      continue;
+    }
+    if ("+-*/%()[]<>".includes(char)) {
+      tokens.push({ type: "symbol", value: char });
+      cursor += 1;
+      continue;
+    }
+    throw new Error(`第 ${line} 行表达式包含暂不支持的字符：${char}`);
+  }
+  tokens.push({ type: "eof", value: "" });
+  return tokens;
+}
+
+function renderFrame(frame, pendingEvent = null) {
+  stage.innerHTML = "";
+  const symbols = frame.state.symbols;
+
+  if (symbols.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = "<strong>内存还是空的</strong><span>运行声明语句后，变量和数组会出现在这里。</span>";
+    stage.append(empty);
+  } else {
+    const grid = document.createElement("div");
+    grid.className = "memory-grid";
+    symbols.forEach((symbol) => {
+      grid.append(createMemoryBlock(symbol, pendingEvent));
+    });
+    stage.append(grid);
+  }
+
+  stepTitle.textContent = frame.title;
+  stepCounter.textContent = `${currentIndex} / ${Math.max(frames.length - 1, 0)}`;
+  currentCode.textContent = frame.code || "等待运行";
+  outputBox.textContent = frame.state.output ?? "";
+  renderFlowInsight(frame);
+  renderMemoryOverview(symbols);
+  renderTimeline();
+}
+
+function renderFlowInsight(frame) {
+  const insight = getFlowInsight(frame);
+  flowInsight.className = `flow-insight ${insight.tone}`;
+  flowInsight.innerHTML = `
+    <span class="flow-icon">${insight.icon}</span>
+    <span class="flow-copy">
+      <strong>${escapeHtml(insight.title)}</strong>
+      <small>${escapeHtml(insight.detail)}</small>
+    </span>
+    <span class="flow-result">${escapeHtml(insight.result)}</span>
+  `;
+}
+
+function getFlowInsight(frame) {
+  const event = frame.event ?? { type: "none" };
+  if (event.type === "branch") {
+    const result = event.passed ? "成立" : "不成立";
+    const action = event.destination === "then" ? "进入 if 代码块" : event.destination === "else" ? "进入 else 代码块" : "跳过 if 代码块";
+    return {
+      icon: "◇",
+      tone: event.passed ? "flow-true" : "flow-false",
+      title: `${event.keyword} 判断 ${result}`,
+      detail: `${event.expression} -> ${action}`,
+      result,
+    };
+  }
+
+  if (event.type === "loop") {
+    return {
+      icon: "↻",
+      tone: event.passed ? "flow-loop-on" : "flow-loop-off",
+      title: `${event.keyword} 循环 ${event.passed ? "继续" : "结束"}`,
+      detail: `${event.expression} -> ${event.passed ? "执行循环体" : "退出循环"}`,
+      result: event.passed ? "继续" : "退出",
+    };
+  }
+
+  return {
+    icon: "→",
+    tone: "flow-neutral",
+    title: "顺序执行",
+    detail: frame.code || "等待生成执行步骤",
+    result: "STEP",
+  };
+}
+
+function renderMemoryOverview(symbols) {
+  const counts = symbols.reduce(
+    (total, symbol) => {
+      if (symbol.kind === "array") total.arrays += 1;
+      if (symbol.kind === "scalar") total.scalars += 1;
+      if (symbol.role === "iterator") total.iterators += 1;
+      if (symbol.role === "loop") total.loopLocals += 1;
+      return total;
+    },
+    { scalars: 0, arrays: 0, iterators: 0, loopLocals: 0 },
+  );
+
+  memoryOverview.innerHTML = "";
+  [
+    ["变量", counts.scalars, "overview-chip scalar-chip"],
+    ["数组", counts.arrays, "overview-chip array-chip"],
+    ["迭代器", counts.iterators, "overview-chip iterator-chip"],
+    ["循环内", counts.loopLocals, "overview-chip loop-chip"],
+  ].forEach(([label, value, className]) => {
+    const chip = document.createElement("span");
+    chip.className = className;
+    chip.innerHTML = `<strong>${value}</strong>${label}`;
+    memoryOverview.append(chip);
+  });
+}
+
+function createMemoryBlock(symbol, pendingEvent) {
+  const block = document.createElement("article");
+  block.className = `memory-block ${symbol.kind === "array" ? "array-block" : "scalar-block"} ${getSymbolRoleClass(symbol)}`;
+
+  const title = document.createElement("div");
+  title.className = "block-title";
+  title.innerHTML = `
+    <strong>${escapeHtml(symbol.name)}</strong>
+    <span class="pill-group">
+      ${getSymbolRolePill(symbol)}
+      <span class="type-pill">${symbol.kind === "array" ? "int[]" : "int"}</span>
+    </span>
+  `;
+  block.append(title);
+
+  if (symbol.kind === "scalar") {
+    const body = document.createElement("div");
+    body.className = "scalar-body";
+    body.append(createCell(symbol.name, symbol.value, pendingEvent, symbol.role));
+    block.append(body);
+    return block;
+  }
+
+  const body = document.createElement("div");
+  body.className = "array-body";
+  symbol.values.forEach((value, index) => {
+    body.append(createCell(`${symbol.name}[${index}]`, value, pendingEvent, symbol.role));
+  });
+  block.append(body);
+  return block;
+}
+
+function createCell(label, value, pendingEvent, role = "standard") {
+  const cell = document.createElement("div");
+  cell.className = `cell ${getSymbolRoleClass({ role })}`;
+  cell.dataset.ref = label;
+  if (isEventSource(label, pendingEvent)) cell.classList.add("source");
+  if (isEventTarget(label, pendingEvent)) cell.classList.add("changed");
+
+  const name = document.createElement("span");
+  name.className = "cell-label";
+  name.textContent = label;
+
+  const cellValue = document.createElement("strong");
+  cellValue.className = "cell-value";
+  cellValue.textContent = String(value);
+
+  cell.append(name, cellValue);
+  return cell;
+}
+
+function getSymbolRoleClass(symbol) {
+  if (symbol.role === "iterator") return "iterator-symbol";
+  if (symbol.role === "loop") return "loop-symbol";
+  return "";
+}
+
+function getSymbolRolePill(symbol) {
+  if (symbol.role === "iterator") return '<span class="role-pill iterator-pill">迭代器</span>';
+  if (symbol.role === "loop") return '<span class="role-pill loop-pill">循环内</span>';
+  return "";
+}
+
+function isEventSource(label, event) {
+  if (!event) return false;
+  if (event.source === label) return true;
+  return event.tokens?.some((token) => token.source === label) ?? false;
+}
+
+function isEventTarget(label, event) {
+  if (!event) return false;
+  if (event.target === label) return true;
+  if (event.targets?.includes(label)) return true;
+  return event.tokens?.some((token) => token.target === label) ?? false;
+}
+
+async function animateEvent(previousFrame, nextFrame) {
+  const event = nextFrame.event;
+  const duration = Number(speedInput.value);
+
+  if (event.type === "assign") {
+    await moveToken({
+      source: event.source,
+      target: event.target,
+      value: event.value,
+      duration,
+      fallbackText: event.sourceText,
+    });
+    return;
+  }
+
+  if (event.type === "swap") {
+    await Promise.all(
+      event.tokens.map((token, index) =>
+        moveToken({
+          source: token.source,
+          target: token.target,
+          value: token.value,
+          duration,
+          alternate: index === 1,
+        }),
+      ),
+    );
+    return;
+  }
+
+  if (event.type === "create" || event.type === "create-array") {
+    await sleep(Math.min(duration, 520));
+  }
+}
+
+function moveToken({ source, target, value, duration, fallbackText = "expr", alternate = false }) {
+  const targetRect = getCellRect(target);
+  if (!targetRect) return sleep(Math.min(duration, 420));
+
+  const sourceRect = source ? getCellRect(source) : null;
+  const start = sourceRect
+    ? centerOf(sourceRect)
+    : { x: Math.max(92, targetRect.left - 90), y: Math.max(86, targetRect.top - 64) };
+  const end = centerOf(targetRect);
+
+  const token = document.createElement("div");
+  token.className = `moving-token${alternate ? " alt" : ""}`;
+  token.textContent = String(value);
+  token.title = source ? `${source} -> ${target}` : `${fallbackText} -> ${target}`;
+  document.body.append(token);
+
+  token.style.left = `${start.x}px`;
+  token.style.top = `${start.y}px`;
+
+  const curve = Math.max(34, Math.min(88, Math.abs(end.x - start.x) * 0.12 + 34));
+  const animation = token.animate(
+    [
+      { left: `${start.x}px`, top: `${start.y}px`, transform: "translate(-50%, -50%) scale(0.92)" },
+      {
+        left: `${(start.x + end.x) / 2}px`,
+        top: `${Math.min(start.y, end.y) - curve}px`,
+        transform: "translate(-50%, -50%) scale(1.08)",
+      },
+      { left: `${end.x}px`, top: `${end.y}px`, transform: "translate(-50%, -50%) scale(0.96)" },
+    ],
+    {
+      duration,
+      easing: "cubic-bezier(.2,.75,.18,1)",
+      fill: "forwards",
+    },
+  );
+
+  return animation.finished
+    .catch(() => {})
+    .then(() => {
+      token.remove();
+    });
+}
+
+function getCellRect(label) {
+  const cell = stage.querySelector(`[data-ref="${cssEscape(label)}"]`);
+  return cell?.getBoundingClientRect() ?? null;
+}
+
+function centerOf(rect) {
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+  };
+}
+
+function renderTimeline() {
+  timeline.innerHTML = "";
+  const indexes = getTimelineIndexes(frames.length, currentIndex);
+
+  indexes.forEach((index, position) => {
+    if (position > 0 && index - indexes[position - 1] > 1) {
+      const gap = document.createElement("span");
+      gap.className = "timeline-gap";
+      gap.textContent = "...";
+      timeline.append(gap);
+    }
+
+    const frame = frames[index];
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.step = String(index);
+    button.textContent = String(index);
+    button.title = frame.title;
+    button.classList.add(getTimelineEventClass(frame.event));
+    if (index === currentIndex) button.classList.add("active");
+    timeline.append(button);
+  });
+}
+
+function getTimelineEventClass(event) {
+  if (event?.type === "branch") return event.passed ? "branch-true-step" : "branch-false-step";
+  if (event?.type === "loop") return event.passed ? "loop-continue-step" : "loop-exit-step";
+  return "plain-step";
+}
+
+function getTimelineIndexes(total, current) {
+  if (total <= 260) {
+    return Array.from({ length: total }, (_, index) => index);
+  }
+
+  const indexes = new Set([0, total - 1]);
+  const stride = Math.ceil(total / 120);
+  for (let index = 0; index < total; index += stride) {
+    indexes.add(index);
+  }
+  for (let index = current - 5; index <= current + 5; index += 1) {
+    if (index >= 0 && index < total) indexes.add(index);
+  }
+  return [...indexes].sort((a, b) => a - b);
+}
+
+function setControls() {
+  const hasSteps = frames.length > 1;
+  backButton.disabled = !hasSteps || currentIndex <= 0 || animating;
+  nextButton.disabled = !hasSteps || currentIndex >= frames.length - 1 || animating;
+  playButton.disabled = !hasSteps || animating;
+  resetButton.disabled = !hasSteps && currentIndex === 0;
+}
+
+function sleep(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function cssEscape(value) {
+  if (window.CSS?.escape) return CSS.escape(value);
+  return String(value).replace(/["\\]/g, "\\$&");
+}
+
+    </script>
+  </body>
+</html>
