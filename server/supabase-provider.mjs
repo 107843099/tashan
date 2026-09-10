@@ -146,6 +146,7 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
       }
     },
     changePassword: async (user, currentPassword, newPassword) => {
+      validatePassword(newPassword);
       const proof = await passwordLogin(user.username, currentPassword);
       if (!proof?.access_token || proof.user?.id !== user.id) throw new ApiError(401, 'INCORRECT_PASSWORD', '当前密码不正确。');
       try {

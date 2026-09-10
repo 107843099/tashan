@@ -49,6 +49,7 @@ npm run preview
 
 - [AI 助手、自动分析与真实验证](docs/AI_ASSISTANT.md)
 - [2026-09-11 上线与示例验收](docs/RELEASE_QA_2026-09-11.md)
+- [账户页面、8 位密码与上线复测](docs/ACCOUNT_SETTINGS_QA.md)
 - [账号使用与配置](docs/ACCOUNTS.md)
 - [v3.4 验证记录](docs/PROJECT_VERSION_QA.md)
 - [云端配置与迁移](docs/CLOUD_SETUP.md)

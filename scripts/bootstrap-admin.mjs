@@ -43,7 +43,7 @@ try {
   const displayName = validateDisplayName(args['display-name'] || '');
   const provider = createSupabaseProvider(process.env);
   if (!(await provider.status()).configured) throw new Error('请先设置 SUPABASE_URL 与 SUPABASE_SECRET_KEY（或兼容的 SUPABASE_SERVICE_ROLE_KEY），并应用数据库迁移。');
-  const password = validatePassword(await privatePassword('设置初始管理员密码（输入不显示）：'));
+  const password = validatePassword(await privatePassword('设置初始管理员密码（至少 8 位，可纯数字，输入不显示）：'));
   if (password !== await privatePassword('再次输入密码：')) throw new Error('两次密码不一致，未创建账号。');
   const user = await provider.bootstrapAdmin({ username, displayName, password });
   process.stdout.write(`初始管理员 ${user.username} 已创建。请在平台登录；后续账号通过管理员工作台创建。\n`);

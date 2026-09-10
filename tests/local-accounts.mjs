@@ -25,13 +25,13 @@ async function call(path, { method = 'GET', body, as = 'admin', originHeader = o
 }
 const password = 'LocalTeacher12345';
 try {
-  const admin = await provider.bootstrap({ username:'admin', password:'admin', displayName:'管理员', allowDemoPassword:true });
+  const admin = await provider.bootstrap({ username:'admin', password:'12345678', displayName:'管理员' });
   assert.equal(provider.status().mode, 'local');
   await assert.rejects(provider.bootstrap({ username:'other', password, displayName:'Other' }), error => error.code === 'ALREADY_INITIALIZED');
   assert.equal((await call('/admin/users')).status, 401, 'Anonymous requests cannot list accounts');
   assert.equal((await call('/auth/login', { method:'POST', body:{ username:'admin', password:'wrong' } })).status, 401);
-  assert.equal((await call('/auth/login', { method:'POST', body:{ username:'admin', password:'admin' }, originHeader:'https://attacker.invalid' })).status, 403);
-  let result = await call('/auth/login', { method:'POST', body:{ username:'ADMIN', password:'admin' } });
+  assert.equal((await call('/auth/login', { method:'POST', body:{ username:'admin', password:'12345678' }, originHeader:'https://attacker.invalid' })).status, 403);
+  let result = await call('/auth/login', { method:'POST', body:{ username:'ADMIN', password:'12345678' } });
   assert.equal(result.status, 200);
   assert.equal(result.data.user.id, admin.id);
   assert(!JSON.stringify(result.data).includes('Token'), 'API never returns session tokens in JSON');

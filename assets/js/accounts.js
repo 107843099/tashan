@@ -3,6 +3,25 @@
 
   // Session identity comes from the server. Credentials and tokens never enter web storage.
   const translations = {
+    '身份与登录，清楚地安排在这里。':['身分與登入，清楚地安排在這裡。','Your identity and sign-in settings, in one place.'],
+    '个人资料':['個人資料','Profile'],'账户安全':['帳戶安全','Account security'],'登录会话':['登入工作階段','Signed-in session'],
+    '基本资料':['基本資料','Basic details'],'账户权限':['帳戶權限','Account permissions'],'账户访问':['帳戶存取','Account access'],
+    '创建时间':['建立時間','Created'],'你':['你','You'],'当前登录':['目前登入','Signed in'],
+    '需要修改名称？请联系管理员。':['需要修改名稱？請聯絡管理員。','Contact an administrator to update your display name.'],
+    '退出不会删除已保存的项目与草稿。':['登出不會刪除已儲存的專案與草稿。','Signing out keeps your saved projects and drafts.'],
+    '从列表选择账户，或创建一个新账户。':['從列表選擇帳戶，或建立新帳戶。','Choose an account from the list, or create a new one.'],
+    '选择账户':['選擇帳戶','Select an account'],'管理人员与登录权限。':['管理人員與登入權限。','Manage people and their access.'],
+    '成员可使用自己的工作台；管理员还可管理账户。':['成員可使用自己的工作台；管理員還可管理帳戶。','Members use their own workspace. Administrators can also manage accounts.'],
+    '本页筛选':['本頁篩選','Filter this page'],'全部角色':['全部角色','All roles'],'全部状态':['全部狀態','All statuses'],
+    '清除筛选':['清除篩選','Clear filters'],'本页显示':['本頁顯示','Shown on this page'],'个账户':['個帳戶','accounts'],
+    '没有符合本页筛选的账户。':['沒有符合本頁篩選的帳戶。','No accounts on this page match these filters.'],
+    '调整关键词，或清除筛选后重试。':['調整關鍵詞，或清除篩選後重試。','Try another search or clear the filters.'],
+    '正在读取账户…':['正在讀取帳戶…','Loading accounts…'],'搜索所有账户':['搜尋所有帳戶','Search all accounts'],
+    '再次输入密码':['再次輸入密碼','Confirm password'],'两次输入的密码不一致。':['兩次輸入的密碼不一致。','The passwords do not match.'],
+    '停用账户':['停用帳戶','Disable account'],'重新启用':['重新啟用','Enable account'],
+    '停用只限制登录，不删除项目资料。':['停用只限制登入，不刪除專案資料。','Disabling access does not delete project data.'],
+    '此账户已停用，可重新启用登录。':['此帳戶已停用，可重新啟用登入。','This account is disabled. You can restore sign-in access.'],
+    '返回列表':['返回列表','Back to list'],'账户已切换，请重新操作。':['帳戶已切換，請重新操作。','The account changed. Please try this action again.'],
     '游客模式':['訪客模式','Explore as guest'],'浏览公开项目，体验教学灵感。':['瀏覽公開專案，體驗教學靈感。','Browse public projects and explore teaching ideas.'],
     '复制账号信息':['複製帳戶資訊','Copy sign-in details'],'账号信息已复制。':['帳戶資訊已複製。','Sign-in details copied.'],'初始密码仅在此显示，离开账户管理后清除。':['初始密碼僅在此顯示，離開帳戶管理後清除。','Initial details are cleared when you leave account management.'],'收起账号信息':['收起帳戶資訊','Dismiss sign-in details'],'请手动复制用户名和初始密码。':['請手動複製使用者名稱和初始密碼。','Copy the username and initial password manually.'],
     '登录，凿开新知':['登入，鑿開新知','Sign in & reveal the jade'],'生成初始密码':['產生初始密碼','Generate password'],
@@ -29,11 +48,11 @@
     '修改密码':['修改密碼','Change password'],'请先设置你的新密码':['請先設定你的新密碼','Set your new password first'],
     '管理员重置密码后，需要设置新密码才能继续。':['管理員重設密碼後，需要設定新密碼才能繼續。','After an administrator resets your password, set a new password before continuing.'],
     '当前密码':['目前密碼','Current password'],'新密码':['新密碼','New password'],'再次输入新密码':['再次輸入新密碼','Confirm new password'],
-    '12–72 个字符，至少包含字母和数字。':['12–72 個字元，至少包含字母和數字。','Use 12–72 characters, including letters and numbers.'],
+    '至少 8 位，可使用纯数字；最长 72 个字符。':['至少 8 位，可使用純數字；最長 72 個字元。','Use 8–72 characters. Numbers-only passwords are allowed.'],
     '保存新密码':['儲存新密碼','Save new password'],'密码已更新。':['密碼已更新。','Your password has been updated.'],
     '用户名需为 3–32 位英文字母、数字、下划线或连字符。':['使用者名稱需為 3–32 位英文字母、數字、底線或連字號。','Use a username of 3–32 letters, digits, underscores or hyphens.'],'显示名称需为 1–60 个字符。':['顯示名稱需為 1–60 個字元。','Display names must contain 1–60 characters.'],'新密码不能与当前密码相同。':['新密碼不能與目前密碼相同。','Your new password must differ from the current password.'],'请填写当前密码。':['請填寫目前密碼。','Enter your current password.'],'请检查用户名和密码。':['請檢查使用者名稱和密碼。','Check your username and password.'],
     '两次输入的新密码不一致。':['兩次輸入的新密碼不一致。','The new passwords do not match.'],
-    '密码需为 12–72 个字符，并包含字母和数字。':['密碼需為 12–72 個字元，並包含字母和數字。','Passwords must have 12–72 characters, including letters and numbers.'],
+    '密码需为 8–72 个字符，可使用纯数字。':['密碼需為 8–72 個字元，可使用純數字。','Use 8–72 characters; numbers-only passwords are allowed.'],
     '登录已过期，请重新登录。':['登入已過期，請重新登入。','Your session expired. Please sign in again.'],
     '请先修改密码。':['請先修改密碼。','Please change your password first.'],
     '操作未完成，请稍后重试。':['操作未完成，請稍後重試。','The action could not be completed. Please try again.'],
@@ -76,13 +95,13 @@
   const symbol = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${({user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/>',arrow:'<path d="M19 12H5m6-6-6 6 6 6"/>'})[name]}</svg>`;
   let pendingEntry=false;
   let createdCredentials=null;
-  const state = {user:null,configured:false,mode:'unavailable',initialized:false,busy:false,checking:false,error:'',notice:'',username:'',adminTab:'users',users:[],total:0,page:1,pageSize:20,q:'',loaded:false,loading:false,adminError:'',selected:null,createDraft:{},events:[],auditLoaded:false,auditLoading:false};
-  let hooks = {}, started = false, sessionVersion = 0, channel, lastCheck = 0;
+  const state = {user:null,configured:false,mode:'unavailable',initialized:false,busy:false,checking:false,error:'',notice:'',username:'',adminTab:'users',users:[],total:0,page:1,pageSize:20,q:'',roleFilter:'',statusFilter:'',editorMode:'empty',errorForm:'',loaded:false,loading:false,adminError:'',selected:null,createDraft:{},events:[],auditLoaded:false,auditLoading:false};
+  let hooks = {}, started = false, sessionVersion = 0, identityEpoch = 0, channel, lastCheck = 0;
   let resolveReady;
   const ready = new Promise(resolve => { resolveReady = resolve; });
 
   function errorMessage(error) {
-    const byCode = {UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 12–72 个字符，并包含字母和数字。',WEAK_PASSWORD:'密码需为 12–72 个字符，并包含字母和数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
+    const byCode = {UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',WEAK_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
     return t(byCode[error?.code] || error?.message || '操作未完成，请稍后重试。');
   }
   function redraw(focusError = false, preserveForms = false) {
@@ -106,12 +125,17 @@
       throw error;
     } finally { clearTimeout(timer); }
   }
+  function staleRequestError() {const error=new Error(t('账户已切换，请重新操作。'));error.code='ACCOUNT_CONTEXT_CHANGED';return error;}
   async function request(path, options) {
-    try { return await rawRequest(path, options); }
+    const epoch=identityEpoch;
+    try { const result=await rawRequest(path, options);if(epoch!==identityEpoch)throw staleRequestError();return result; }
     catch (error) {
+      // A delayed response belongs to its original identity, including authentication failures.
+      if(epoch!==identityEpoch)throw staleRequestError();
       if (error.status === 401 && !path.startsWith('/auth/login') && error.code !== 'INCORRECT_PASSWORD') {
+        const expiredEpoch=identityEpoch+1;
         await changeIdentity(null, {reason:'expired',forced:true});
-        state.error=t('登录已过期，请重新登录。');location.hash='login';redraw();
+        if(identityEpoch===expiredEpoch){state.error=t('登录已过期，请重新登录。');location.hash='login';redraw();}
       } else if (error.code === 'PASSWORD_CHANGE_REQUIRED' && state.user) {
         state.user={...state.user,mustChangePassword:true};location.hash='account';redraw();
       }
@@ -119,10 +143,11 @@
     }
   }
   async function changeIdentity(user, context) {
-    createdCredentials=null;
+    identityEpoch+=1;createdCredentials=null;
+    const confirmation=document.querySelector('.account-confirm');confirmation?.close('cancel');confirmation?.remove();
     const oldId=state.user?.id || null, nextId=user?.id || null;
     // Clear administrative records before publishing any new identity.
-    state.users=[];state.events=[];state.selected=null;state.createDraft={};state.loaded=false;state.auditLoaded=false;state.adminError='';
+    state.users=[];state.events=[];state.selected=null;state.createDraft={};state.editorMode='empty';state.roleFilter='';state.statusFilter='';state.errorForm='';state.loaded=false;state.loading=false;state.auditLoaded=false;state.auditLoading=false;state.adminError='';
     state.user=user || null;
     if (oldId !== nextId || context.reason === 'initial') await hooks.onChange?.(state.user,context);
     if (state.user?.mustChangePassword) location.hash='account';
@@ -170,8 +195,8 @@
     refreshSession({initial:true});
     return ready;
   }
-  const passwordField=(name,label,{newPassword=false,confirm=false}={})=>`<label class="account-field"><span>${text(label)}</span><span class="account-password"><input name="${name}" id="account-${name}" type="password" autocomplete="${newPassword?'new-password':'current-password'}" required ${newPassword?'minlength="12" maxlength="72"':''} ${newPassword&&!confirm?'aria-describedby="account-password-help"':''}><button type="button" class="account-password-toggle" data-account-action="toggle-password" data-field="account-${name}" aria-label="${text('显示密码')}" aria-pressed="false">${symbol('eye')}</button></span></label>`;
-  const passwordHelp=()=>`<p class="account-help" id="account-password-help">${text('12–72 个字符，至少包含字母和数字。')}</p>`;
+  const passwordField=(name,label,{newPassword=false,confirm=false}={})=>`<label class="account-field"><span>${text(label)}</span><span class="account-password"><input name="${name}" id="account-${name}" type="password" autocomplete="${newPassword?'new-password':'current-password'}" required ${newPassword?'minlength="8" maxlength="72"':''} ${newPassword&&!confirm?'aria-describedby="account-password-help"':''}><button type="button" class="account-password-toggle" data-account-action="toggle-password" data-field="account-${name}" aria-label="${text('显示密码')}" aria-pressed="false">${symbol('eye')}</button></span></label>`;
+  const passwordHelp=()=>`<p class="account-help" id="account-password-help">${text('至少 8 位，可使用纯数字；最长 72 个字符。')}</p>`;
   const translateMessage=value=>{const key=Object.keys(translations).find(key=>key===value||translations[key].includes(value));return t(key||value);};
   const messages=(includeError=true)=>`${state.error&&includeError?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.error))}</p>`:''}${state.notice?`<p class="account-message" role="status">${escape(translateMessage(state.notice))}</p>`:''}`;
   const submitButton=label=>`<button type="submit" class="primary account-submit" ${state.busy?'disabled':''}>${text(state.busy?'正在处理…':label)}</button>`;
@@ -190,18 +215,28 @@
     if(!state.user)return login();
     const user=state.user,forced=user.mustChangePassword;
     if(forced)return `<section class="entry-account" data-entry-account><h2>${text('请先设置你的新密码')}</h2><p class="entry-account-lead">${text('管理员重置密码后，需要设置新密码才能继续。')}</p>${passwordForm()}<button class="entry-guest" type="button" data-account-action="logout">${text('退出登录')}</button></section>`;
-    return `<section class="account-surface account-page">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ACCOUNT</span><h1>${text('我的账户')}</h1><p class="account-lead">${text('草稿、收藏和任务按账户保存在此浏览器；项目版本可另行上传与发布。')}</p></div><button class="subtle" data-account-action="logout" ${state.busy?'disabled':''}>${text('退出登录')}</button></div><div class="account-profile-grid"><aside class="account-card account-profile"><span class="account-emblem">${symbol(user.role==='admin'?'shield':'user')}</span><h2>${escape(user.displayName||user.username)}</h2><p class="account-username">@${escape(user.username)}</p><span class="account-pill">${text(user.role==='admin'?'管理员':'成员')}</span><p class="account-help">${text(state.mode==='local'?'本机账户服务':'在线账户服务')}</p>${!forced?`<div class="account-profile-links"><a href="#desk">${text('打开工作台')} <span aria-hidden="true">↗</span></a>${user.role==='admin'?`<a href="#admin">${text('账户管理')} <span aria-hidden="true">↗</span></a>`:''}</div>`:''}</aside><div class="account-card"><h2>${text('修改密码')}</h2><p class="account-help">${text('按需修改，下次登录使用新密码。')}</p>${passwordForm()}</div></div></section>`;
+    return `<section class="account-surface account-page">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ACCOUNT</span><h1>${text('我的账户')}</h1><p class="account-lead">${text('身份与登录，清楚地安排在这里。')}</p></div><a class="btn account-workspace-link" href="#desk">${text('打开工作台')} <span aria-hidden="true">↗</span></a></div>
+      <div class="account-profile-grid"><div class="account-profile-column"><aside class="account-card account-profile"><div class="account-profile-identity"><span class="account-avatar account-avatar--large" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><span class="account-pill">${text(user.role==='admin'?'管理员':'成员')}</span><h2>${escape(user.displayName||user.username)}</h2><p class="account-username">@${escape(user.username)}</p></div></div><div class="account-section-heading"><h3>${text('个人资料')}</h3><span class="account-live-status">${text('当前登录')}</span></div><dl class="account-facts"><div><dt>${text('用户名')}</dt><dd>@${escape(user.username)}</dd></div><div><dt>${text('显示名称')}</dt><dd>${escape(user.displayName||user.username)}</dd></div>${user.createdAt?`<div><dt>${text('创建时间')}</dt><dd>${escape(formatDate(user.createdAt))}</dd></div>`:''}<div><dt>${text('账户')}</dt><dd>${text(state.mode==='local'?'本机账户服务':'在线账户服务')}</dd></div></dl><p class="account-help">${text('需要修改名称？请联系管理员。')}</p>${user.role==='admin'?`<div class="account-profile-links"><a href="#admin">${symbol('shield')}${text('账户管理')} <span aria-hidden="true">↗</span></a></div>`:''}</aside><section class="account-card account-session"><div><h2>${text('登录会话')}</h2><p>${text('退出不会删除已保存的项目与草稿。')}</p></div><button class="subtle" data-account-action="logout" ${state.busy?'disabled':''}>${text('退出登录')}</button></section></div>
+      <section class="account-card account-security"><div class="account-security-heading"><span class="account-emblem">${symbol('shield')}</span><div><p class="account-eyebrow">${text('账户安全')}</p><h2>${text('修改密码')}</h2></div></div><p class="account-lead">${text('按需修改，下次登录使用新密码。')}</p>${passwordForm()}<p class="account-footnote">${text('草稿、收藏和任务按账户保存在此浏览器；项目版本可另行上传与发布。')}</p></section></div></section>`;
   }
   function workspaceNotice() {return `<div class="account-workspace-note"><span>${symbol('user')}</span><div><strong>${text(state.user?'账户工作台':'访客本地工作台')}${state.user?' · '+escape(state.user.displayName||state.user.username):''}</strong><p>${text(state.user?'草稿、收藏和任务按账户保存在此浏览器；项目版本可另行上传与发布。':'访客资料单独保存在此浏览器，不会自动转入登录账户。')}</p></div><a href="#${state.user?'account':'login'}">${text(state.user?'账户':'登录')} <span aria-hidden="true">↗</span></a></div>`;}
   function guestExportMarkup() {return state.user?`<button class="subtle" data-action="export-guest-backup">${text('导出旧版浏览器资料')}</button><small>${text('导出登录功能上线前的访客项目、草稿、收藏、任务与版本记录。')}</small>`:'';}
-  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" value="${escape(user?.displayName||'')}"></label><p class="account-help">${text('显示名称可用中文；留空时使用用户名。')}</p><label class="account-field"><span>${text('角色')}</span><select name="role" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label>`;}
+  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" aria-describedby="account-display-help" value="${escape(user?.displayName||'')}"></label><p class="account-help" id="account-display-help">${text('显示名称可用中文；留空时使用用户名。')}</p><fieldset class="account-permissions"><legend>${text('账户权限')}</legend><label class="account-field"><span>${text('角色')}</span><select name="role" aria-describedby="account-role-help" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label><p class="account-help" id="account-role-help">${text('成员可使用自己的工作台；管理员还可管理账户。')}</p></fieldset>`;}
+  const editorError=kind=>state.error&&state.errorForm===kind?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.error))}</p>`:'';
   function userEditor() {
-    const user=state.selected, draft=user||state.createDraft;
-    return `<aside class="account-card account-editor"><div class="account-editor-heading"><h2>${text(user?'编辑账户':'新建账户')}</h2>${user?`<button class="subtle" data-account-action="new-user">${text('取消编辑')}</button>`:''}</div><form data-account-form="${user?'edit-user':'create-user'}" class="account-form" novalidate aria-busy="${state.busy}" ${user?`data-user-id="${escape(user.id)}"`:''}><label class="account-field"><span>${text('用户名')}</span><input name="username" required ${user?'readonly':''} maxlength="32"  autocomplete="off" autocapitalize="none" spellcheck="false" value="${escape(draft?.username||'')}"></label><p class="account-help">${text(user?'用户名创建后不可修改。':'用户名以字母或数字开头，3–32 位；可含下划线和连字符。')}</p>${userFields(draft)}${!user?passwordField('password','初始密码',{newPassword:true})+passwordHelp()+`<button type="button" class="subtle account-generate" data-account-action="generate-password">${text('生成初始密码')} ↗</button>`+`<p class="account-help">${text('新账户可直接登录，之后可在“我的账户”中修改密码。')}</p>`:''}${state.error?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.error))}</p>`:''}${submitButton(user?'保存修改':'创建账户')}</form>${user&&user.id!==state.user.id?`<details class="account-reset"><summary>${text('重置密码')}</summary><p class="account-help">${text('重置后，对方需要重新登录并修改密码。')}</p><form data-account-form="reset-password" data-user-id="${escape(user.id)}" class="account-form" novalidate>${passwordField('password','设置重置密码',{newPassword:true})}${passwordHelp()}${submitButton('重置密码')}</form></details>`:''}${user?.id===state.user.id?`<p class="account-help">${text('这是你当前登录的账户。')}</p>`:''}</aside>`;
+    const user=state.selected,draft=user||state.createDraft;
+    if(!user&&state.editorMode!=='create')return `<aside class="account-card account-editor account-editor-empty"><span class="account-emblem">${symbol('user')}</span><h2>${text('选择账户')}</h2><p>${text('从列表选择账户，或创建一个新账户。')}</p><button class="btn" data-account-action="new-user">${text('新建账户')} <span aria-hidden="true">+</span></button></aside>`;
+    const kind=user?'edit-user':'create-user';
+    return `<aside class="account-card account-editor" aria-labelledby="account-editor-title"><div class="account-editor-heading"><div><p class="account-eyebrow">${text(user?'基本资料':'新建账户')}</p><h2 id="account-editor-title">${user?escape(user.displayName||user.username):text('创建账户')}</h2>${user?`<p class="account-editor-username">@${escape(user.username)} <span class="account-pill ${user.status==='disabled'?'is-disabled':''}">${text(user.status==='disabled'?'已停用':'已启用')}</span></p>`:''}</div><button class="subtle" data-account-action="close-editor">${text('返回列表')}</button></div><form data-account-form="${kind}" class="account-form" novalidate aria-busy="${state.busy}" ${user?`data-user-id="${escape(user.id)}"`:''}>${editorError(kind)}<label class="account-field"><span>${text('用户名')}</span><input name="username" required ${user?'readonly':''} maxlength="32" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="account-username-help" value="${escape(draft?.username||'')}"></label><p class="account-help" id="account-username-help">${text(user?'用户名创建后不可修改。':'用户名以字母或数字开头，3–32 位；可含下划线和连字符。')}</p>${userFields(draft)}${!user?`<div class="account-form-divider"><span>${text('初始密码')}</span></div>`+passwordField('password','初始密码',{newPassword:true})+passwordHelp()+passwordField('confirmPassword','再次输入密码',{newPassword:true,confirm:true})+`<button type="button" class="subtle account-generate" data-account-action="generate-password">${text('生成初始密码')} ↗</button><p class="account-help">${text('新账户可直接登录，之后可在“我的账户”中修改密码。')}</p>`:''}${submitButton(user?'保存修改':'创建账户')}</form>
+      ${user&&user.id!==state.user.id?`<details class="account-reset" ${state.errorForm==='reset-password'&&state.error?'open':''}><summary><span>${text('重置密码')}</span><span aria-hidden="true">+</span></summary><p class="account-help">${text('重置后，对方需要重新登录并修改密码。')}</p><form data-account-form="reset-password" data-user-id="${escape(user.id)}" class="account-form" novalidate aria-busy="${state.busy}">${editorError('reset-password')}${passwordField('password','设置重置密码',{newPassword:true})}${passwordHelp()}${passwordField('confirmPassword','再次输入密码',{newPassword:true,confirm:true})}<button type="button" class="subtle account-generate" data-account-action="generate-password">${text('生成初始密码')} ↗</button>${submitButton('重置密码')}</form></details><section class="account-access"><h3>${text('账户访问')}</h3><p>${text(user.status==='disabled'?'此账户已停用，可重新启用登录。':'停用只限制登录，不删除项目资料。')}</p><button class="${user.status==='disabled'?'account-enable':'account-danger-button'}" data-account-action="toggle-user" data-user-id="${escape(user.id)}" data-next-status="${user.status==='disabled'?'active':'disabled'}" ${state.busy?'disabled':''}>${text(user.status==='disabled'?'重新启用':'停用账户')}</button></section>`:''}${user?.id===state.user.id?`<p class="account-self-note">${symbol('shield')}${text('这是你当前登录的账户。')}</p>`:''}</aside>`;
   }
   function userList() {
-    const count=language()==='en'?`${state.total} accounts · Page ${state.page}`:`${state.total} ${language()==='zh-Hant'?'個帳戶':'个账户'} · ${state.page}`;
-    return `<section class="account-card account-list"><div class="account-list-heading"><h2>${text('用户账户')}</h2><span>${escape(count)}</span></div><form class="account-search" data-account-form="search-users"><label class="sr-only" for="account-search">${text('搜索用户名或名称')}</label><input id="account-search" name="query" type="search" maxlength="60" value="${escape(state.q)}" placeholder="${text('搜索用户名或名称')}"><button type="submit">${text('搜索')}</button></form>${state.loading?`<p class="account-empty" role="status">${text('正在处理…')}</p>`:state.users.length?`<div class="account-table-scroll"><table class="account-table"><thead><tr><th>${text('用户账户')}</th><th>${text('角色')}</th><th>${text('状态')}</th><th>${text('操作')}</th></tr></thead><tbody>${state.users.map(user=>`<tr ${state.selected?.id===user.id?'class="is-selected"':''}><td><strong>${escape(user.displayName||user.username)}</strong><small>@${escape(user.username)}</small>${user.mustChangePassword?`<small>${text('待修改密码')}</small>`:''}</td><td>${text(user.role==='admin'?'管理员':'成员')}</td><td><span class="account-pill ${user.status==='disabled'?'is-disabled':''}">${text(user.status==='disabled'?'已停用':'已启用')}</span></td><td><div class="account-row-actions"><button class="subtle" data-account-action="edit-user" data-user-id="${escape(user.id)}">${text('编辑')}</button>${user.id!==state.user.id?`<button class="subtle" data-account-action="toggle-user" data-user-id="${escape(user.id)}" ${state.busy?'disabled':''}>${text(user.status==='disabled'?'启用':'停用')}</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`:`<p class="account-empty">${text('没有找到匹配的账户。')}</p>`}<div class="account-pagination"><button data-account-action="previous-page" ${state.page<=1||state.loading?'disabled':''}>${text('上一页')}</button><button data-account-action="next-page" ${state.page*state.pageSize>=state.total||state.loading?'disabled':''}>${text('下一页')}</button></div></section>`;
+    const filtered=state.users.filter(user=>(!state.roleFilter||user.role===state.roleFilter)&&(!state.statusFilter||user.status===state.statusFilter));
+    const count=language()==='en'?`${state.total} accounts`:`${state.total} ${t('个账户')}`;
+    const filterActive=Boolean(state.q||state.roleFilter||state.statusFilter);
+    const rows=filtered.map(user=>`<tr ${state.selected?.id===user.id?'class="is-selected"':''}><td><div class="account-person"><span class="account-avatar" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><strong>${escape(user.displayName||user.username)}${user.id===state.user.id?` <span class="account-you">${text('你')}</span>`:''}</strong><small>@${escape(user.username)}</small>${user.mustChangePassword?`<small class="account-reset-label">${text('待修改密码')}</small>`:''}</div></div></td><td data-label="${text('角色')}">${text(user.role==='admin'?'管理员':'成员')}</td><td data-label="${text('状态')}"><span class="account-pill ${user.status==='disabled'?'is-disabled':''}">${text(user.status==='disabled'?'已停用':'已启用')}</span></td><td><button class="account-edit-button" data-account-action="edit-user" data-user-id="${escape(user.id)}" aria-label="${escape(t('编辑账户')+' · '+(user.displayName||user.username))}" aria-pressed="${state.selected?.id===user.id}" ${state.busy?'disabled':''}>${text('编辑')} <span aria-hidden="true">↗</span></button></td></tr>`).join('');
+    const result=state.loading?`<div class="account-list-loading"><p role="status">${text('正在读取账户…')}</p><div aria-hidden="true">${'<span></span>'.repeat(3)}</div></div>`:state.adminError?`<div class="account-empty"><p>${text('账户列表读取失败。')}</p><button data-account-action="reload-users">${text('重新加载')}</button></div>`:filtered.length?`<div class="account-table-scroll"><table class="account-table account-people-table"><thead><tr><th scope="col">${text('用户账户')}</th><th scope="col">${text('角色')}</th><th scope="col">${text('状态')}</th><th scope="col">${text('操作')}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="account-empty"><span class="account-emblem">${symbol('user')}</span><p>${text(state.roleFilter||state.statusFilter?'没有符合本页筛选的账户。':'没有找到匹配的账户。')}</p><small>${text('调整关键词，或清除筛选后重试。')}</small>${filterActive?`<button class="subtle" data-account-action="clear-filters">${text('清除筛选')}</button>`:''}</div>`;
+    return `<section class="account-card account-list" aria-busy="${state.loading}"><div class="account-list-heading"><h2>${text('用户账户')}</h2><span>${escape(count)}</span></div><form class="account-search" data-account-form="search-users"><label for="account-search">${text('搜索所有账户')}</label><div><input id="account-search" name="query" type="search" maxlength="60" value="${escape(state.q)}" placeholder="${text('搜索用户名或名称')}"><button type="submit" ${state.loading?'disabled':''}>${text('搜索')}</button></div></form><div class="account-filters"><span>${text('本页筛选')}</span><label class="sr-only" for="account-role-filter">${text('角色')}</label><select id="account-role-filter" data-account-filter="roleFilter"><option value="">${text('全部角色')}</option><option value="member" ${state.roleFilter==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${state.roleFilter==='admin'?'selected':''}>${text('管理员')}</option></select><label class="sr-only" for="account-status-filter">${text('状态')}</label><select id="account-status-filter" data-account-filter="statusFilter"><option value="">${text('全部状态')}</option><option value="active" ${state.statusFilter==='active'?'selected':''}>${text('已启用')}</option><option value="disabled" ${state.statusFilter==='disabled'?'selected':''}>${text('已停用')}</option></select></div>${result}<div class="account-pagination"><span aria-live="polite">${text('本页显示')} ${state.loading?'—':filtered.length} · ${state.page} / ${Math.max(1,Math.ceil(state.total/state.pageSize))}</span><button data-account-action="previous-page" ${state.page<=1||state.loading?'disabled':''} aria-label="${text('上一页')}">←</button><button data-account-action="next-page" ${state.page*state.pageSize>=state.total||state.loading?'disabled':''} aria-label="${text('下一页')}">→</button></div></section>`;
   }
   const actionName=action=>({ 'initial_password_requirement_removed':'已取消首次改密要求','account.initial_password_requirement_removed':'已取消首次改密要求','system.initial_password_optional':'已取消首次改密要求', 'account.created':'账户已创建','account.updated':'账户已修改','account.password_reset':'密码已重置','auth.password_changed':'密码已修改','user.created':'账户已创建','user.create':'账户已创建','user.updated':'账户已修改','user.update':'账户已修改','user.password_reset':'密码已重置','password.reset':'密码已重置','auth.password_change':'密码已修改','auth.login':'登录成功','auth.logout':'已退出','account_created':'账户已创建','account_updated':'账户已修改','password_reset':'密码已重置','password_changed':'密码已修改','admin_bootstrapped':'管理员已初始化','account.bootstrap':'管理员已初始化','password_reset_started':'开始重置密码','password_change_started':'开始修改密码','password_operation_failed':'密码操作未完成'})[action]||action||'—';
   function auditList() {return `<section class="account-card"><div class="account-list-heading"><h2>${text('操作记录')}</h2><button class="subtle" data-account-action="reload-audit">${text('重新加载')}</button></div>${state.auditLoading?`<p class="account-empty" role="status">${text('正在处理…')}</p>`:state.events.length?`<div class="account-table-scroll"><table class="account-table"><thead><tr><th>${text('时间')}</th><th>${text('执行人')}</th><th>${text('操作')}</th><th>${text('对象')}</th></tr></thead><tbody>${state.events.map(event=>`<tr><td>${escape(formatDate(event.createdAt||event.created_at))}</td><td>${escape(event.actorUsername||event.actor?.username||event.actorId||'—')}</td><td>${text(actionName(event.action))}</td><td>${escape(event.targetUsername||event.target?.username||event.targetId||'—')}</td></tr>`).join('')}</tbody></table></div>`:`<p class="account-empty">${text('暂无操作记录。')}</p>`}</section>`;}
@@ -210,7 +245,7 @@
     if(!state.user)return login();
     if(state.user.mustChangePassword)return account();
     if(state.user.role!=='admin')return `<section class="account-surface account-narrow">${back()}<div class="account-card"><h1>${text('账户管理')}</h1><p>${text('此页面仅供管理员使用。')}</p><a class="btn" href="#account">${text('我的账户')}</a></div></section>`;
-    return `<section class="account-surface account-admin">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ADMINISTRATION</span><h1>${text('账户管理')}</h1><p class="account-lead">${text('由管理员直接创建和维护账户。')}</p></div><button class="primary" data-account-action="new-user">${text('新建账户')} <span aria-hidden="true">+</span></button></div><div class="account-tabs" role="group" aria-label="${text('账户管理')}"><button data-account-action="users-tab" aria-pressed="${state.adminTab==='users'}">${text('用户账户')}</button><button data-account-action="audit-tab" aria-pressed="${state.adminTab==='audit'}">${text('操作记录')}</button></div>${messages(state.adminTab!=='users')}${state.adminError?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.adminError))}</p>`:''}${createdAccountNotice()}${state.adminTab==='users'?`<div class="account-admin-grid">${userList()}${userEditor()}</div>`:auditList()}</section>`;
+    return `<section class="account-surface account-admin">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ADMINISTRATION</span><h1>${text('账户管理')}</h1><p class="account-lead">${text('管理人员与登录权限。')}</p></div><button class="primary" data-account-action="new-user">${text('新建账户')} <span aria-hidden="true">+</span></button></div><div class="account-tabs" role="group" aria-label="${text('账户管理')}"><button data-account-action="users-tab" aria-pressed="${state.adminTab==='users'}">${text('用户账户')}</button><button data-account-action="audit-tab" aria-pressed="${state.adminTab==='audit'}">${text('操作记录')}</button></div>${messages(state.adminTab!=='users'||!['create-user','edit-user','reset-password'].includes(state.errorForm))}${state.adminError?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.adminError))}</p>`:''}${createdAccountNotice()}${state.adminTab==='users'?`<div class="account-admin-grid">${userList()}${userEditor()}</div>`:auditList()}</section>`;
   }
   function createdAccountNotice(){
     if(!createdCredentials)return '';
@@ -223,17 +258,17 @@
   }
   async function loadUsers() {
     if(state.loading||state.user?.role!=='admin'||state.user.mustChangePassword)return;
-    state.loading=true;state.adminError='';const id=state.user.id;
+    state.loading=true;state.adminError='';const epoch=identityEpoch;
     redraw(false,true);
-    try {const result=await request('/admin/users?query='+encodeURIComponent(state.q)+'&page='+state.page);if(state.user?.id!==id)return;state.users=result.users||[];state.total=result.total||0;state.page=result.page||state.page;state.pageSize=result.pageSize||20;state.loaded=true;}
-    catch(error){state.adminError=errorMessage(error);}finally{state.loading=false;state.loaded=true;redraw(false,true);}
+    try {const result=await request('/admin/users?query='+encodeURIComponent(state.q)+'&page='+state.page);if(identityEpoch!==epoch)return;state.users=result.users||[];if(state.selected){const selected=state.users.find(user=>user.id===state.selected.id);if(selected)state.selected=selected;}state.total=result.total||0;state.page=result.page||state.page;state.pageSize=result.pageSize||20;state.loaded=true;}
+    catch(error){if(identityEpoch===epoch)state.adminError=errorMessage(error);}finally{if(identityEpoch===epoch){state.loading=false;state.loaded=true;redraw(false,true);}}
   }
   async function loadAudit() {
     if(state.auditLoading||state.user?.role!=='admin'||state.user.mustChangePassword)return;
-    state.auditLoading=true;state.adminError='';const id=state.user.id;redraw();
-    try{const result=await request('/admin/audit');if(state.user?.id!==id)return;state.events=result.events||[];state.auditLoaded=true;}catch(error){state.adminError=errorMessage(error);}finally{state.auditLoading=false;state.auditLoaded=true;redraw(false,true);}
+    state.auditLoading=true;state.adminError='';const epoch=identityEpoch;redraw();
+    try{const result=await request('/admin/audit');if(identityEpoch!==epoch)return;state.events=result.events||[];state.auditLoaded=true;}catch(error){if(identityEpoch===epoch)state.adminError=errorMessage(error);}finally{if(identityEpoch===epoch){state.auditLoading=false;state.auditLoaded=true;redraw(false,true);}}
   }
-  function validatePassword(password) {if(password.length<12||password.length>72||!/[A-Za-z]/.test(password)||!/[0-9]/.test(password))throw new Error('密码需为 12–72 个字符，并包含字母和数字。');if(new TextEncoder().encode(password).length>72)throw new Error('密码最长为 72 个 UTF-8 字节，中文字符通常占 3 字节。');}
+  function validatePassword(password) {if(password.length<8||password.length>72)throw new Error('密码需为 8–72 个字符，可使用纯数字。');if(new TextEncoder().encode(password).length>72)throw new Error('密码最长为 72 个 UTF-8 字节，中文字符通常占 3 字节。');}
   async function transaction(work,{identity=false}={}) {
     if(state.busy)return;
     state.busy=true;state.error='';state.notice='';
@@ -246,9 +281,10 @@
     event.preventDefault();event.stopImmediatePropagation();if(state.busy)return;
     const fields=new FormData(form),kind=form.dataset.accountForm;
     if(kind==='search-users'){state.q=String(fields.get('query')||'').trim();state.page=1;await loadUsers();return;}
+    state.errorForm=kind;
     // Validate explicitly: native popovers can hide why creation was blocked.
     form.querySelector('[data-form-feedback]')?.remove();
-    form.querySelectorAll('[aria-invalid]').forEach(input=>input.removeAttribute('aria-invalid'));
+    form.querySelectorAll('[aria-invalid]').forEach(input=>{input.removeAttribute('aria-invalid');const help=(input.getAttribute?.('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('account-form-feedback-')).join(' ');if(help)input.setAttribute('aria-describedby',help);else input.removeAttribute('aria-describedby');});
     let invalid;
     try {
       if(kind==='login'){
@@ -258,15 +294,16 @@
       if(kind==='create-user'){
         invalid=form.elements.username;if(!/^[A-Za-z0-9][A-Za-z0-9_-]{2,31}$/.test(String(fields.get('username')||'').trim()))throw new Error('用户名需为 3–32 位英文字母、数字、下划线或连字符。');
       }
-      if(kind==='create-user'||kind==='reset-password'){invalid=form.elements.password;validatePassword(String(fields.get('password')||''));}
+      if(kind==='create-user'||kind==='reset-password'){invalid=form.elements.password;validatePassword(String(fields.get('password')||''));invalid=form.elements.confirmPassword;if(fields.get('password')!==fields.get('confirmPassword'))throw new Error('两次输入的密码不一致。');}
       if(kind==='password'){
         invalid=form.elements.currentPassword;if(!fields.get('currentPassword'))throw new Error('请填写当前密码。');
         invalid=form.elements.newPassword;validatePassword(String(fields.get('newPassword')||''));
         invalid=form.elements.confirmPassword;if(fields.get('newPassword')!==fields.get('confirmPassword'))throw new Error('两次输入的新密码不一致。');
       }
     } catch(error) {
-      const feedback=document.createElement('p');feedback.className='account-message account-message--error';feedback.dataset.formFeedback='true';feedback.setAttribute('role','alert');feedback.textContent=errorMessage(error);
-      form.querySelector('[type="submit"]').before(feedback);invalid?.setAttribute('aria-invalid','true');invalid?.focus();return;
+      const feedback=document.createElement('p');feedback.className='account-message account-message--error account-field-error';feedback.id='account-form-feedback-'+kind;feedback.dataset.formFeedback='true';feedback.setAttribute('role','alert');feedback.textContent=errorMessage(error);
+      const field=invalid?.closest?.('.account-field');if(field)field.append(feedback);else form.querySelector('[type="submit"]').before(feedback);
+      invalid?.setAttribute('aria-invalid','true');invalid?.setAttribute('aria-describedby',[(invalid.getAttribute?.('aria-describedby')||''),feedback.id].filter(Boolean).join(' '));invalid?.focus();return;
     }
     const username=String(fields.get('username')||'').trim();
     if(kind==='create-user')state.createDraft={username,displayName:String(fields.get('displayName')||''),role:fields.get('role')||'member'};
@@ -285,13 +322,13 @@
         const password=String(fields.get('password')||'');validatePassword(password);
         const created=await request('/admin/users',{method:'POST',body:{username,displayName:String(fields.get('displayName')||'').trim()||username,password,role:fields.get('role')==='admin'?'admin':'member'}});
         createdCredentials={username:created.user?.username||username,password};
-        state.q='';state.page=1;state.selected=created.user||null;
+        state.q='';state.roleFilter='';state.statusFilter='';state.page=1;state.selected=created.user||null;state.editorMode='edit';
         state.notice=t('账户已创建。请通过可信渠道告知对方用户名和初始密码。');state.createDraft={};await loadUsers();state.auditLoaded=false;
       }else if(kind==='edit-user'){
         const body={displayName:String(fields.get('displayName')||'').trim()||username};if(form.dataset.userId!==state.user.id)body.role=fields.get('role')==='admin'?'admin':'member';
         const result=await request('/admin/users/'+encodeURIComponent(form.dataset.userId),{method:'PATCH',body});
         if(form.dataset.userId===state.user.id)state.user=result.user||{...state.user,displayName:body.displayName};
-        state.notice=t('账户已更新。');state.selected=null;await loadUsers();state.auditLoaded=false;
+        state.notice=t('账户已更新。');state.selected=result.user||{...state.selected,...body};await loadUsers();state.auditLoaded=false;
       }else if(kind==='reset-password'){
         const password=String(fields.get('password')||'');validatePassword(password);
         await request('/admin/users/'+encodeURIComponent(form.dataset.userId)+'/password',{method:'POST',body:{newPassword:password}});
@@ -304,7 +341,7 @@
   function confirmDisable(user) {
     return new Promise(resolve=>{
       const dialog=document.createElement('dialog');dialog.className='confirm-dialog account-confirm';dialog.setAttribute('aria-labelledby','account-confirm-title');
-      dialog.innerHTML=`<h2 id="account-confirm-title">${text('确认停用账户')}</h2><p><strong>${escape(user.displayName||user.username)}</strong> · @${escape(user.username)}</p><p>${text('停用后，该用户的会话会失效。')}</p><form method="dialog"><button value="cancel">${text('取消')}</button><button class="primary" value="confirm">${text('确认停用')}</button></form>`;
+      dialog.innerHTML=`<h2 id="account-confirm-title">${text('确认停用账户')}</h2><p><strong>${escape(user.displayName||user.username)}</strong> · @${escape(user.username)}</p><p>${text('停用后，该用户的会话会失效。')}</p><form method="dialog"><button value="cancel">${text('取消')}</button><button class="account-danger-button" value="confirm">${text('确认停用')}</button></form>`;
       document.body.append(dialog);dialog.addEventListener('close',()=>{resolve(dialog.returnValue==='confirm');dialog.remove();},{once:true});dialog.showModal();
     });
   }
@@ -316,8 +353,9 @@
     if(action==='guest'&&!state.user){state.error='';state.notice='';window.TashanEntrance?.dismissAuth();window.dispatchEvent(new CustomEvent('tashan:guest-entry'));return;}
     if(action==='generate-password'&&state.user?.role==='admin'){
       const form=button.closest('form'),input=form.elements.password;
-      const bytes=crypto.getRandomValues(new Uint8Array(16)),alphabet='ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-      input.value='T7'+Array.from(bytes,value=>alphabet[value%alphabet.length]).join('');
+      let generated='';
+      while(generated.length<8)for(const value of crypto.getRandomValues(new Uint8Array(8))){if(value<250&&generated.length<8)generated+=String(value%10);}
+      input.value=generated;if(form.elements.confirmPassword)form.elements.confirmPassword.value=generated;
       button.textContent=t('已生成，可点眼睛查看并交给对方。');return;
     }
     if(action==='retry'){await refreshSession({initial:!state.configured});return;}
@@ -325,17 +363,28 @@
     if(state.user?.role!=='admin'||state.user.mustChangePassword)return;
     if(action==='copy-created'&&createdCredentials){try{await navigator.clipboard.writeText(`${t('用户名')}: ${createdCredentials.username}\n${t('初始密码')}: ${createdCredentials.password}`);button.textContent=t('账号信息已复制。');}catch{button.textContent=t('请手动复制用户名和初始密码。');}return;}
     if(action==='dismiss-created'){createdCredentials=null;redraw(false,true);return;}
-    if(action==='new-user'){state.selected=null;state.adminTab='users';state.error='';state.notice='';redraw();document.querySelector('.account-editor input')?.focus();return;}
-    if(action==='edit-user'){state.selected=state.users.find(user=>user.id===button.dataset.userId)||null;state.error='';state.notice='';redraw();document.querySelector('.account-editor input[name="displayName"]')?.focus();return;}
+    if(action==='close-editor'){createdCredentials=null;state.selected=null;state.editorMode='empty';state.error='';redraw();document.querySelector('.account-list input')?.focus();return;}
+    if(action==='clear-filters'){state.q='';state.roleFilter='';state.statusFilter='';state.page=1;await loadUsers();return;}
+    if(action==='reload-users'){await loadUsers();return;}
+    if(action==='new-user'){createdCredentials=null;state.editorMode='create';state.selected=null;state.adminTab='users';state.error='';state.notice='';redraw();document.querySelector('.account-editor input')?.focus();return;}
+    if(action==='edit-user'){createdCredentials=null;state.editorMode='edit';state.selected=state.users.find(user=>user.id===button.dataset.userId)||null;state.error='';state.notice='';redraw();document.querySelector('.account-editor input[name="displayName"]')?.focus();return;}
     if(action==='users-tab'){state.adminTab='users';redraw();if(!state.loaded)loadUsers();return;}
     if(action==='audit-tab'){state.adminTab='audit';redraw();if(!state.auditLoaded)loadAudit();return;}
     if(action==='reload-audit'){loadAudit();return;}
     if(action==='previous-page'||action==='next-page'){state.page=Math.max(1,state.page+(action==='previous-page'?-1:1));loadUsers();return;}
     if(action==='toggle-user'){
-      const user=state.users.find(item=>item.id===button.dataset.userId);if(!user)return;
-      if(user.status!=='disabled'&&!await confirmDisable(user))return;
-      await transaction(async()=>{await request('/admin/users/'+encodeURIComponent(user.id),{method:'PATCH',body:{status:user.status==='disabled'?'active':'disabled'}});state.notice=t('账户状态已更新。');await loadUsers();state.auditLoaded=false;});
+      state.errorForm='access';const user=state.users.find(item=>item.id===button.dataset.userId)||state.selected,nextStatus=button.dataset.nextStatus,epoch=identityEpoch;
+      if(!user||user.id!==button.dataset.userId||!['active','disabled'].includes(nextStatus))return;
+      // Submit the action shown on the button, even if another administrator changed this account.
+      if(nextStatus==='disabled'&&!await confirmDisable(user))return;
+      if(identityEpoch!==epoch)return;
+      await transaction(async()=>{const updated=await request('/admin/users/'+encodeURIComponent(user.id),{method:'PATCH',body:{status:nextStatus}});if(state.selected?.id===user.id)state.selected=updated.user||{...user,status:nextStatus};state.notice=t('账户状态已更新。');await loadUsers();state.auditLoaded=false;});
     }
+  }
+  function filterChange(event) {
+    const control=event.target.closest('[data-account-filter]');if(!control||state.busy)return;
+    const key=control.dataset.accountFilter;if(!['roleFilter','statusFilter'].includes(key))return;
+    state[key]=control.value;const id=control.id;redraw(false,true);document.getElementById(id)?.focus({preventScroll:true});
   }
   const bound=new WeakSet();
   function bind(root) {
@@ -343,7 +392,7 @@
     const entry=root.querySelector('[data-entry-account]');
     if(entry){window.TashanEntrance?.mountAuth(entry);if(!bound.has(entry)){entry.addEventListener('submit',submit,true);entry.addEventListener('click',click,true);bound.add(entry);}}
     else if(!state.busy)window.TashanEntrance?.dismissAuth();
-    if(!bound.has(root)){root.addEventListener('submit',submit,true);root.addEventListener('click',click,true);bound.add(root);}
+    if(!bound.has(root)){root.addEventListener('submit',submit,true);root.addEventListener('click',click,true);root.addEventListener('change',filterChange,true);bound.add(root);}
     if(location.hash.split('/')[0]==='#admin'&&state.user?.role==='admin'&&!state.user.mustChangePassword){if(state.adminTab==='users'&&!state.loaded&&!state.loading)queueMicrotask(loadUsers);if(state.adminTab==='audit'&&!state.auditLoaded&&!state.auditLoading)queueMicrotask(loadAudit);}
   }
   window.TashanAccounts={init,ready,request,header,render,bind,workspaceNotice,guestExportMarkup,refreshSession,get user(){return state.user;},get mode(){return state.mode;},get configured(){return state.configured;},get initialized(){return state.initialized;},get busy(){return state.busy;}};

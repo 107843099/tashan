@@ -8,7 +8,7 @@ import {LocalProvider} from '../server/local-provider.mjs';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const folder=await mkdtemp(join(tmpdir(),'tashan-project-browser-'));
 const provider=new LocalProvider(join(folder,'accounts.sqlite'));
-await provider.bootstrap({username:'admin',password:'admin',displayName:'管理员',allowDemoPassword:true});provider.close();
+await provider.bootstrap({username:'admin',password:'12345678',displayName:'管理员'});provider.close();
 const origin='http://127.0.0.1:4182';
 const server=spawn(process.execPath,['scripts/dev-server.mjs'],{env:{...process.env,PORT:'4182',TASHAN_ACCOUNT_PROVIDER:'local',TASHAN_LOCAL_DB:join(folder,'accounts.sqlite'),TASHAN_LOCAL_FILES:join(folder,'files')},stdio:['ignore','pipe','pipe']});
 let browser,page;
@@ -20,7 +20,7 @@ try{
   async function login(target){
     await target.goto(origin+'/index.html#login');
     const form=target.locator('.stone-entrance [data-account-form="login"]');
-    await form.locator('[name=username]').fill('admin');await form.locator('[name=password]').fill('admin');await form.locator('[type=submit]').click();
+    await form.locator('[name=username]').fill('admin');await form.locator('[name=password]').fill('12345678');await form.locator('[type=submit]').click();
     await target.waitForURL('**#discover');await target.waitForFunction(()=>!document.querySelector('.stone-entrance')&&!window.TashanProjects.busy);
   }
   async function idle(target=page){await target.waitForFunction(()=>!window.TashanProjects.busy);}

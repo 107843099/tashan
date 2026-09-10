@@ -16,7 +16,7 @@ export function validateUsername(value) {
   return value.trim().toLowerCase();
 }
 export function validatePassword(value) {
-  if (typeof value !== 'string' || value.length < 12 || value.length > 72 || new TextEncoder().encode(value).byteLength > 72 || !/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) fail(400, 'INVALID_PASSWORD', '密码需为 12–72 位，至少包含英文字母和数字；总长度不能超过 72 字节。');
+  if (typeof value !== 'string' || value.length < 8 || value.length > 72 || new TextEncoder().encode(value).byteLength > 72) fail(400, 'INVALID_PASSWORD', '密码至少 8 位，可以只用数字；总长度不能超过 72 字节。');
   return value;
 }
 export function validateDisplayName(value) {

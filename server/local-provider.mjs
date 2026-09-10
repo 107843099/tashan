@@ -16,7 +16,7 @@ function validateUsername(value) {
   return username;
 }
 function validatePassword(value) {
-  if (typeof value !== 'string' || value.length < 12 || value.length > 72 || Buffer.byteLength(value, 'utf8') > 72 || !/[a-zA-Z]/.test(value) || !/[0-9]/.test(value)) throw failure(400, 'INVALID_PASSWORD', '密码需为 12–72 位，并包含字母和数字，UTF-8 长度不超过 72 字节。');
+  if (typeof value !== 'string' || value.length < 8 || value.length > 72 || Buffer.byteLength(value, 'utf8') > 72) throw failure(400, 'INVALID_PASSWORD', '密码至少 8 位，可以只用数字；总长度不能超过 72 字节。');
 }
 function displayName(value) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > 60 || /[\u0000-\u001f\u007f]/.test(value)) throw failure(400, 'INVALID_DISPLAY_NAME', '请填写 1–60 位显示名称。');
@@ -267,9 +267,9 @@ export class LocalProvider {
       targetUsername: row.target_username, action: row.action, details: JSON.parse(row.details), createdAt: row.created_at
     })) };
   }
-  async bootstrap({ username, password, displayName: name, allowDemoPassword = false }) {
+  async bootstrap({ username, password, displayName: name }) {
     const login = validateUsername(username);
-    if (!(allowDemoPassword && login === 'admin' && password === 'admin')) validatePassword(password);
+    validatePassword(password);
     const label = displayName(name || login), hash = await passwordHash(password);
     return this.transaction(() => {
       if (this.db.prepare('SELECT count(*) AS count FROM accounts').get().count) throw failure(409, 'ALREADY_INITIALIZED', '本地账号库已初始化，不能覆盖已有账号。');

@@ -9,7 +9,7 @@ import { LocalProvider } from '../server/local-provider.mjs';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const folder = await mkdtemp(join(tmpdir(), 'tashan-browser-'));
 const provider = new LocalProvider(join(folder, 'accounts.sqlite'));
-await provider.bootstrap({ username:'admin', password:'admin', displayName:'管理员', allowDemoPassword:true });
+await provider.bootstrap({ username:'admin', password:'12345678', displayName:'管理员' });
 provider.close();
 const origin = 'http://127.0.0.1:4181';
 const server = spawn(process.execPath, ['scripts/dev-server.mjs'], { env:{...process.env,PORT:'4181',TASHAN_LOCAL_DB:join(folder,'accounts.sqlite'),TASHAN_LOCAL_FILES:join(folder,'project-files')}, stdio:['ignore','pipe','pipe'] });
@@ -71,7 +71,7 @@ try {
   assert.equal(await scene().getAttribute('data-automatic'), null, 'Invalid passwords do not start automatic entry');
   assert.equal(await waitingScene.evaluate(node => node.isConnected && node === document.querySelector('.stone-entrance')), true, 'An error updates the form without replacing the scene');
   const waitingCanvas = await scene().locator('canvas').elementHandle();
-  await form().locator('[name=password]').fill('admin');
+  await form().locator('[name=password]').fill('12345678');
   await loginButton().click();
   await page.locator('.stone-entrance[data-automatic=true]').waitFor();
   assert.equal(await waitingScene.evaluate(node => node.isConnected && node === document.querySelector('.stone-entrance')), true, 'Successful verification reuses the authentication scene');
@@ -83,6 +83,7 @@ try {
   await page.screenshot({path:'/tmp/tashan-after-stone-entry.png'});
   await page.goto(origin + '/index.html#admin');
   await page.getByRole('heading', {name:'账户管理',exact:true}).waitFor();
+  await page.locator('.account-page-heading [data-account-action="new-user"]').click();
   const editor = page.locator('[data-account-form="create-user"]');
 
   // Failed account creation reports errors at the form instead of silently doing nothing.
@@ -90,7 +91,7 @@ try {
   await editor.locator('[name=displayName]').fill('测试教师');
   await editor.locator('[name=password]').fill('weak');
   await editor.getByRole('button', {name:'创建账户',exact:true}).click();
-  await editor.getByRole('alert').filter({hasText:/12|密码|password/i}).waitFor();
+  await editor.getByRole('alert').filter({hasText:/8|密码|password/i}).waitFor();
   assert.equal(await page.locator('tr').filter({hasText:'@teacher_demo'}).count(), 0, 'Weak passwords do not create accounts');
   await editor.locator('[name=username]').fill('教师甲');
   await editor.locator('[name=password]').fill('TeacherInitial123');
@@ -99,8 +100,12 @@ try {
 
   await editor.locator('[data-account-action="generate-password"]').click();
   const generated = await editor.locator('[name=password]').inputValue();
-  assert(generated.length >= 12 && Buffer.byteLength(generated,'utf8') <= 72, 'Generated passwords meet the length policy');
-  assert(/[A-Za-z]/.test(generated) && /[0-9]/.test(generated), 'Generated passwords contain letters and digits');
+  assert(/^[0-9]{8}$/.test(generated), 'Generated passwords contain exactly eight cryptographically random digits');
+  assert.equal(await editor.locator('[name=confirmPassword]').inputValue(),generated,'Generation also fills the confirmation');
+  await editor.locator('[data-account-action="toggle-password"][data-field="account-password"]').click();
+  assert.equal(await editor.locator('[name=password]').getAttribute('type'),'text','The generated password can be explicitly revealed');
+  await editor.locator('[data-account-action="toggle-password"][data-field="account-password"]').click();
+  assert.equal(await editor.locator('[name=password]').getAttribute('type'),'password','The password can be hidden again');
   assert.equal(await page.evaluate(value => Object.values(localStorage).some(item => item.includes(value)), generated), false, 'Generated passwords never enter persistent browser storage');
 
   // Creating an account resets stale filters and permits a blank display name.
@@ -111,6 +116,12 @@ try {
   await editor.locator('[name=username]').fill('teacher_demo');
   await editor.locator('[name=displayName]').fill('');
   await editor.locator('[name=password]').fill('TeacherInitial123');
+  await editor.locator('[name=confirmPassword]').fill('Mismatch123');
+  await editor.getByRole('button', {name:'创建账户',exact:true}).click();
+  await editor.getByRole('alert').filter({hasText:'两次输入的密码不一致。'}).waitFor();
+  assert.equal(await editor.locator('[name=confirmPassword]').getAttribute('aria-invalid'),'true','Confirmation error is attached to its input');
+  assert.equal(await editor.locator('[name=confirmPassword]').evaluate(node=>node===document.activeElement),true,'Invalid confirmation receives keyboard focus');
+  await editor.locator('[name=confirmPassword]').fill('TeacherInitial123');
   await editor.getByRole('button', {name:'创建账户',exact:true}).click();
   const teacherRow = page.locator('tr').filter({hasText:'@teacher_demo'});
   await teacherRow.waitFor();
@@ -129,6 +140,16 @@ try {
   await page.locator('.account-profile-links a[href="#admin"]').click();
   await page.getByRole('heading',{name:'账户管理',exact:true}).waitFor();
   assert.equal(await page.locator('.account-created').count(),0,'Leaving account management clears the temporary handoff card without a reload');
+  await page.locator('.account-people-table tr').filter({hasText:'@teacher_demo'}).locator('[data-account-action="edit-user"]').click();
+  await page.locator('.account-reset summary').click();
+  const reset=page.locator('[data-account-form="reset-password"]');
+  await reset.locator('[name=password]').fill('23456789');
+  await reset.locator('[name=confirmPassword]').fill('23456788');
+  await reset.getByRole('button',{name:'重置密码',exact:true}).click();
+  await reset.getByRole('alert').filter({hasText:'两次输入的密码不一致。'}).waitFor();
+  await page.locator('.account-people-table tr').filter({hasText:'@admin'}).locator('[data-account-action="edit-user"]').click();
+  assert.equal(await page.locator('.account-editor [name=username]').inputValue(),'admin');
+  assert.equal(await page.locator('.account-editor input[type=password]').evaluateAll(fields=>fields.every(field=>field.value==='')),true,'Changing selected accounts removes unfinished password fields');
   // Real IndexedDB operations exercise account isolation using the shipped storage adapter.
   const record = await page.evaluate(async () => window.PracticeStore.put({title:'Admin private project',kind:'visual',attachment:{name:'private.html',type:'text/html',blob:new Blob(['<h1>Private preview</h1>'],{type:'text/html'})}}));
   const preview = await context.newPage();
@@ -262,7 +283,7 @@ try {
     const reducedPage=reducedCase.isolatedPage;
     const reducedForm=reducedPage.locator('.stone-entrance [data-account-form="login"]');
     await reducedForm.locator('[name=username]').fill('admin');
-    await reducedForm.locator('[name=password]').fill('admin');
+    await reducedForm.locator('[name=password]').fill('12345678');
     const start=Date.now();
     await reducedForm.locator('[type=submit]').click();
     await expectCleanEntry(reducedPage);
@@ -285,7 +306,7 @@ try {
     assert.equal(await fallbackPage.locator('.stone-entrance.has-webgl').count(),0,'Failed WebGL creation uses the SVG stone');
     const fallbackForm=fallbackPage.locator('.stone-entrance [data-account-form="login"]');
     await fallbackForm.locator('[name=username]').fill('admin');
-    await fallbackForm.locator('[name=password]').fill('admin');
+    await fallbackForm.locator('[name=password]').fill('12345678');
     await fallbackForm.locator('[type=submit]').click();
     await expectCleanEntry(fallbackPage);
     assert.equal(await fallbackPage.evaluate(()=>window.TashanAccounts.user?.username),'admin','SVG fallback preserves the real login flow');

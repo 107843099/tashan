@@ -13,11 +13,11 @@ try {
   if (!provider.status().needsSetup) throw new Error('本地账号库已初始化。请登录管理员管理账号，现有数据不会被覆盖。');
   const username = value('--username') || await readline.question('管理员账号名：');
   const displayName = value('--display-name') || await readline.question('显示名称（可留空）：');
-  process.stdout.write('管理员密码（输入不回显）：');
+  process.stdout.write('管理员密码（至少 8 位，可纯数字，输入不回显）：');
   muted = true;
   const password = await readline.question('');
   muted = false; process.stdout.write('\n');
-  await provider.bootstrap({ username, password, displayName, allowDemoPassword:args.includes('--allow-demo-password') });
+  await provider.bootstrap({ username, password, displayName });
   console.log('本机管理员已创建。账号数据库只供本地开发，不会部署到 Cloudflare。');
 } catch (error) { console.error(error.message); process.exitCode = 1; }
 finally { readline.close(); provider.close(); }

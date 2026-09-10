@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { handleApi, ApiError } from '../server/api.mjs';
+import { handleApi, ApiError, validatePassword } from '../server/api.mjs';
 import { createSupabaseProvider } from '../server/supabase-provider.mjs';
 import { LocalProvider } from '../server/local-provider.mjs';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -61,6 +61,99 @@ async function login(provider, username = 'admin', password = 'admin') {
   assert.equal(response.status, 200);
   return { response, cookie: cookieHeader(response), data: await response.json() };
 }
+
+test('new password policy accepts eight digits without composition rules and keeps the 72-byte ceiling', () => {
+  for (const password of ['12345678', 'abcdefgh', '密'.repeat(8), '9'.repeat(72), '密'.repeat(24), 'LegacyPassword12345']) assert.equal(validatePassword(password), password);
+  for (const password of [undefined, null, 12345678, '', '1234567', 'abcdefg', '9'.repeat(73), '密'.repeat(25)]) assert.throws(() => validatePassword(password), error => error.code === 'INVALID_PASSWORD' && error.status === 400);
+});
+
+test('real SQLite accepts numeric creation, voluntary change and administrator reset while rejecting seven digits', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'tashan-numeric-password-')), file = join(folder, 'accounts.sqlite');
+  let provider = new LocalProvider(file);
+  try {
+    await assert.rejects(provider.bootstrap({ username:'admin', password:'admin', displayName:'Fixture admin', allowDemoPassword:true }), error => error.code === 'INVALID_PASSWORD');
+    await assert.rejects(provider.bootstrap({ username:'admin', password:'1234567', displayName:'Fixture admin' }), error => error.code === 'INVALID_PASSWORD');
+    const legacyPassword = 'Legacy9-' + 'x'.repeat(64);
+    const adminUser = await provider.bootstrap({ username:'admin', password:legacyPassword, displayName:'Fixture admin' });
+    const admin = await login(provider, 'admin', legacyPassword);
+    const input = { username:'numeric_teacher', displayName:'Numeric teacher', role:'member', password:'12345678' };
+    const weakCreate = await call(provider, '/admin/users', { method:'POST', cookie:admin.cookie, data:{...input,password:'1234567'} });
+    assert.equal(weakCreate.status,400); assert.equal((await weakCreate.json()).error.code,'INVALID_PASSWORD');
+    assert.equal(provider.db.prepare('SELECT count(*) n FROM accounts').get().n,1);
+    const created = await call(provider, '/admin/users', { method:'POST', cookie:admin.cookie, data:input });
+    assert.equal(created.status,201); const member = (await created.json()).user; assert.equal(member.mustChangePassword,false);
+    const initial = await login(provider, input.username, input.password);
+    const oldHash = provider.account(member.id).password_hash;
+    const weakChange = await call(provider, '/auth/password', { method:'POST', cookie:initial.cookie, data:{currentPassword:input.password,newPassword:'2345678'} });
+    assert.equal(weakChange.status,400); assert.equal((await weakChange.json()).error.code,'INVALID_PASSWORD'); assert.equal(provider.account(member.id).password_hash,oldHash);
+    const changed = await call(provider, '/auth/password', { method:'POST', cookie:initial.cookie, data:{currentPassword:input.password,newPassword:'23456789'} });
+    assert.equal(changed.status,200); const changedCookie = cookieHeader(changed); assert.equal((await changed.json()).user.mustChangePassword,false);
+    assert.equal((await (await call(provider, '/auth/session', {cookie:initial.cookie})).json()).user,null);
+    assert.equal((await call(provider, '/auth/login', {method:'POST',data:{username:input.username,password:input.password}})).status,401);
+    assert.equal((await login(provider,input.username,'23456789')).data.user.id,member.id);
+    const hashBeforeReset = provider.account(member.id).password_hash;
+    const weakReset = await call(provider, '/admin/users/'+member.id+'/password', {method:'POST',cookie:admin.cookie,data:{newPassword:'8765432'}});
+    assert.equal(weakReset.status,400); assert.equal((await weakReset.json()).error.code,'INVALID_PASSWORD'); assert.equal(provider.account(member.id).password_hash,hashBeforeReset);
+    assert.equal((await (await call(provider,'/auth/session',{cookie:changedCookie})).json()).user.id,member.id);
+    const reset = await call(provider, '/admin/users/'+member.id+'/password', {method:'POST',cookie:admin.cookie,data:{newPassword:'87654321'}});
+    assert.equal(reset.status,200); assert.equal((await reset.json()).user.mustChangePassword,true);
+    assert.equal((await (await call(provider,'/auth/session',{cookie:changedCookie})).json()).user,null);
+    const resetLogin = await login(provider,input.username,'87654321'); assert.equal(resetLogin.data.user.mustChangePassword,true);
+    const finish = await call(provider,'/auth/password',{method:'POST',cookie:resetLogin.cookie,data:{currentPassword:'87654321',newPassword:'98765432'}});
+    assert.equal(finish.status,200); assert.equal((await finish.json()).user.mustChangePassword,false);
+    assert.equal((await (await call(provider,'/auth/session',{cookie:resetLogin.cookie})).json()).user,null);
+    assert.equal((await call(provider,'/admin/users',{cookie:cookieHeader(finish)})).status,403,'Numeric passwords do not change role permissions');
+    const adminHash = provider.account(adminUser.id).password_hash;
+    provider.close(); provider = new LocalProvider(file);
+    assert.equal((await provider.login(input.username,'98765432')).user.id,member.id);
+    assert.equal((await provider.login('admin',legacyPassword)).user.id,adminUser.id,'Existing long credentials still authenticate after a restart');
+    assert.equal(provider.account(adminUser.id).password_hash,adminHash,'Policy changes never rewrite existing credentials');
+    const audit = JSON.stringify(await provider.listAudit(adminUser));
+    for (const password of [input.password,'23456789','87654321','98765432',legacyPassword]) assert.equal(audit.includes(password),false);
+  } finally { provider.close(); await rm(folder,{recursive:true,force:true}); }
+});
+
+test('Supabase provider and CLI bootstrap accept eight digits; invalid new passwords make no Auth or RPC request', async () => {
+  const id='30000000-0000-4000-8000-000000000001',actor={id:'30000000-0000-4000-8000-000000000002',role:'admin',status:'active',mustChangePassword:false};
+  const row={id,username:'numeric_cloud',display_name:'Numeric cloud',role:'member',status:'active',must_change_password:false};
+  const calls=[],sessions=new Map(); let currentPassword='',sequence=0;
+  const provider=createSupabaseProvider({SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SECRET_KEY:'sb_secret_fixture'}, {fetch:async(url,options)=>{
+    const path=new URL(url).pathname,body=options.body?JSON.parse(options.body):null; calls.push({path,method:options.method,body});
+    if(path==='/rest/v1/rpc/tashan_require_admin')return Response.json(null);
+    if(path==='/auth/v1/admin/users'&&options.method==='POST'){currentPassword=body.password;return Response.json({id});}
+    if(path==='/rest/v1/rpc/tashan_register_account'){Object.assign(row,{username:body.p_username,display_name:body.p_display_name,role:body.p_role});return Response.json(row);}
+    if(path==='/auth/v1/token'){
+      if(body.password!==currentPassword)return Response.json({error_code:'invalid_credentials'},{status:400});
+      const sessionId='40000000-0000-4000-8000-'+String(++sequence).padStart(12,'0');
+      const token='fixture.'+Buffer.from(JSON.stringify({sub:id,session_id:sessionId})).toString('base64url')+'.fixture';sessions.set(token,sessionId);
+      return Response.json({access_token:token,refresh_token:'fixture-refresh-'+sequence,expires_in:3600,user:{id}});
+    }
+    if(path==='/auth/v1/user'){const token=options.headers.Authorization?.slice(7);return sessions.has(token)?Response.json({id}):Response.json({error_code:'bad_jwt'},{status:401});}
+    if(path==='/rest/v1/rpc/tashan_session_account')return Response.json([...sessions.values()].includes(body.p_session)?row:null);
+    if(path==='/rest/v1/rpc/tashan_begin_password_change'){sessions.clear();return Response.json({lock:'fixture-lock'});}
+    if(path==='/auth/v1/admin/users/'+id&&options.method==='PUT'){currentPassword=body.password;return Response.json({id});}
+    if(path==='/rest/v1/rpc/tashan_finish_password_change'){row.must_change_password=body.p_admin_reset;return Response.json(row);}
+    if(path==='/auth/v1/logout'){sessions.delete(options.headers.Authorization?.slice(7));return new Response(null,{status:204});}
+    throw new Error('Unexpected isolated Auth fixture route');
+  }});
+  const input={username:row.username,displayName:row.display_name,role:'member',password:'12345678'};
+  const noRequest=async operation=>{const before=calls.length;await assert.rejects(operation,error=>error.code==='INVALID_PASSWORD');assert.equal(calls.length,before,'Invalid input cannot create a proof session, identity or credential lock');};
+  await noRequest(()=>provider.createUser(actor,{...input,password:'1234567'}));
+  await noRequest(()=>provider.bootstrapAdmin({...input,password:'1234567'}));
+  await noRequest(()=>provider.resetPassword(actor,id,'1234567'));
+  await noRequest(()=>provider.changePassword({id,username:row.username},'12345678','1234567'));
+  const member=await provider.createUser(actor,input);assert.equal(member.mustChangePassword,false);assert.equal(currentPassword,'12345678');
+  const first=await provider.login(member.username,'12345678');assert.equal(first.user.id,id);
+  const changed=await provider.changePassword(member,'12345678','23456789');assert.equal(changed.user.mustChangePassword,false);assert.equal(currentPassword,'23456789');
+  assert.equal(await provider.authenticate(first.session.accessToken,''),null);
+  const reset=await provider.resetPassword(actor,id,'87654321');assert.equal(reset.mustChangePassword,true);assert.equal(currentPassword,'87654321');
+  assert.equal(await provider.authenticate(changed.session.accessToken,''),null);
+  const afterReset=await provider.login(member.username,'87654321');assert.equal(afterReset.user.mustChangePassword,true);
+  const restored=await provider.changePassword(afterReset.user,'87654321','98765432');assert.equal(restored.user.mustChangePassword,false);assert.equal(currentPassword,'98765432');
+  const writes=calls.filter(call=>call.path==='/auth/v1/admin/users/'+id&&call.method==='PUT');assert.deepEqual(writes.map(call=>call.body.password),['23456789','87654321','98765432']);
+  const bootstrap=await provider.bootstrapAdmin({username:'bootstrap_numeric',displayName:'Bootstrap fixture',password:'11223344'});assert.equal(bootstrap.role,'admin');assert.equal(currentPassword,'11223344');
+  assert.equal(calls.at(-1).body.p_bootstrap,true,'The private bootstrap path retains its distinct database authorization');
+});
 
 test('login permits the explicit local legacy password, sets private cookies, and never sends tokens', async () => {
   const { provider } = fixture();
@@ -222,8 +315,8 @@ test('real SQLite concurrent refreshes keep account creation authenticated and p
   const file = join(folder, 'accounts.sqlite');
   let provider = new LocalProvider(file);
   try {
-    await provider.bootstrap({ username: 'admin', password: 'admin', displayName: 'Test admin', allowDemoPassword: true });
-    const signedIn = await provider.login('admin', 'admin');
+    await provider.bootstrap({ username: 'admin', password: '12345678', displayName: 'Test admin' });
+    const signedIn = await provider.login('admin', '12345678');
     provider.db.prepare('UPDATE sessions SET access_until = 0').run();
     const results = await Promise.all(Array.from({ length: 6 }, () => provider.authenticate(signedIn.session.accessToken, signedIn.session.refreshToken)));
     assert.ok(results.every(result => result?.user.id === signedIn.user.id), 'Every simultaneous request remains authenticated');
@@ -244,7 +337,7 @@ test('real SQLite concurrent refreshes keep account creation authenticated and p
 test('real SQLite refresh replay never restores a logged-out or disabled session', async () => {
   const provider = new LocalProvider(':memory:');
   try {
-    const admin = await provider.bootstrap({ username: 'admin', password: 'admin', displayName: 'Test admin', allowDemoPassword: true });
+    const admin = await provider.bootstrap({ username: 'admin', password: '12345678', displayName: 'Test admin' });
     const member = await provider.createUser(admin, { username: 'refresh_member', displayName: 'Refresh member', password: 'RefreshMember1234', role: 'member' });
     const signedIn = await provider.login('refresh_member', 'RefreshMember1234');
     provider.db.prepare('UPDATE sessions SET access_until = 0').run();
