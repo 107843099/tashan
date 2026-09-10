@@ -24,6 +24,14 @@ function walk(directory) {
   });
 }
 const files = walk(dist);
+// Cloudflare must publish the release, never the checkout or its node_modules.
+const cloudflare = JSON.parse(readFileSync(path.join(root, 'wrangler.jsonc'), 'utf8'));
+assert.equal(path.resolve(root, cloudflare.assets.directory), dist, 'Cloudflare assets.directory must point to dist');
+assert.equal(cloudflare.assets.html_handling, 'auto-trailing-slash', 'Directory pages retain a base URL for their relative resources');
+assert.equal(cloudflare.assets.not_found_handling, 'none', 'Missing project resources must not receive the platform HTML');
+for (const file of files) {
+  assert(statSync(path.join(dist, file)).size <= 25 * 1024 * 1024, `Cloudflare asset exceeds 25 MiB: ${file}`);
+}
 const forbidden = /(?:^|\/)(?:node_modules|\.git|\.codex|\.agents|\.env(?:\.[^/]*)?|backups|archives?|tests|scripts|docs|vibe coding库|__MACOSX|\.DS_Store)(?:\/|$)/;
 for (const file of files) {
   assert(!forbidden.test(file), `Development/private content included: ${file}`);

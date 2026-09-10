@@ -28,7 +28,25 @@ npm run preview
 
 主站资源随包提供；部分原始互动项目依赖外部 CDN，需要联网运行。构建产生的发布清单记录这些外部依赖，不能将整个项目库视为完整离线包。上传项目的隔离预览仍禁止外部联网，这是预览器自身的行为。
 
-## 上传
+## Cloudflare Workers 部署
+
+仓库根目录的 `wrangler.jsonc` 已指定 Worker 名称 `tashan` 与静态资源目录 `./dist`。在 Cloudflare 的 Git 构建设置中使用：
+
+| 设置 | 值 |
+| --- | --- |
+| 仓库根目录 | `/`（仓库根目录） |
+| 构建命令 | `npm run build` |
+| 部署命令 | `npx wrangler deploy` |
+| Worker 名称 | `tashan` |
+| 静态资源目录 | `./dist`，由 `wrangler.jsonc` 指定 |
+
+构建成功后 Wrangler 只上传 `dist/` 内的网站文件。不能把静态资源目录设成 `.`：仓库根目录会包含安装的 `node_modules`，其中的 `workerd` 可执行程序会超过 Cloudflare 静态资源单文件 25 MiB 的限制。发布检查会验证目录和文件大小，防止这个问题再次出现。
+
+保留 `auto-trailing-slash` 处理目录首页，使光学实验等页面的相对资源路径正常；主平台的 hash 路由不需要 SPA 全站回退。不存在的资源仍返回 404。
+
+推送配置后部署最新提交；如需手动重试，请选择包含 `wrangler.jsonc` 的最新版本。Cloudflare 官方说明：[静态资源配置](https://developers.cloudflare.com/workers/static-assets/binding/)、[HTML 路径处理](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)。
+
+## 其他静态托管目录上传
 
 1. 选择静态托管的目标目录。
 2. 上传 `dist/` **内部的全部文件与子目录**，或先解压 `releases/tashan-site.zip` 后上传其内容。
