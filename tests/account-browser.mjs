@@ -13,16 +13,38 @@ await provider.bootstrap({ username:'admin', password:'12345678', displayName:'�
 provider.close();
 const origin = 'http://127.0.0.1:4181';
 const server = spawn(process.execPath, ['scripts/dev-server.mjs'], { env:{...process.env,PORT:'4181',TASHAN_LOCAL_DB:join(folder,'accounts.sqlite'),TASHAN_LOCAL_FILES:join(folder,'project-files')}, stdio:['ignore','pipe','pipe'] });
+const serverExited=once(server,'exit');
 let browser;
 try {
-  await Promise.race([once(server.stdout, 'data'), once(server, 'exit').then(() => { throw new Error('Browser test server failed to start.'); })]);
+  await Promise.race([once(server.stdout, 'data'), serverExited.then(() => { throw new Error('Browser test server failed to start.'); })]);
   browser = await chromium.launch({ headless:true, ...(process.env.BROWSER_CHANNEL ? {channel:process.env.BROWSER_CHANNEL} : {}) });
-  const context = await browser.newContext({ viewport:{width:1440,height:900} });
+  const context = await browser.newContext({ viewport:{width:1440,height:900}, reducedMotion:'no-preference' });
   const page = await context.newPage(), errors=[];
   page.on('pageerror', error => errors.push(error.message));
   const scene = () => page.locator('.stone-entrance[data-mode="auth"]');
   const form = () => scene().locator('[data-account-form="login"]');
   const loginButton = () => form().getByRole('button', {name:'登录，凿开新知',exact:true});
+  async function captureEntryMotion(target) {
+    await target.evaluate(() => {
+      const nativeTimeout=window.setTimeout,overlay=document.querySelector('.stone-entrance'),ui=document.getElementById('practice-ui');
+      const report={reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,schedules:[],phases:[],arrival:false,leaving:false};let running='';
+      // Observe requested delays; original callbacks, real time and authentication still run.
+      window.setTimeout=function(callback,delay,...args){
+        const name=typeof callback==='function'?callback.name:'',entryCallback=name==='carve'||name==='finish';
+        if(entryCallback||running)report.schedules.push({callback:name,owner:running,delay:Number(delay)});
+        const original=callback;
+        if(entryCallback)callback=function(...params){const previous=running;running=name;try{return original.apply(this,params);}finally{running=previous;}};
+        return nativeTimeout.call(window,callback,delay,...args);
+      };
+      const observer=new MutationObserver(()=>{
+        const phase=overlay.dataset.phase;if(!report.phases.includes(phase))report.phases.push(phase);
+        report.arrival ||= ui.classList.contains('entrance-arrival');report.leaving ||= overlay.classList.contains('is-leaving');
+      });
+      observer.observe(overlay,{attributes:true,attributeFilter:['data-phase','class']});observer.observe(ui,{attributes:true,attributeFilter:['class']});
+      window.__finishEntryMotionCapture=()=>{window.setTimeout=nativeTimeout;observer.disconnect();delete window.__finishEntryMotionCapture;return report;};
+    });
+  }
+  const finishEntryMotionCapture=target=>target.evaluate(()=>window.__finishEntryMotionCapture());
   async function waitForEntry() {
     await page.waitForURL('**#discover');
     await page.waitForFunction(() => !document.querySelector('.stone-entrance') && !document.documentElement.classList.contains('entrance-open') && !document.getElementById('practice-ui').classList.contains('entrance-arrival'));
@@ -71,6 +93,7 @@ try {
   assert.equal(await scene().getAttribute('data-automatic'), null, 'Invalid passwords do not start automatic entry');
   assert.equal(await waitingScene.evaluate(node => node.isConnected && node === document.querySelector('.stone-entrance')), true, 'An error updates the form without replacing the scene');
   const waitingCanvas = await scene().locator('canvas').elementHandle();
+  await captureEntryMotion(page);
   await form().locator('[name=password]').fill('12345678');
   await loginButton().click();
   await page.locator('.stone-entrance[data-automatic=true]').waitFor();
@@ -78,6 +101,11 @@ try {
   // A WebGL-capable browser keeps its rendered canvas; the SVG fallback is also supported.
   if (waitingCanvas) assert.equal(await waitingCanvas.evaluate(node => node.isConnected && node === document.querySelector('.stone-entrance canvas')), true, 'Successful verification keeps the existing canvas');
   await waitForEntry();
+  const normalMotion=await finishEntryMotionCapture(page);
+  assert.equal(normalMotion.reduced,false);
+  assert.deepEqual(normalMotion.schedules.filter(item=>['carve','finish'].includes(item.callback)).map(item=>item.delay),[180,2200],'Normal entry takes the full carving path');
+  assert(normalMotion.schedules.some(item=>item.owner==='finish'&&item.delay===700),'Normal entry schedules its arrival cleanup');
+  assert(normalMotion.phases.includes('carving')&&normalMotion.arrival&&normalMotion.leaving,'The normal-path observer detects the full motion states');
   assert.equal(await page.evaluate(() => sessionStorage.getItem('tashan-guest-entry')), null, 'Verified authentication clears guest mode');
   assert.equal(await page.locator('.project-card--discovery').count(), 14);
   await page.screenshot({path:'/tmp/tashan-after-stone-entry.png'});
@@ -108,6 +136,37 @@ try {
   assert.equal(await editor.locator('[name=password]').getAttribute('type'),'password','The password can be hidden again');
   assert.equal(await page.evaluate(value => Object.values(localStorage).some(item => item.includes(value)), generated), false, 'Generated passwords never enter persistent browser storage');
 
+  // Affiliation changes update only their own fields and preserve unfinished input.
+  assert.equal(await editor.locator('[name=affiliationType]').inputValue(),'personal');
+  assert.equal(await editor.locator('[name=organizationName]').isVisible(),false);
+  assert.equal(await editor.locator('[name=organizationName]').isDisabled(),true);
+  await editor.locator('[name=username]').fill('teacher_demo');
+  const originalForm=await editor.elementHandle();
+  await editor.locator('[name=affiliationType]').selectOption('school');
+  assert.equal(await originalForm.evaluate(node=>node.isConnected),true,'Changing affiliation does not replace the form');
+  assert.equal(await editor.locator('[name=organizationName]').isVisible(),true);
+  assert.equal(await editor.locator('[name=organizationName]').getAttribute('required'),'');
+  await editor.getByRole('button',{name:'创建账户',exact:true}).click();
+  await editor.getByRole('alert').filter({hasText:'请填写学校名称。'}).waitFor();
+  await editor.locator('[name=organizationName]').fill('山海实验学校');
+  await editor.locator('[name=affiliationType]').selectOption('organization');
+  assert.equal(await editor.locator('[data-account-organization-label]').textContent(),'机构名称');
+  await editor.locator('[name=affiliationType]').selectOption('personal');
+  assert.equal(await editor.locator('[name=organizationName]').isVisible(),false);
+  assert.equal(await editor.locator('[name=organizationName]').isDisabled(),true);
+  await editor.locator('[name=affiliationType]').selectOption('school');
+  assert.equal(await editor.locator('[name=organizationName]').inputValue(),'山海实验学校','The unfinished name survives switching back');
+  assert.equal(await editor.locator('[name=password]').inputValue(),generated,'Switching affiliation preserves the password');
+  assert.equal(await editor.locator('[name=displayName]').inputValue(),'测试教师');
+  await page.locator('[data-action="language-menu"]').click();await page.locator('[data-language="en"]').click();
+  assert.equal(await editor.locator('[name=organizationName]').inputValue(),'山海实验学校');
+  assert.equal(await editor.locator('[name=affiliationType]').inputValue(),'school');
+  assert.equal(await editor.locator('[data-account-organization-label]').textContent(),'School name');
+  assert.equal(await editor.locator('[name=password]').inputValue(),generated,'Language switching preserves the password in memory');
+  assert.equal(await editor.locator('[name=confirmPassword]').inputValue(),generated);
+  assert.equal(await editor.locator('[name=displayName]').inputValue(),'测试教师');
+  await page.locator('[data-action="language-menu"]').click();await page.locator('[data-language="zh-CN"]').click();
+
   // Creating an account resets stale filters and permits a blank display name.
   const search = page.locator('[data-account-form="search-users"]');
   await search.locator('[name=query]').fill('no-matching-account');
@@ -127,6 +186,8 @@ try {
   await teacherRow.waitFor();
   assert.equal(await teacherRow.count(), 1);
   assert.equal(await teacherRow.locator('strong').textContent(), 'teacher_demo', 'Blank display names fall back to the username');
+  assert.equal(await teacherRow.locator('.account-person-affiliation').textContent(),'学校 · 山海实验学校');
+  assert.equal(await page.locator('[data-account-form="edit-user"] [name=organizationName]').inputValue(),'山海实验学校','The saved affiliation is returned by the account API');
   assert.equal(await search.locator('[name=query]').inputValue(), '', 'New accounts remain visible after creation clears the search');
   assert.equal(await page.locator('.account-editor input[name=password]').evaluateAll(fields => fields.every(field => !field.value)), true, 'Initial passwords are cleared after a successful creation');
   const createdPassword=page.locator('.account-created #account-created-password');
@@ -284,10 +345,18 @@ try {
     const reducedForm=reducedPage.locator('.stone-entrance [data-account-form="login"]');
     await reducedForm.locator('[name=username]').fill('admin');
     await reducedForm.locator('[name=password]').fill('12345678');
+    await reducedPage.bringToFront();
+    await captureEntryMotion(reducedPage);
     const start=Date.now();
     await reducedForm.locator('[type=submit]').click();
     await expectCleanEntry(reducedPage);
-    assert(Date.now()-start<3000,'Reduced-motion login completes promptly without the full carving sequence');
+    const reducedMotion=await finishEntryMotionCapture(reducedPage);
+    assert.equal(reducedMotion.reduced,true);
+    assert.deepEqual(reducedMotion.schedules.filter(item=>['carve','finish'].includes(item.callback)).map(item=>item.delay),[30,120],'Reduced motion schedules the short entry path regardless of authentication or machine latency');
+    assert.equal(reducedMotion.schedules.some(item=>item.owner==='finish'&&item.delay===700),false,'Reduced motion does not schedule animated arrival cleanup');
+    assert(reducedMotion.phases.includes('revealed')&&!reducedMotion.phases.includes('carving'),'Reduced motion skips the observable carving phase');
+    assert.equal(reducedMotion.arrival||reducedMotion.leaving,false,'Reduced motion does not add arrival or leaving animations');
+    console.log(JSON.stringify({reducedMotionLoginWallMs:Date.now()-start,entryScheduledDelaysMs:[30,120]}));
     assert.equal(await reducedPage.evaluate(()=>window.TashanAccounts.user?.username),'admin');
   } finally {await reducedCase.isolated.close();}
 
@@ -316,6 +385,6 @@ try {
   console.log('Browser checks passed: integrated stone login, waiting/error states, scene/canvas reuse, animation cleanup, guest refresh and write gates, password generation, inline account errors, visible new accounts, direct member entry, voluntary password change, separate workspaces, preview invalidation, RBAC, three-language draft retention, small/landscape English layouts, reduced motion, WebGL fallback and private file boundaries.');
 } finally {
   if(browser)await browser.close();
-  server.kill('SIGTERM');await once(server,'exit').catch(()=>{});
+  if(server.exitCode===null&&server.signalCode===null)server.kill('SIGTERM');await serverExited.catch(()=>{});
   await rm(folder,{recursive:true,force:true});
 }

@@ -10,7 +10,23 @@ const ACCESS = 'tashan_access';
 const REFRESH = 'tashan_refresh';
 const BODY_LIMIT = 16 * 1024;
 const USER_FIELDS = ['id', 'username', 'displayName', 'role', 'status', 'mustChangePassword', 'createdAt', 'updatedAt'];
-export const publicUser = user => user ? Object.fromEntries(USER_FIELDS.map(key => [key, user[key]])) : null;
+export const publicUser = user => user ? {...Object.fromEntries(USER_FIELDS.map(key => [key, user[key]])), affiliationType:user.affiliationType || 'personal', organizationName:user.affiliationType && user.affiliationType !== 'personal' ? user.organizationName || '' : ''} : null;
+// Partial patches are validated here, then merged with the locked database row
+// by each provider. Omitting these fields must never reset an existing profile.
+export function validateAffiliation(input, {partial = false} = {}) {
+  const hasType = Object.hasOwn(input, 'affiliationType'), hasName = Object.hasOwn(input, 'organizationName');
+  if (partial && !hasType && !hasName) return {};
+  const type = hasType ? input.affiliationType : partial ? undefined : 'personal';
+  if (type !== undefined && !['personal','school','organization'].includes(type)) fail(400, 'INVALID_AFFILIATION_TYPE', '请选择个人、学校或机构。');
+  if (type === 'personal') return {affiliationType:type, organizationName:''};
+  const result = type === undefined ? {} : {affiliationType:type};
+  if (hasName || !partial) {
+    const name = input.organizationName;
+    if (typeof name !== 'string' || /\p{Cc}/u.test(name) || !name.trim() || Array.from(name.trim()).length > 100) fail(400, 'INVALID_ORGANIZATION_NAME', '学校或机构名称需为 1–100 个字符，不能包含控制字符。');
+    result.organizationName = name.trim();
+  }
+  return result;
+}
 export function validateUsername(value) {
   if (typeof value !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{2,31}$/.test(value.trim())) fail(400, 'INVALID_USERNAME', '用户名需为 3–32 位英文字母、数字、下划线或连字符。');
   return value.trim().toLowerCase();
@@ -185,8 +201,8 @@ export async function handleApi(request, provider, context = {}) {
     }
     if (path === PREFIX + '/admin/users' && method === 'POST') {
       const input = await body(request);
-      exactFields(input, ['username', 'displayName', 'password', 'role']);
-      const created = await provider.createUser(user, { username: validateUsername(input.username), displayName: validateDisplayName(input.displayName), password: validatePassword(input.password), role: role(input.role || 'member') });
+      exactFields(input, ['username', 'displayName', 'password', 'role', 'affiliationType', 'organizationName']);
+      const created = await provider.createUser(user, { username: validateUsername(input.username), displayName: validateDisplayName(input.displayName), password: validatePassword(input.password), role: role(input.role || 'member'), ...validateAffiliation(input) });
       return respond({ user: publicUser(created) }, 201);
     }
     if (path === PREFIX + '/admin/audit' && method === 'GET') {
@@ -202,9 +218,9 @@ export async function handleApi(request, provider, context = {}) {
         if (id === user.id) fail(409, 'SELF_RESET_FORBIDDEN', '请在账号设置中修改自己的密码。');
         return respond({ user: publicUser(await provider.resetPassword(user, id, validatePassword(input.newPassword))) });
       }
-      exactFields(input, ['displayName', 'role', 'status']);
+      exactFields(input, ['displayName', 'role', 'status', 'affiliationType', 'organizationName']);
       if (!Object.keys(input).length) fail(400, 'EMPTY_UPDATE', '请至少修改一项账号信息。');
-      const changes = {};
+      const changes = validateAffiliation(input, {partial:true});
       if ('displayName' in input) changes.displayName = validateDisplayName(input.displayName);
       if ('role' in input) changes.role = role(input.role);
       if ('status' in input) { if (!['active', 'disabled'].includes(input.status)) fail(400, 'INVALID_STATUS', '账号状态无效。'); changes.status = input.status; }

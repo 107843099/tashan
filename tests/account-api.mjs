@@ -121,7 +121,7 @@ test('Supabase provider and CLI bootstrap accept eight digits; invalid new passw
     const path=new URL(url).pathname,body=options.body?JSON.parse(options.body):null; calls.push({path,method:options.method,body});
     if(path==='/rest/v1/rpc/tashan_require_admin')return Response.json(null);
     if(path==='/auth/v1/admin/users'&&options.method==='POST'){currentPassword=body.password;return Response.json({id});}
-    if(path==='/rest/v1/rpc/tashan_register_account'){Object.assign(row,{username:body.p_username,display_name:body.p_display_name,role:body.p_role});return Response.json(row);}
+    if(path==='/rest/v1/rpc/tashan_register_account_profile'){Object.assign(row,{username:body.p_username,display_name:body.p_display_name,role:body.p_role,affiliation_type:body.p_affiliation_type,organization_name:body.p_organization_name});return Response.json(row);}
     if(path==='/auth/v1/token'){
       if(body.password!==currentPassword)return Response.json({error_code:'invalid_credentials'},{status:400});
       const sessionId='40000000-0000-4000-8000-'+String(++sequence).padStart(12,'0');
@@ -365,7 +365,7 @@ test('SQLite onboarding upgrade is atomic, evidence-based and never clears a lat
     const protectedKinds = ['disabled','reset','changed','unknown','duplicate','password-pending','future-credential','wrong-creation','unknown-update','malformed-update','missing-actor','self-created'];
     for (const kind of ['initial', ...protectedKinds]) {
       const id = 'legacy-' + kind;
-      provider.db.prepare('INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?,?)').run(id, id, id, template.password_hash, 'member', kind === 'disabled' ? 'disabled' : 'active', 1, stamp, stamp);
+      provider.db.prepare('INSERT INTO accounts (id,username,display_name,password_hash,role,status,must_change_password,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)').run(id, id, id, template.password_hash, 'member', kind === 'disabled' ? 'disabled' : 'active', 1, stamp, stamp);
       if (kind !== 'unknown') provider.record(kind === 'self-created' ? {id} : admin, 'account.created', id, {username:id,role:'member'});
       if (kind === 'duplicate') provider.record(admin, 'account.created', id, {username:id,role:'member'});
       if (kind === 'reset') provider.record(admin, 'account.password_reset', id);

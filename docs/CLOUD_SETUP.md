@@ -11,6 +11,7 @@ v3.4 使用 Supabase Auth 与 Postgres 保存账号、项目版本、权限和�
 3. `supabase/migrations/202609100003_attachment_limit.sql`：把新附件上限降为 10 MiB；仅替换对应函数体并保留服务端授权，封面 5 MiB、账号 200 MiB 和已有项目资料保持原状。已有环境只执行尚未登记的增量迁移。
 4. `supabase/migrations/202609100004_account_onboarding.sql`：新账号默认直接登录；只解除有明确创建审计、未改密且没有凭据锁的启用账号的初始改密标记。管理员重置、来源不明或存在中断凭据操作的账号保留原状态。
 5. `supabase/migrations/202609110005_stream_uploads.sql`：增加版本存储后端和经过服务端校验的文件回执；R2 文件全部核对成功后才完成版本。旧版本保留 Supabase 后端，001–004 不改写。
+6. `supabase/migrations/202609110006_account_affiliation.sql`：增加个人／学校／机构归属及名称，旧账号默认个人；保留旧版创建账号 RPC，新增完整资料创建 RPC，并扩展编辑资料校验。先安装此迁移并通过 `cloud:check`，再发布使用新字段的 Worker。不会修改已有密码、角色、项目或时间戳。
 
 将本轮待安装的 SQL 放在同一事务中执行，任意语句失败就回滚，避免表或函数已创建但权限尚未收紧的中间状态。迁移仅授权各自声明的精确函数签名，不修改同名前缀的其他函数或重载；审计序列也显式撤销 `PUBLIC`、`anon`、`authenticated` 的默认权限。已有 CLI 迁移流程时，先查看 `supabase migration list` 和 `supabase db push --dry-run`，不要混用未登记的手动迁移。参见 [迁移与历史同步](https://supabase.com/docs/guides/deployment/database-migrations)。
 
@@ -103,7 +104,7 @@ npm run dev:cloud
 npm run accounts:migrate -- --dry-run
 ```
 
-默认不带参数也只生成计划。工具仅从本项目 `.local/accounts.sqlite` 读取 ID、用户名、显示名、角色、状态和更新时间，不读取密码哈希或会话，不修改 SQLite。计划保存为 `.local/account-migration-<id>.json`，权限为 `0600`；没有云配置也能形成离线清单，但该清单不能执行 apply，配置完成后需重新生成。
+默认不带参数也只生成计划。工具仅从本项目 `.local/accounts.sqlite` 读取 ID、用户名、显示名、角色、状态、归属资料和更新时间，不读取密码哈希或会话，不修改 SQLite。没有归属字段的旧数据库兼容为个人；学校或机构的名称会一起迁移并核对保存结果。旧版计划需重新生成。计划保存为 `.local/account-migration-<id>.json`，权限为 `0600`；没有云配置也能形成离线清单，但该清单不能执行 apply，配置完成后需重新生成。
 
 计划中 `create` 表示新账号，`conflict` 表示云端已有同名账号，`skip` 表示跳过的停用账号。请先核对：保留所有已有云账号，对不迁移的条目只把 `action` 改为 `skip`。不要修改用户名、角色或 ID；需要调整时先在本机管理界面修改，再重新生成计划。冲突不会自动合并，也不会停用或覆盖现有管理员。
 

@@ -11,14 +11,16 @@ const folder=await mkdtemp(join(tmpdir(),'tashan-account-layout-'));
 const screenshots=join(tmpdir(),'tashan-account-polish');await mkdir(screenshots,{recursive:true});
 const provider=new LocalProvider(join(folder,'accounts.sqlite'));
 const admin=await provider.bootstrap({username:'admin',password:'12345678',displayName:'他山管理员'});
-const member=await provider.createUser(admin,{username:'classroom_teacher',password:'87654321',displayName:'陈老师 · 跨学科教学与课堂可视化实践',role:'member'});
-const disabled=await provider.createUser(admin,{username:'disabled_teacher',password:'23456789',displayName:'已停用的测试教师',role:'member'});
+const organizationName='山海学校 · 跨学科教育与课堂研究中心 · School of Interdisciplinary Teaching';
+const member=await provider.createUser(admin,{username:'classroom_teacher',password:'87654321',displayName:'陈老师 · 跨学科教学与课堂可视化实践',role:'member',affiliationType:'school',organizationName});
+const disabled=await provider.createUser(admin,{username:'disabled_teacher',password:'23456789',displayName:'已停用的测试教师',role:'member',affiliationType:'organization',organizationName:'教师发展机构'});
 await provider.updateUser(admin,disabled.id,{status:'disabled'});provider.close();
 const origin='http://127.0.0.1:4183';
 const server=spawn(process.execPath,['scripts/dev-server.mjs'],{env:{...process.env,PORT:'4183',TASHAN_ACCOUNT_PROVIDER:'local',TASHAN_LOCAL_DB:join(folder,'accounts.sqlite'),TASHAN_LOCAL_FILES:join(folder,'files')},stdio:['ignore','pipe','pipe']});
+const serverExited=once(server,'exit');
 let browser,activePage;let layouts=0;const errors=[],network=[];
 try{
- await Promise.race([once(server.stdout,'data'),once(server,'exit').then(()=>{throw new Error('Local layout server did not start');})]);
+ await Promise.race([once(server.stdout,'data'),serverExited.then(()=>{throw new Error('Local layout server did not start');})]);
  browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
  for(const view of ['admin','account']){
   const context=await browser.newContext({reducedMotion:'reduce'}),page=await context.newPage();activePage=page;page.setDefaultTimeout(30000);page.on('pageerror',error=>errors.push(error.message));page.on('response',response=>{if(response.url().includes('/api/v1/'))network.push({path:new URL(response.url()).pathname,status:response.status()});});
@@ -31,6 +33,8 @@ try{
    if(view==='admin'){
     await page.locator('[data-account-action="edit-user"][data-user-id="'+member.id+'"]').click();
     await page.locator('[data-account-form="edit-user"]').waitFor();
+    assert.equal(await page.locator('[name=affiliationType]').inputValue(),'school');
+    assert.equal(await page.locator('[name=organizationName]').inputValue(),organizationName);
    }
    const label=[view,width,locale,theme].join('-');
    await page.locator('#main').focus();
@@ -41,6 +45,8 @@ try{
    const unnamed=await page.locator('.account-surface button').evaluateAll(buttons=>buttons.filter(button=>!button.hidden&&getComputedStyle(button).display!=='none'&&!((button.getAttribute('aria-label')||button.textContent||'').trim())).length);
    assert.equal(unnamed,0,label+' buttons have accessible names');
    if(view==='account'){
+    assert.ok((await page.locator('.account-facts').textContent()).includes(organizationName),label+' displays the affiliation name');
+    assert.equal(await page.locator('[name=affiliationType]').count(),0,label+' member affiliation is read-only');
     assert.equal(await page.locator('a[href="#admin"]').count(),0,label+' member has no admin link');
     assert.equal(await page.locator('[data-account-action="logout"]').count(),1,label+' has one sign-out action');
     assert.equal(await page.locator('[name=newPassword]').getAttribute('minlength'),'8',label+' new password uses eight-character minimum');
@@ -70,4 +76,4 @@ try{
   console.error(JSON.stringify({layouts,url:activePage.url(),network:network.slice(-16),ui:await activePage.evaluate(()=>({ready:window.TashanAccounts?.initialized,user:window.TashanAccounts?.user?.role,overlays:document.querySelectorAll('.stone-entrance').length,header:getComputedStyle(document.querySelector('.site-header')).visibility})).catch(()=>null)}));
  }
  throw error;
-}finally{await browser?.close();server.kill('SIGTERM');await once(server,'exit').catch(()=>{});await rm(folder,{recursive:true,force:true});}
+}finally{await browser?.close();if(server.exitCode===null&&server.signalCode===null)server.kill('SIGTERM');await serverExited.catch(()=>{});await rm(folder,{recursive:true,force:true});}

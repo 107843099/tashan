@@ -4,6 +4,7 @@ import { randomBytes, randomUUID, scrypt, timingSafeEqual, createHash } from 'no
 import { promisify } from 'node:util';
 import { mkdirSync, chmodSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { validateAffiliation } from './api.mjs';
 
 const derive = promisify(scrypt);
 const now = () => new Date().toISOString();
@@ -36,7 +37,8 @@ async function passwordMatches(password, hash) {
 function publicUser(row) {
   if (!row) return null;
   return { id: row.id, username: row.username, displayName: row.display_name, role: row.role, status: row.status,
-    mustChangePassword: Boolean(row.must_change_password), createdAt: row.created_at, updatedAt: row.updated_at };
+    mustChangePassword: Boolean(row.must_change_password), createdAt: row.created_at, updatedAt: row.updated_at,
+    affiliationType:row.affiliation_type || 'personal', organizationName:row.organization_name || '' };
 }
 function hasOnlyInitialPasswordRequirement(account, history) {
   const creation = history.filter(event => event.action === 'account.created');
@@ -83,7 +85,15 @@ export class LocalProvider {
       );
       CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, until INTEGER NOT NULL);
     `);
+    this.upgradeAffiliation();
     this.upgradeInitialPasswordPolicy();
+  }
+  upgradeAffiliation() {
+    this.transaction(() => {
+      const columns = new Set(this.db.prepare('PRAGMA table_info(accounts)').all().map(column => column.name));
+      if (!columns.has('affiliation_type')) this.db.exec("ALTER TABLE accounts ADD COLUMN affiliation_type TEXT NOT NULL DEFAULT 'personal' CHECK(affiliation_type IN ('personal','school','organization'))");
+      if (!columns.has('organization_name')) this.db.exec("ALTER TABLE accounts ADD COLUMN organization_name TEXT NOT NULL DEFAULT ''");
+    });
   }
   upgradeInitialPasswordPolicy() {
     // One atomic upgrade: clear only a proven initial-assignment requirement.
@@ -215,7 +225,7 @@ export class LocalProvider {
   }
   async createUser(actor, input) {
     this.requireAdmin(actor);
-    const username = validateUsername(input.username), name = displayName(input.displayName);
+    const username = validateUsername(input.username), name = displayName(input.displayName), affiliation = validateAffiliation(input);
     validatePassword(input.password);
     if (!['admin', 'member'].includes(input.role)) throw failure(400, 'INVALID_ROLE', '账号角色无效。');
     const hash = await passwordHash(input.password);
@@ -223,8 +233,8 @@ export class LocalProvider {
       this.requireAdmin(actor);
       if (this.db.prepare('SELECT id FROM accounts WHERE username=?').get(username)) throw failure(409, 'USERNAME_EXISTS', '这个账号名已存在。');
       const id = randomUUID(), timestamp = now();
-      this.db.prepare('INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?,?)').run(id, username, name, hash, input.role, 'active', 0, timestamp, timestamp);
-      this.record(actor, 'account.created', id, { username, role: input.role });
+      this.db.prepare('INSERT INTO accounts (id,username,display_name,password_hash,role,status,must_change_password,created_at,updated_at,affiliation_type,organization_name) VALUES (?,?,?,?,?,?,?,?,?,?,?)').run(id, username, name, hash, input.role, 'active', 0, timestamp, timestamp, affiliation.affiliationType, affiliation.organizationName);
+      this.record(actor, 'account.created', id, { username, role: input.role, ...affiliation });
       return publicUser(this.account(id));
     });
   }
@@ -234,6 +244,7 @@ export class LocalProvider {
       const row = this.account(id);
       if (!row) throw failure(404, 'USER_NOT_FOUND', '未找到账号。');
       const name = patch.displayName === undefined ? row.display_name : displayName(patch.displayName);
+      const affiliation = validateAffiliation({affiliationType:row.affiliation_type, organizationName:row.organization_name, ...validateAffiliation(patch,{partial:true})});
       const role = patch.role ?? row.role, status = patch.status ?? row.status;
       if (!['admin', 'member'].includes(role) || !['active', 'disabled'].includes(status)) throw failure(400, 'INVALID_ACCOUNT', '账号状态或角色无效。');
       if (id === actor.id && (role !== row.role || status !== 'active')) throw failure(400, 'SELF_PROTECTION', '不能停用自己或移除自己的管理员权限。');
@@ -241,9 +252,9 @@ export class LocalProvider {
         const count = this.db.prepare("SELECT count(*) AS count FROM accounts WHERE role='admin' AND status='active'").get().count;
         if (count <= 1) throw failure(409, 'LAST_ADMIN', '至少需要保留一个启用的管理员。');
       }
-      this.db.prepare('UPDATE accounts SET display_name=?, role=?, status=?, updated_at=? WHERE id=?').run(name, role, status, now(), id);
+      this.db.prepare('UPDATE accounts SET display_name=?, role=?, status=?, updated_at=?, affiliation_type=?, organization_name=? WHERE id=?').run(name, role, status, now(), affiliation.affiliationType, affiliation.organizationName, id);
       if (role !== row.role || status !== row.status) this.db.prepare('DELETE FROM sessions WHERE user_id=?').run(id);
-      this.record(actor, 'account.updated', id, { displayName: name, role, status });
+      this.record(actor, 'account.updated', id, { displayName: name, role, status, ...affiliation });
       return publicUser(this.account(id));
     });
   }
@@ -274,7 +285,7 @@ export class LocalProvider {
     return this.transaction(() => {
       if (this.db.prepare('SELECT count(*) AS count FROM accounts').get().count) throw failure(409, 'ALREADY_INITIALIZED', '本地账号库已初始化，不能覆盖已有账号。');
       const id = randomUUID(), timestamp = now();
-      this.db.prepare('INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?,?)').run(id, login, label, hash, 'admin', 'active', 0, timestamp, timestamp);
+      this.db.prepare('INSERT INTO accounts (id,username,display_name,password_hash,role,status,must_change_password,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)').run(id, login, label, hash, 'admin', 'active', 0, timestamp, timestamp);
       this.record({ id }, 'account.bootstrap', id, { localDevelopment: true });
       return publicUser(this.account(id));
     });

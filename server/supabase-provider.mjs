@@ -1,6 +1,6 @@
-import { ApiError, validateUsername, validatePassword, validateDisplayName } from './api.mjs';
+import { ApiError, validateUsername, validatePassword, validateDisplayName, validateAffiliation } from './api.mjs';
 
-const account = row => row ? ({ id: row.id, username: row.username, displayName: row.display_name, role: row.role, status: row.status, mustChangePassword: row.must_change_password, createdAt: row.created_at, updatedAt: row.updated_at }) : null;
+const account = row => row ? ({ id: row.id, username: row.username, displayName: row.display_name, role: row.role, status: row.status, mustChangePassword: row.must_change_password, createdAt: row.created_at, updatedAt: row.updated_at, affiliationType:row.affiliation_type || 'personal', organizationName:row.organization_name || '' }) : null;
 const session = data => ({ accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in });
 const unavailable = () => new ApiError(503, 'ACCOUNT_SERVICE_UNAVAILABLE', '账号服务暂时不可用，请稍后重试。');
 const invalidCredentials = () => new ApiError(401, 'INVALID_CREDENTIALS', '用户名或密码不正确。');
@@ -13,7 +13,9 @@ const SQL_ERRORS = {
   E_LAST_ADMIN: [409, 'LAST_ADMIN', '至少需要保留一个可用的管理员账号。'],
   E_ACCOUNT_BUSY: [409, 'ACCOUNT_BUSY', '这个账号正在修改密码，请稍后重试。'],
   E_BOOTSTRAP_CLOSED: [409, 'BOOTSTRAP_CLOSED', '初始管理员已创建，请通过管理员工作台管理账号。'],
-  E_INVALID_INPUT: [400, 'INVALID_INPUT', '账号信息格式无效。']
+  E_INVALID_INPUT: [400, 'INVALID_INPUT', '账号信息格式无效。'],
+  E_INVALID_AFFILIATION: [400, 'INVALID_AFFILIATION_TYPE', '请选择个人、学校或机构。'],
+  E_INVALID_ORGANIZATION: [400, 'INVALID_ORGANIZATION_NAME', '学校或机构名称需为 1–100 个字符，不能包含控制字符。']
 };
 function trustedClaims(token) {
   // Only inspect a token AFTER Auth has validated it with GET /user.
@@ -74,7 +76,7 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
     if (accessToken) await request('/auth/v1/logout?scope=local', { method: 'POST', bearer: accessToken, allowInvalidAuth: true });
   }
   async function makeAccount(actor, input, bootstrap = false) {
-    const username = validateUsername(input.username), displayName = validateDisplayName(input.displayName);
+    const username = validateUsername(input.username), displayName = validateDisplayName(input.displayName), affiliation = validateAffiliation(input);
     validatePassword(input.password);
     if (!['member', 'admin'].includes(input.role)) throw new ApiError(400, 'INVALID_ROLE', '请选择有效的角色。');
     // Database authorization runs both before creating an Auth identity and at registration.
@@ -83,7 +85,7 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
     const id = data?.id || data?.user?.id;
     if (!UUID.test(id || '')) throw unavailable();
     try {
-      return account(await rpc('tashan_register_account', { p_actor: actor?.id || null, p_id: id, p_username: username, p_display_name: displayName, p_role: input.role, p_bootstrap: bootstrap }));
+      return account(await rpc('tashan_register_account_profile', { p_actor: actor?.id || null, p_id: id, p_username: username, p_display_name: displayName, p_role: input.role, p_bootstrap: bootstrap, p_affiliation_type:affiliation.affiliationType, p_organization_name:affiliation.organizationName }));
     } catch (error) {
       // Only this operation's newly-created, unregistered identity is removed.
       // If registration response was lost, first check ownership to avoid deleting a live account.
@@ -162,7 +164,7 @@ export function createSupabaseProvider(env, { fetch: fetchImpl = globalThis.fetc
     createUser: (actor, input) => makeAccount(actor, input),
     updateUser: async (actor, id, changes) => {
       if (!UUID.test(id || '')) throw new ApiError(404, 'ACCOUNT_NOT_FOUND', '账号不存在。');
-      return account(await rpc('tashan_update_account', { p_actor: actor.id, p_id: id, p_changes: changes }));
+      return account(await rpc('tashan_update_account', { p_actor: actor.id, p_id: id, p_changes: {...changes,...validateAffiliation(changes,{partial:true})} }));
     },
     resetPassword: (actor, id, password) => replacePassword(actor, id, password, true),
     listAudit: async actor => {

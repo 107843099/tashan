@@ -4,6 +4,13 @@
   // Session identity comes from the server. Credentials and tokens never enter web storage.
   const translations = {
     '身份与登录，清楚地安排在这里。':['身分與登入，清楚地安排在這裡。','Your identity and sign-in settings, in one place.'],
+    '所属类型':['所屬類型','Affiliation'],'个人':['個人','Personal'],'学校':['學校','School'],'机构':['機構','Organization'],
+    '学校名称':['學校名稱','School name'],'机构名称':['機構名稱','Organization name'],
+    '个人无需填写学校或机构名称。':['個人無需填寫學校或機構名稱。','Personal accounts do not need a school or organization name.'],
+    '名称最多 100 个字符。':['名稱最多 100 個字元。','Use up to 100 characters.'],
+    '请选择个人、学校或机构。':['請選擇個人、學校或機構。','Choose Personal, School or Organization.'],
+    '请填写学校名称。':['請填寫學校名稱。','Enter the school name.'],'请填写机构名称。':['請填寫機構名稱。','Enter the organization name.'],
+    '学校或机构名称需为 1–100 个字符。':['學校或機構名稱需為 1–100 個字元。','Use 1–100 characters for the school or organization name.'],
     '个人资料':['個人資料','Profile'],'账户安全':['帳戶安全','Account security'],'登录会话':['登入工作階段','Signed-in session'],
     '基本资料':['基本資料','Basic details'],'账户权限':['帳戶權限','Account permissions'],'账户访问':['帳戶存取','Account access'],
     '创建时间':['建立時間','Created'],'你':['你','You'],'当前登录':['目前登入','Signed in'],
@@ -94,22 +101,30 @@
   const text = key => escape(t(key));
   const symbol = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${({user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/>',arrow:'<path d="M19 12H5m6-6-6 6 6 6"/>'})[name]}</svg>`;
   let pendingEntry=false;
-  let createdCredentials=null;
+  let createdCredentials=null, lastAppearance=null, appearanceForms=null;
   const state = {user:null,configured:false,mode:'unavailable',initialized:false,busy:false,checking:false,error:'',notice:'',username:'',adminTab:'users',users:[],total:0,page:1,pageSize:20,q:'',roleFilter:'',statusFilter:'',editorMode:'empty',errorForm:'',loaded:false,loading:false,adminError:'',selected:null,createDraft:{},events:[],auditLoaded:false,auditLoading:false};
   let hooks = {}, started = false, sessionVersion = 0, identityEpoch = 0, channel, lastCheck = 0;
   let resolveReady;
   const ready = new Promise(resolve => { resolveReady = resolve; });
 
   function errorMessage(error) {
-    const byCode = {UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',WEAK_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
+    const byCode = {INVALID_AFFILIATION_TYPE:'请选择个人、学校或机构。',INVALID_ORGANIZATION_NAME:'学校或机构名称需为 1–100 个字符。',UNAUTHENTICATED:'登录已过期，请重新登录。',INVALID_USERNAME:'用户名需为 3–32 位英文字母、数字、下划线或连字符。',INVALID_DISPLAY_NAME:'显示名称需为 1–60 个字符。',PASSWORD_UNCHANGED:'新密码不能与当前密码相同。',CURRENT_PASSWORD_REQUIRED:'请填写当前密码。',ACCOUNT_SERVICE_UNAVAILABLE:'账户服务暂不可用',INVALID_CURRENT_PASSWORD:'当前密码不正确。',LAST_ACTIVE_ADMIN:'不能停用或降级最后一位管理员。',INVALID_CREDENTIALS:'请检查用户名和密码。',AUTH_REQUIRED:'登录已过期，请重新登录。',UNAUTHORIZED:'登录已过期，请重新登录。',SESSION_EXPIRED:'登录已过期，请重新登录。',PASSWORD_CHANGE_REQUIRED:'请先修改密码。',ACCOUNT_DISABLED:'账户已停用，请联系管理员。',USER_DISABLED:'账户已停用，请联系管理员。',FORBIDDEN:'你没有执行此操作的权限。',USERNAME_EXISTS:'该用户名已被使用。',USERNAME_TAKEN:'该用户名已被使用。',RATE_LIMITED:'尝试次数过多，请稍后再试。',LAST_ADMIN:'不能停用或降级最后一位管理员。',INVALID_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',WEAK_PASSWORD:'密码需为 8–72 个字符，可使用纯数字。',CURRENT_PASSWORD_INVALID:'当前密码不正确。',INCORRECT_PASSWORD:'当前密码不正确。'};
     return t(byCode[error?.code] || error?.message || '操作未完成，请稍后重试。');
   }
+  function snapshotForms() {
+    return [...document.querySelectorAll('[data-account-form]')].map(form=>({kind:form.dataset.accountForm,id:form.dataset.userId||'',fields:[...form.elements].filter(field=>field.name&&field.type!=='submit').map(field=>({name:field.name,value:field.value,focused:field===document.activeElement,start:field.selectionStart,end:field.selectionEnd}))}));
+  }
+  function restoreForms(snapshots) {
+    for(const snapshot of snapshots){
+      const form=[...document.querySelectorAll('[data-account-form]')].find(node=>node.dataset.accountForm===snapshot.kind&&(node.dataset.userId||'')===snapshot.id);if(!form)continue;
+      for(const saved of snapshot.fields){const field=form.elements[saved.name];if(!field)continue;field.value=saved.value;if(saved.focused){field.focus({preventScroll:true});if(typeof saved.start==='number'&&typeof field.setSelectionRange==='function')try{field.setSelectionRange(saved.start,saved.end);}catch{}}}
+      syncAffiliation(form);
+    }
+  }
   function redraw(focusError = false, preserveForms = false) {
-    // A background list refresh must not erase text while an administrator types.
-    // This short-lived snapshot stays in memory and is never persisted.
-    const snapshots=preserveForms&&!state.busy?[...document.querySelectorAll('[data-account-form]')].map(form=>({kind:form.dataset.accountForm,id:form.dataset.userId||'',fields:[...form.elements].filter(field=>field.name&&field.type!=='submit').map(field=>({name:field.name,value:field.value,focused:field===document.activeElement,start:field.selectionStart,end:field.selectionEnd}))})):[];
-    hooks.onRender?.();
-    for(const snapshot of snapshots){const form=[...document.querySelectorAll('[data-account-form]')].find(node=>node.dataset.accountForm===snapshot.kind&&(node.dataset.userId||'')===snapshot.id);if(!form)continue;for(const saved of snapshot.fields){const field=form.elements[saved.name];if(!field)continue;field.value=saved.value;if(saved.focused){field.focus({preventScroll:true});if(typeof saved.start==='number'&&typeof field.setSelectionRange==='function')try{field.setSelectionRange(saved.start,saved.end);}catch{}}}}
+    // Short-lived form snapshots stay in memory only and are scoped to this render.
+    const snapshots=preserveForms&&!state.busy?snapshotForms():[];
+    hooks.onRender?.();restoreForms(snapshots);
     if (focusError) document.querySelector('.account-message[role="alert"]')?.focus({preventScroll:true});
   }
   async function rawRequest(path, {method='GET',body} = {}) {
@@ -143,7 +158,7 @@
     }
   }
   async function changeIdentity(user, context) {
-    identityEpoch+=1;createdCredentials=null;
+    identityEpoch+=1;createdCredentials=null;appearanceForms=null;lastAppearance=null;
     const confirmation=document.querySelector('.account-confirm');confirmation?.close('cancel');confirmation?.remove();
     const oldId=state.user?.id || null, nextId=user?.id || null;
     // Clear administrative records before publishing any new identity.
@@ -216,12 +231,24 @@
     const user=state.user,forced=user.mustChangePassword;
     if(forced)return `<section class="entry-account" data-entry-account><h2>${text('请先设置你的新密码')}</h2><p class="entry-account-lead">${text('管理员重置密码后，需要设置新密码才能继续。')}</p>${passwordForm()}<button class="entry-guest" type="button" data-account-action="logout">${text('退出登录')}</button></section>`;
     return `<section class="account-surface account-page">${back()}<div class="account-page-heading"><div><span class="account-eyebrow">TASHAN / ACCOUNT</span><h1>${text('我的账户')}</h1><p class="account-lead">${text('身份与登录，清楚地安排在这里。')}</p></div><a class="btn account-workspace-link" href="#desk">${text('打开工作台')} <span aria-hidden="true">↗</span></a></div>
-      <div class="account-profile-grid"><div class="account-profile-column"><aside class="account-card account-profile"><div class="account-profile-identity"><span class="account-avatar account-avatar--large" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><span class="account-pill">${text(user.role==='admin'?'管理员':'成员')}</span><h2>${escape(user.displayName||user.username)}</h2><p class="account-username">@${escape(user.username)}</p></div></div><div class="account-section-heading"><h3>${text('个人资料')}</h3><span class="account-live-status">${text('当前登录')}</span></div><dl class="account-facts"><div><dt>${text('用户名')}</dt><dd>@${escape(user.username)}</dd></div><div><dt>${text('显示名称')}</dt><dd>${escape(user.displayName||user.username)}</dd></div>${user.createdAt?`<div><dt>${text('创建时间')}</dt><dd>${escape(formatDate(user.createdAt))}</dd></div>`:''}<div><dt>${text('账户')}</dt><dd>${text(state.mode==='local'?'本机账户服务':'在线账户服务')}</dd></div></dl><p class="account-help">${text('需要修改名称？请联系管理员。')}</p>${user.role==='admin'?`<div class="account-profile-links"><a href="#admin">${symbol('shield')}${text('账户管理')} <span aria-hidden="true">↗</span></a></div>`:''}</aside><section class="account-card account-session"><div><h2>${text('登录会话')}</h2><p>${text('退出不会删除已保存的项目与草稿。')}</p></div><button class="subtle" data-account-action="logout" ${state.busy?'disabled':''}>${text('退出登录')}</button></section></div>
+      <div class="account-profile-grid"><div class="account-profile-column"><aside class="account-card account-profile"><div class="account-profile-identity"><span class="account-avatar account-avatar--large" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><span class="account-pill">${text(user.role==='admin'?'管理员':'成员')}</span><h2>${escape(user.displayName||user.username)}</h2><p class="account-username">@${escape(user.username)}</p></div></div><div class="account-section-heading"><h3>${text('个人资料')}</h3><span class="account-live-status">${text('当前登录')}</span></div><dl class="account-facts"><div><dt>${text('用户名')}</dt><dd>@${escape(user.username)}</dd></div><div><dt>${text('显示名称')}</dt><dd>${escape(user.displayName||user.username)}</dd></div><div><dt>${text('所属类型')}</dt><dd>${affiliationMarkup(user)}</dd></div>${user.createdAt?`<div><dt>${text('创建时间')}</dt><dd>${escape(formatDate(user.createdAt))}</dd></div>`:''}<div><dt>${text('账户')}</dt><dd>${text(state.mode==='local'?'本机账户服务':'在线账户服务')}</dd></div></dl><p class="account-help">${text('需要修改名称？请联系管理员。')}</p>${user.role==='admin'?`<div class="account-profile-links"><a href="#admin">${symbol('shield')}${text('账户管理')} <span aria-hidden="true">↗</span></a></div>`:''}</aside><section class="account-card account-session"><div><h2>${text('登录会话')}</h2><p>${text('退出不会删除已保存的项目与草稿。')}</p></div><button class="subtle" data-account-action="logout" ${state.busy?'disabled':''}>${text('退出登录')}</button></section></div>
       <section class="account-card account-security"><div class="account-security-heading"><span class="account-emblem">${symbol('shield')}</span><div><p class="account-eyebrow">${text('账户安全')}</p><h2>${text('修改密码')}</h2></div></div><p class="account-lead">${text('按需修改，下次登录使用新密码。')}</p>${passwordForm()}<p class="account-footnote">${text('草稿、收藏和任务按账户保存在此浏览器；项目版本可另行上传与发布。')}</p></section></div></section>`;
   }
   function workspaceNotice() {return `<div class="account-workspace-note"><span>${symbol('user')}</span><div><strong>${text(state.user?'账户工作台':'访客本地工作台')}${state.user?' · '+escape(state.user.displayName||state.user.username):''}</strong><p>${text(state.user?'草稿、收藏和任务按账户保存在此浏览器；项目版本可另行上传与发布。':'访客资料单独保存在此浏览器，不会自动转入登录账户。')}</p></div><a href="#${state.user?'account':'login'}">${text(state.user?'账户':'登录')} <span aria-hidden="true">↗</span></a></div>`;}
   function guestExportMarkup() {return state.user?`<button class="subtle" data-action="export-guest-backup">${text('导出旧版浏览器资料')}</button><small>${text('导出登录功能上线前的访客项目、草稿、收藏、任务与版本记录。')}</small>`:'';}
-  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" aria-describedby="account-display-help" value="${escape(user?.displayName||'')}"></label><p class="account-help" id="account-display-help">${text('显示名称可用中文；留空时使用用户名。')}</p><fieldset class="account-permissions"><legend>${text('账户权限')}</legend><label class="account-field"><span>${text('角色')}</span><select name="role" aria-describedby="account-role-help" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label><p class="account-help" id="account-role-help">${text('成员可使用自己的工作台；管理员还可管理账户。')}</p></fieldset>`;}
+  const affiliationType=user=>['school','organization'].includes(user?.affiliationType)?user.affiliationType:'personal';
+  const affiliationLabel=type=>({school:'学校',organization:'机构',personal:'个人'})[type];
+  function affiliationMarkup(user) {const type=affiliationType(user);return `${text(affiliationLabel(type))}${type!=='personal'&&user.organizationName?' · '+escape(user.organizationName):''}`;}
+  function affiliationFields(user) {
+    const type=affiliationType(user),personal=type==='personal';
+    return `<fieldset class="account-affiliation"><legend>${text('所属类型')}</legend><label class="account-field"><span class="sr-only">${text('所属类型')}</span><select name="affiliationType" data-account-affiliation aria-describedby="account-affiliation-help">${['personal','school','organization'].map(value=>`<option value="${value}" ${type===value?'selected':''}>${text(affiliationLabel(value))}</option>`).join('')}</select></label><p class="account-help" id="account-affiliation-help">${text('个人无需填写学校或机构名称。')}</p><label class="account-field account-organization-field" data-account-organization ${personal?'hidden':''}><span data-account-organization-label>${text(type==='school'?'学校名称':'机构名称')}</span><input name="organizationName" maxlength="200" autocomplete="organization" aria-describedby="account-organization-help" value="${escape(personal?'':user?.organizationName||'')}" ${personal?'disabled':'required'}><small class="account-help" id="account-organization-help">${text('名称最多 100 个字符。')}</small></label></fieldset>`;
+  }
+  function syncAffiliation(form) {
+    const control=form.elements?.affiliationType,input=form.elements?.organizationName,field=form.querySelector('[data-account-organization]');if(!control||!input||!field)return;
+    const personal=control.value==='personal';field.hidden=personal;input.disabled=personal;input.required=!personal;
+    field.querySelector('[data-account-organization-label]').textContent=t(control.value==='school'?'学校名称':'机构名称');
+  }
+  function userFields(user) {return `<label class="account-field"><span>${text('显示名称')}</span><input name="displayName" maxlength="60" autocomplete="off" aria-describedby="account-display-help" value="${escape(user?.displayName||'')}"></label><p class="account-help" id="account-display-help">${text('显示名称可用中文；留空时使用用户名。')}</p>${affiliationFields(user)}<fieldset class="account-permissions"><legend>${text('账户权限')}</legend><label class="account-field"><span>${text('角色')}</span><select name="role" aria-describedby="account-role-help" ${user?.id===state.user.id?'disabled':''}><option value="member" ${user?.role==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${user?.role==='admin'?'selected':''}>${text('管理员')}</option></select></label><p class="account-help" id="account-role-help">${text('成员可使用自己的工作台；管理员还可管理账户。')}</p></fieldset>`;}
   const editorError=kind=>state.error&&state.errorForm===kind?`<p class="account-message account-message--error" role="alert" tabindex="-1">${escape(translateMessage(state.error))}</p>`:'';
   function userEditor() {
     const user=state.selected,draft=user||state.createDraft;
@@ -234,7 +261,7 @@
     const filtered=state.users.filter(user=>(!state.roleFilter||user.role===state.roleFilter)&&(!state.statusFilter||user.status===state.statusFilter));
     const count=language()==='en'?`${state.total} accounts`:`${state.total} ${t('个账户')}`;
     const filterActive=Boolean(state.q||state.roleFilter||state.statusFilter);
-    const rows=filtered.map(user=>`<tr ${state.selected?.id===user.id?'class="is-selected"':''}><td><div class="account-person"><span class="account-avatar" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><strong>${escape(user.displayName||user.username)}${user.id===state.user.id?` <span class="account-you">${text('你')}</span>`:''}</strong><small>@${escape(user.username)}</small>${user.mustChangePassword?`<small class="account-reset-label">${text('待修改密码')}</small>`:''}</div></div></td><td data-label="${text('角色')}">${text(user.role==='admin'?'管理员':'成员')}</td><td data-label="${text('状态')}"><span class="account-pill ${user.status==='disabled'?'is-disabled':''}">${text(user.status==='disabled'?'已停用':'已启用')}</span></td><td><button class="account-edit-button" data-account-action="edit-user" data-user-id="${escape(user.id)}" aria-label="${escape(t('编辑账户')+' · '+(user.displayName||user.username))}" aria-pressed="${state.selected?.id===user.id}" ${state.busy?'disabled':''}>${text('编辑')} <span aria-hidden="true">↗</span></button></td></tr>`).join('');
+    const rows=filtered.map(user=>`<tr ${state.selected?.id===user.id?'class="is-selected"':''}><td><div class="account-person"><span class="account-avatar" aria-hidden="true">${escape(Array.from(user.displayName||user.username)[0])}</span><div><strong>${escape(user.displayName||user.username)}${user.id===state.user.id?` <span class="account-you">${text('你')}</span>`:''}</strong><small>@${escape(user.username)}</small><small class="account-person-affiliation" title="${escape(user.organizationName||t(affiliationLabel(affiliationType(user))))}">${affiliationMarkup(user)}</small>${user.mustChangePassword?`<small class="account-reset-label">${text('待修改密码')}</small>`:''}</div></div></td><td data-label="${text('角色')}">${text(user.role==='admin'?'管理员':'成员')}</td><td data-label="${text('状态')}"><span class="account-pill ${user.status==='disabled'?'is-disabled':''}">${text(user.status==='disabled'?'已停用':'已启用')}</span></td><td><button class="account-edit-button" data-account-action="edit-user" data-user-id="${escape(user.id)}" aria-label="${escape(t('编辑账户')+' · '+(user.displayName||user.username))}" aria-pressed="${state.selected?.id===user.id}" ${state.busy?'disabled':''}>${text('编辑')} <span aria-hidden="true">↗</span></button></td></tr>`).join('');
     const result=state.loading?`<div class="account-list-loading"><p role="status">${text('正在读取账户…')}</p><div aria-hidden="true">${'<span></span>'.repeat(3)}</div></div>`:state.adminError?`<div class="account-empty"><p>${text('账户列表读取失败。')}</p><button data-account-action="reload-users">${text('重新加载')}</button></div>`:filtered.length?`<div class="account-table-scroll"><table class="account-table account-people-table"><thead><tr><th scope="col">${text('用户账户')}</th><th scope="col">${text('角色')}</th><th scope="col">${text('状态')}</th><th scope="col">${text('操作')}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="account-empty"><span class="account-emblem">${symbol('user')}</span><p>${text(state.roleFilter||state.statusFilter?'没有符合本页筛选的账户。':'没有找到匹配的账户。')}</p><small>${text('调整关键词，或清除筛选后重试。')}</small>${filterActive?`<button class="subtle" data-account-action="clear-filters">${text('清除筛选')}</button>`:''}</div>`;
     return `<section class="account-card account-list" aria-busy="${state.loading}"><div class="account-list-heading"><h2>${text('用户账户')}</h2><span>${escape(count)}</span></div><form class="account-search" data-account-form="search-users"><label for="account-search">${text('搜索所有账户')}</label><div><input id="account-search" name="query" type="search" maxlength="60" value="${escape(state.q)}" placeholder="${text('搜索用户名或名称')}"><button type="submit" ${state.loading?'disabled':''}>${text('搜索')}</button></div></form><div class="account-filters"><span>${text('本页筛选')}</span><label class="sr-only" for="account-role-filter">${text('角色')}</label><select id="account-role-filter" data-account-filter="roleFilter"><option value="">${text('全部角色')}</option><option value="member" ${state.roleFilter==='member'?'selected':''}>${text('成员')}</option><option value="admin" ${state.roleFilter==='admin'?'selected':''}>${text('管理员')}</option></select><label class="sr-only" for="account-status-filter">${text('状态')}</label><select id="account-status-filter" data-account-filter="statusFilter"><option value="">${text('全部状态')}</option><option value="active" ${state.statusFilter==='active'?'selected':''}>${text('已启用')}</option><option value="disabled" ${state.statusFilter==='disabled'?'selected':''}>${text('已停用')}</option></select></div>${result}<div class="account-pagination"><span aria-live="polite">${text('本页显示')} ${state.loading?'—':filtered.length} · ${state.page} / ${Math.max(1,Math.ceil(state.total/state.pageSize))}</span><button data-account-action="previous-page" ${state.page<=1||state.loading?'disabled':''} aria-label="${text('上一页')}">←</button><button data-account-action="next-page" ${state.page*state.pageSize>=state.total||state.loading?'disabled':''} aria-label="${text('下一页')}">→</button></div></section>`;
   }
@@ -252,6 +279,9 @@
     return `<aside class="account-created" aria-label="${text('账户已创建')}"><div><strong>${text('账户已创建')} · @${escape(createdCredentials.username)}</strong><p class="account-help">${text('初始密码仅在此显示，离开账户管理后清除。')}</p></div><label class="account-field"><span>${text('初始密码')}</span><span class="account-password"><input id="account-created-password" type="password" readonly autocomplete="off" value="${escape(createdCredentials.password)}"><button type="button" class="account-password-toggle" data-account-action="toggle-password" data-field="account-created-password" aria-label="${text('显示密码')}" aria-pressed="false">${symbol('eye')}</button></span></label><div class="account-actions"><button type="button" data-account-action="copy-created">${text('复制账号信息')}</button><button type="button" class="subtle" data-account-action="dismiss-created">${text('收起账号信息')}</button></div></aside>`;
   }
   function render(view) {
+    const appearance=language()+'|'+(document.documentElement.dataset?.theme||'light');
+    if(lastAppearance&&lastAppearance.epoch===identityEpoch&&lastAppearance.view===view&&lastAppearance.value!==appearance&&!state.busy)appearanceForms={epoch:identityEpoch,snapshots:snapshotForms()};
+    lastAppearance={epoch:identityEpoch,view,value:appearance};
     if(!state.initialized || state.checking&&!state.initialized)return `<section class="entry-account" data-entry-account><p role="status">${text('正在确认账户…')}</p></section>`;
     if(!state.configured)return unavailable();
     return view==='admin'?admin():view==='account'?account():login();
@@ -285,6 +315,8 @@
     // Validate explicitly: native popovers can hide why creation was blocked.
     form.querySelector('[data-form-feedback]')?.remove();
     form.querySelectorAll('[aria-invalid]').forEach(input=>{input.removeAttribute('aria-invalid');const help=(input.getAttribute?.('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('account-form-feedback-')).join(' ');if(help)input.setAttribute('aria-describedby',help);else input.removeAttribute('aria-describedby');});
+    const affiliation={affiliationType:String(fields.get('affiliationType')||'personal'),organizationName:String(fields.get('organizationName')||'').trim()};
+    if(affiliation.affiliationType==='personal')affiliation.organizationName='';
     let invalid;
     try {
       if(kind==='login'){
@@ -293,6 +325,10 @@
       }
       if(kind==='create-user'){
         invalid=form.elements.username;if(!/^[A-Za-z0-9][A-Za-z0-9_-]{2,31}$/.test(String(fields.get('username')||'').trim()))throw new Error('用户名需为 3–32 位英文字母、数字、下划线或连字符。');
+      }
+      if(kind==='create-user'||kind==='edit-user'){
+        invalid=form.elements.affiliationType;if(!['personal','school','organization'].includes(affiliation.affiliationType))throw new Error('请选择个人、学校或机构。');
+        if(affiliation.affiliationType!=='personal'){invalid=form.elements.organizationName;if(!affiliation.organizationName)throw new Error(affiliation.affiliationType==='school'?'请填写学校名称。':'请填写机构名称。');if(Array.from(affiliation.organizationName).length>100||/\p{Cc}/u.test(affiliation.organizationName))throw new Error('学校或机构名称需为 1–100 个字符。');}
       }
       if(kind==='create-user'||kind==='reset-password'){invalid=form.elements.password;validatePassword(String(fields.get('password')||''));invalid=form.elements.confirmPassword;if(fields.get('password')!==fields.get('confirmPassword'))throw new Error('两次输入的密码不一致。');}
       if(kind==='password'){
@@ -306,7 +342,7 @@
       invalid?.setAttribute('aria-invalid','true');invalid?.setAttribute('aria-describedby',[(invalid.getAttribute?.('aria-describedby')||''),feedback.id].filter(Boolean).join(' '));invalid?.focus();return;
     }
     const username=String(fields.get('username')||'').trim();
-    if(kind==='create-user')state.createDraft={username,displayName:String(fields.get('displayName')||''),role:fields.get('role')||'member'};
+    if(kind==='create-user')state.createDraft={username,...affiliation,displayName:String(fields.get('displayName')||''),role:fields.get('role')||'member'};
     await transaction(async()=>{
       const button=form.querySelector('[type="submit"]');if(button){button.disabled=true;button.textContent=t('正在处理…');}form.setAttribute('aria-busy','true');
       if(kind==='login'){
@@ -320,14 +356,14 @@
         const result=await rawRequest('/auth/session');if(!result.user?.id)throw new Error('登录已过期，请重新登录。');const wasForced=state.user?.mustChangePassword;state.user=result.user;state.notice=t('密码已更新。');notifyTabs();if(wasForced||pendingEntry){pendingEntry=false;await enterPlatform();}
       }else if(kind==='create-user'){
         const password=String(fields.get('password')||'');validatePassword(password);
-        const created=await request('/admin/users',{method:'POST',body:{username,displayName:String(fields.get('displayName')||'').trim()||username,password,role:fields.get('role')==='admin'?'admin':'member'}});
+        const created=await request('/admin/users',{method:'POST',body:{username,...affiliation,displayName:String(fields.get('displayName')||'').trim()||username,password,role:fields.get('role')==='admin'?'admin':'member'}});
         createdCredentials={username:created.user?.username||username,password};
         state.q='';state.roleFilter='';state.statusFilter='';state.page=1;state.selected=created.user||null;state.editorMode='edit';
         state.notice=t('账户已创建。请通过可信渠道告知对方用户名和初始密码。');state.createDraft={};await loadUsers();state.auditLoaded=false;
       }else if(kind==='edit-user'){
-        const body={displayName:String(fields.get('displayName')||'').trim()||username};if(form.dataset.userId!==state.user.id)body.role=fields.get('role')==='admin'?'admin':'member';
+        const body={...affiliation,displayName:String(fields.get('displayName')||'').trim()||username};if(form.dataset.userId!==state.user.id)body.role=fields.get('role')==='admin'?'admin':'member';
         const result=await request('/admin/users/'+encodeURIComponent(form.dataset.userId),{method:'PATCH',body});
-        if(form.dataset.userId===state.user.id)state.user=result.user||{...state.user,displayName:body.displayName};
+        if(form.dataset.userId===state.user.id)state.user=result.user||{...state.user,...body};
         state.notice=t('账户已更新。');state.selected=result.user||{...state.selected,...body};await loadUsers();state.auditLoaded=false;
       }else if(kind==='reset-password'){
         const password=String(fields.get('password')||'');validatePassword(password);
@@ -382,12 +418,18 @@
     }
   }
   function filterChange(event) {
+    const affiliation=event.target.closest('[data-account-affiliation]');
+    if(affiliation?.dataset.accountAffiliation!==undefined){
+      if(state.busy)return;const form=affiliation.closest('[data-account-form]');if(!form)return;syncAffiliation(form);
+      const field=form.querySelector('[data-account-organization]'),input=form.elements.organizationName;field?.querySelector('[data-form-feedback]')?.remove();input?.removeAttribute('aria-invalid');input?.setAttribute('aria-describedby','account-organization-help');return;
+    }
     const control=event.target.closest('[data-account-filter]');if(!control||state.busy)return;
     const key=control.dataset.accountFilter;if(!['roleFilter','statusFilter'].includes(key))return;
     state[key]=control.value;const id=control.id;redraw(false,true);document.getElementById(id)?.focus({preventScroll:true});
   }
   const bound=new WeakSet();
   function bind(root) {
+    if(appearanceForms){const pending=appearanceForms;appearanceForms=null;if(pending.epoch===identityEpoch)restoreForms(pending.snapshots);}
     if(location.hash.split('/')[0]!=='#admin')createdCredentials=null;
     const entry=root.querySelector('[data-entry-account]');
     if(entry){window.TashanEntrance?.mountAuth(entry);if(!bound.has(entry)){entry.addEventListener('submit',submit,true);entry.addEventListener('click',click,true);bound.add(entry);}}

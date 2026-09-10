@@ -170,3 +170,33 @@ test('failed account-list requests show a retry rather than a misleading empty r
  const f=fixture({initialUser:member({role:'admin'}),hash:'#admin',adminFailure:'ACCOUNT_SERVICE_UNAVAILABLE'});await f.initialized;await tick();
  assert.match(f.html,/账户列表读取失败/);assert.match(f.html,/data-account-action="reload-users"/);assert.doesNotMatch(f.html,/没有找到匹配的账户/);
 });
+
+test('affiliation defaults to personal and displays escaped school or organization details in three languages',async()=>{
+ for(const [type,name] of [['personal',''],['school','山海学校 <分校>'],['organization','学习机构 & 伙伴']]){
+  const f=fixture({initialUser:member(type==='personal'?{}:{affiliationType:type,organizationName:name}),hash:'#account'});await f.initialized;
+  for(const [locale,label] of [['zh-CN',{personal:'个人',school:'学校',organization:'机构'}],['zh-Hant',{personal:'個人',school:'學校',organization:'機構'}],['en',{personal:'Personal',school:'School',organization:'Organization'}]]){
+   f.setLocale(locale);assert.ok(f.html.includes('<dd>'+label[type]));assert.doesNotMatch(f.html,/<分校>/);assert.doesNotMatch(f.html,/name="affiliationType"/,'Members cannot edit their own profile');
+  }
+ }
+});
+
+test('creation validates affiliation names by Unicode characters and personal submissions clear stale names',async()=>{
+ const admin=member({role:'admin',id:'admin-affiliation'}),f=fixture({initialUser:admin,hash:'#admin',adminUsers:[admin]});await f.initialized;await tick();await f.click('new-user');
+ assert.match(f.html,/name="affiliationType"/);assert.match(f.html,/data-account-organization hidden/);assert.match(f.html,/name="organizationName"[^>]* disabled/);assert.match(f.html,/个人无需填写学校或机构名称/);
+ const values={username:'affiliation_user',displayName:'课堂用户',role:'member',password:'12345678',confirmPassword:'12345678'};
+ for(const [affiliationType,organizationName,field] of [['school','   ','organizationName'],['organization','','organizationName'],['school','𠮷'.repeat(101),'organizationName'],['organization','A\u0000B','organizationName'],['invalid','Any','affiliationType']]){
+  const form=await f.submit('create-user',{...values,affiliationType,organizationName});assert.equal(form.elements[field].attributes['aria-invalid'],'true');assert.equal(f.requests.filter(r=>r.method==='POST'&&r.path.endsWith('/admin/users')).length,0);
+ }
+ await f.submit('create-user',{...values,affiliationType:'school',organizationName:'  '+ '𠮷'.repeat(100)+'  '});
+ const created=f.requests.find(r=>r.method==='POST'&&r.path.endsWith('/admin/users'));assert.equal(created.body.affiliationType,'school');assert.equal(Array.from(created.body.organizationName).length,100);
+ await f.click('new-user');await f.submit('create-user',{...values,username:'personal_user',affiliationType:'personal',organizationName:'Unsubmitted organization draft'});
+ const personal=f.requests.filter(r=>r.method==='POST'&&r.path.endsWith('/admin/users')).at(-1);assert.equal(personal.body.affiliationType,'personal');assert.equal(personal.body.organizationName,'');
+});
+
+test('administrators can edit their own affiliation without changing their role',async()=>{
+ const admin=member({role:'admin',id:'self-affiliation'}),f=fixture({initialUser:admin,hash:'#admin',adminUsers:[admin]});await f.initialized;await tick();await f.click('edit-user',{dataset:{accountAction:'edit-user',userId:admin.id}});
+ assert.match(f.html,/name="affiliationType"/);assert.match(f.html,/name="role"[^>]*disabled/);
+ await f.submit('edit-user',{username:admin.username,displayName:admin.displayName,role:'member',affiliationType:'organization',organizationName:' 教学机构 '},admin.id);
+ const patch=f.requests.find(r=>r.method==='PATCH');assert.equal(patch.body.affiliationType,'organization');assert.equal(patch.body.organizationName,'教学机构');assert.ok(!Object.hasOwn(patch.body,'role'));assert.equal(f.api.user.organizationName,'教学机构');assert.equal(f.api.user.role,'admin');
+ f.location.hash='#account';f.render();assert.match(f.html,/机构 · 教学机构/);
+});
