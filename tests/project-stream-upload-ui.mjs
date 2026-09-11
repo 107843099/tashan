@@ -15,7 +15,7 @@ async function until(check){for(let i=0;i<1000;i++){if(check())return;await tick
 const response=(value,status=200)=>new Response(JSON.stringify(value),{status});
 const caps=overrides=>({configured:true,mode:'supabase',canUpload:true,canPublish:true,uploadTransport:'r2-stream-v1',uploadPolicy:{mode:'worker'},limits:{attachmentBytes:10*MiB,coverBytes:5*MiB,metadataBytes:65536,requestBytes:98304},...overrides});
 
-async function fixture({capability=caps(),core='观察不同星球上的自由落体。',attachment='<h1>课堂重力实验</h1>',cover='small image fixture',attachmentType='text/html',coverType='image/png',filename='课堂.html',locale='zh-CN',respond,digest,reloadLocal}={}){
+async function fixture({capability=caps(),core='观察不同星球上的自由落体。',attachment='<h1>课堂重力实验</h1>',cover='small image fixture',attachmentType='text/html',coverType='image/png',filename='课堂.html',locale='zh-CN',respond,digest,reloadLocal,confirm=async()=>true,respondRead}={}){
   const calls=[],handlers={},timers=new Map(),counts={encoded:0,reads:0,hashes:0,reload:0,sessionRefresh:0};let timerId=0;
   class TrackedBlob extends Blob{async arrayBuffer(){counts.reads++;return super.arrayBuffer();}}
   const file=(name,type,contents)=>({name,type,blob:new TrackedBlob([typeof contents==='number'?new Uint8Array(contents):contents],{type})});
@@ -32,13 +32,13 @@ async function fixture({capability=caps(),core='观察不同星球上的自由�
     setTimeout:(fn,ms)=>{const next=++timerId;timers.set(next,{fn,ms});return next;},clearTimeout:key=>timers.delete(key),queueMicrotask:()=>{},
     fetch:async(path,options)=>{
       const call={path,options,json:typeof options.body==='string'?JSON.parse(options.body):null};calls.push(call);
-      if(options.method==='GET')return response(path.endsWith('/capabilities')?capability:{projects:[],total:0});
+      if(options.method==='GET')return await respondRead?.(call)??response(path.endsWith('/capabilities')?capability:path==='/api/v1/projects/'+id?{project:{id,latestVersionId:vid,publishedVersionId:null}}:{projects:[],total:0});
       const result=respond?await respond(call):null;
       return result??response(path.endsWith('/uploads')?{ready:false,fingerprint}:{project:{id}},201);
     }
   });
   vm.runInContext(source,context);const api=window.TashanProjects;
-  api.init({record:()=>record,render:()=>{},reloadLocal:async()=>{counts.reload++;await reloadLocal?.();}});
+  api.init({confirm,record:()=>record,render:()=>{},reloadLocal:async()=>{counts.reload++;await reloadLocal?.();}});
   api.mount({addEventListener:(type,fn)=>{handlers[type]=fn;},querySelectorAll:()=>[],querySelector:()=>null});
   await api.refresh();
   return {api,calls,counts,account,location,record,version,timers,context,mutations:()=>calls.filter(call=>call.options.method!=='GET'),
@@ -170,4 +170,32 @@ test('legacy local capabilities still encode once and send one JSON version requ
   const calls=f.mutations();assert.equal(calls.length,1);assert.equal(calls[0].path,`/api/v1/projects/${id}/versions`);assert.equal(calls[0].options.method,'POST');
   assert.equal(f.counts.encoded,1);assert.equal(f.counts.hashes,0);assert.equal(Buffer.from(calls[0].json.files.attachment.base64,'base64').toString(),'<h1>课堂重力实验</h1>');
   assert.equal(calls[0].json.files.attachment.sha256,undefined);assert.equal(f.location.hash,'cloud/'+id);
+});
+
+
+test('combined sharing uploads and commits before publishing the saved version',async()=>{
+  const previous='version-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  const f=await fixture({respondRead:call=>call.path==='/api/v1/projects/'+id?response({project:{id,publishedVersionId:previous}}):null});
+  await f.api.share(id);
+  assert.deepEqual(f.mutations().map(call=>call.path.split('/').at(-1)),['uploads','attachment','coverFile','commit','publish']);
+  assert.deepEqual(f.mutations().at(-1).json,{versionId:vid,expectedVersionId:previous});
+  assert.match(f.api.workspaceMarkup(),/其他成员和游客均可查看/);
+});
+
+test('cancelling sharing and changing account during confirmation do not upload',async()=>{
+  const cancelled=await fixture({confirm:async()=>false});await cancelled.api.share(id);assert.equal(cancelled.mutations().length,0);
+  const decision=deferred(),f=await fixture({confirm:()=>decision.promise});const sharing=f.api.share(id);
+  f.switchAccount();decision.resolve(true);await sharing;assert.equal(f.mutations().length,0);
+});
+
+test('combined sharing never publishes incomplete uploads and reports recoverable failures',async()=>{
+  const upload=await fixture({respond:call=>call.options.method==='PUT'?response({error:{message:'Upload failed'}},503):null});
+  await upload.api.share(id);assert.equal(upload.mutations().some(call=>call.path.endsWith('/publish')),false);assert.match(upload.api.workspaceMarkup(),/本地副本已保留/);
+  const publish=await fixture({respond:call=>call.path.endsWith('/publish')?response({error:{message:'Publish failed'}},503):null});
+  await publish.api.share(id);assert.equal(publish.counts.reload,1);assert.equal(publish.record.currentVersionId,vid);assert.match(publish.api.workspaceMarkup(),/项目已上传，但公开未完成/);assert.equal(publish.location.hash,'cloud/'+id);
+});
+
+test('already public current version is not published twice',async()=>{
+  const f=await fixture({respondRead:call=>call.path==='/api/v1/projects/'+id?response({project:{id,publishedVersionId:vid}}):null});
+  await f.api.share(id);assert.equal(f.mutations().filter(call=>call.path.endsWith('/publish')).length,0);
 });

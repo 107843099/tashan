@@ -8,7 +8,8 @@ import {LocalProvider} from '../server/local-provider.mjs';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const folder=await mkdtemp(join(tmpdir(),'tashan-project-browser-'));
 const provider=new LocalProvider(join(folder,'accounts.sqlite'));
-await provider.bootstrap({username:'admin',password:'12345678',displayName:'管理员'});provider.close();
+const administrator=await provider.bootstrap({username:'admin',password:'12345678',displayName:'管理员'});
+await provider.createUser(administrator,{username:'reader',password:'12345678',displayName:'其他成员',role:'member'});provider.close();
 const origin='http://127.0.0.1:4182';
 const server=spawn(process.execPath,['scripts/dev-server.mjs'],{env:{...process.env,PORT:'4182',TASHAN_ACCOUNT_PROVIDER:'local',TASHAN_LOCAL_DB:join(folder,'accounts.sqlite'),TASHAN_LOCAL_FILES:join(folder,'files')},stdio:['ignore','pipe','pipe']});
 let browser,page;
@@ -17,10 +18,10 @@ try{
   browser=await chromium.launch({headless:true,...(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{})});
   const owner=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce',acceptDownloads:true});
   page=await owner.newPage();page.setDefaultTimeout(15000);const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  async function login(target){
+  async function login(target,username='admin'){
     await target.goto(origin+'/index.html#login');
     const form=target.locator('.stone-entrance [data-account-form="login"]');
-    await form.locator('[name=username]').fill('admin');await form.locator('[name=password]').fill('12345678');await form.locator('[type=submit]').click();
+    await form.locator('[name=username]').fill(username);await form.locator('[name=password]').fill('12345678');await form.locator('[type=submit]').click();
     await target.waitForURL('**#discover');await target.waitForFunction(()=>!document.querySelector('.stone-entrance')&&!window.TashanProjects.busy);
   }
   async function idle(target=page){await target.waitForFunction(()=>!window.TashanProjects.busy);}
@@ -41,6 +42,12 @@ try{
   assert.equal((await page.request.get(origin+'/api/v1/published')).status(),200);
   assert.equal((await (await page.request.get(origin+'/api/v1/published')).json()).total,0,'Uploads stay private');
   await publish();
+  const memberContext=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),member=await memberContext.newPage();
+  await login(member,'reader');await member.locator('.published-library a[href="#cloud/'+record.id+'"]').waitFor();
+  await member.locator('.published-library a[href="#cloud/'+record.id+'"]').click();await member.getByRole('heading',{name:'课堂版本一',exact:true}).waitFor();
+  assert.equal(await member.locator('[data-project-action="publish"]').count(),0,'Other members cannot publish the owner’s project');
+  assert.equal((await member.request.get(origin+'/api/v1/projects/'+record.id)).status(),404);
+  await memberContext.close();
 
   const visitor=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
   const guest=await visitor.newPage();guest.on('pageerror',error=>errors.push(error.message));
@@ -119,12 +126,50 @@ try{
   assert.equal((await guest.request.get(origin+'/api/v1/published/'+record.id)).status(),404);
   assert.equal((await guest.request.get(origin+'/api/v1/published/'+record.id+'/versions/'+second.currentVersionId+'/files/attachment')).status(),404);
 
+  // Discarding an editing draft must never remove its saved project or cloud version.
+  await page.goto(origin+'/index.html#desk');await page.locator('[data-action="delete-draft"]').waitFor();
+  await page.locator('[data-action="delete-draft"]').click();await page.getByRole('dialog').getByRole('button',{name:'取消',exact:true}).click();
+  assert.ok(await page.evaluate(()=>window.PracticeStore.getDraft()));
+  await page.locator('[data-action="delete-draft"]').click();await page.getByRole('dialog').getByRole('button',{name:'删除草稿',exact:true}).click();
+  await page.locator('[data-action="delete-draft"]').waitFor({state:'detached'});await page.reload();
+  assert.equal(await page.locator('[data-action="delete-draft"]').count(),0,'Deleted drafts stay deleted after reload');
+  assert.equal(await page.evaluate(()=>window.PracticeStore.getDraft()),null);
+  assert.equal((await page.evaluate(id=>window.PracticeStore.get(id),record.id)).currentVersionNumber,2);
+  assert.equal((await page.request.get(origin+'/api/v1/projects/'+record.id)).status(),200,'Cloud project survives draft deletion');
+
+  // Exercise the new final-step sharing button with actual browser storage and server requests.
+  await page.evaluate(async()=>{
+    const cover=await (await fetch('./assets/covers/earth.webp')).blob();
+    await window.PracticeStore.putDraft({title:'一步分享的教学提示词',kind:'prompt',core:'请引导学生观察月相并记录形状。',purpose:'观察与记录',subject:'地理',stage:'初中',audience:'初中学生',prior:'认识月球',outcome:'记录月相',setting:'小组讨论',content:true,license:'teach',coverFile:{name:'cover.webp',type:'image/webp',blob:cover}});
+  });
+  await page.reload();await page.locator('.draft-row a[href="#upload"]').click();
+  await page.getByRole('button',{name:/下一步：教学信息/}).click();await page.getByRole('button',{name:/下一步：确认保存/}).click();
+  await page.locator('[data-save-mode="share"]').click();await page.getByRole('dialog',{name:'上传并公开这个项目？'}).waitFor();
+  // Cancel retains the saved project. Retry is available on the local detail page.
+  await page.getByRole('dialog').getByRole('button',{name:'取消',exact:true}).click();
+  const sharedId=page.url().split('/').at(-1);assert.ok(sharedId.startsWith('local-'));
+  assert.equal((await guest.request.get(origin+'/api/v1/published/'+sharedId)).status(),404);
+  await page.locator('[data-project-action="share"]:enabled').click();
+  await Promise.all([page.waitForResponse(r=>r.url().endsWith('/publish')&&r.request().method()==='POST'&&r.status()===200),page.getByRole('dialog').getByRole('button',{name:'上传并公开',exact:true}).click()]);await idle();
+  await guest.goto(origin+'/index.html#cloud/'+sharedId);await guest.getByRole('heading',{name:'一步分享的教学提示词',exact:true}).waitFor();
+  await page.locator('[data-project-action="copy-public-link"]').waitFor();
   await page.goto(origin+'/index.html#desk');await page.locator('.cloud-workspace').waitFor();
+  await page.locator('[data-action="edit-project"][data-id="'+record.id+'"]').click();await page.waitForURL('**#upload');await page.locator('#upload-form').waitFor();await page.goto(origin+'/index.html#desk');
+  await page.locator('[data-action="delete-draft"]').waitFor();
   await page.screenshot({path:'/tmp/tashan-v34-workspace.png',fullPage:true});
-  await page.setViewportSize({width:390,height:844});
+  await page.setViewportSize({width:375,height:812});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Mobile workspace has no horizontal overflow');
   await page.screenshot({path:'/tmp/tashan-v34-workspace-mobile.png',fullPage:true});
+  await page.locator('[data-action="language-menu"]').click();await page.locator('[data-language="en"]').click();
+  await page.locator('[data-action="theme"]').click();
+  assert.equal(await page.locator('[data-action="delete-draft"]').innerText(),'Delete draft');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'English dark workspace has no horizontal overflow');
+  await page.screenshot({path:'/tmp/tashan-sharing-workspace-en-dark.png',fullPage:true});
+  await page.locator('[data-action="language-menu"]').click();await page.locator('[data-language="zh-Hant"]').click();
+  assert.equal(await page.locator('[data-action="delete-draft"]').innerText(),'刪除草稿');
+  await page.setViewportSize({width:812,height:375});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Landscape workspace has no horizontal overflow');
   assert.deepEqual(errors,[]);
-  console.log('Project browser checks passed: real upload/publication, anonymous frozen-version preview, private edits, version selection, full cloud/local backups, cross-device identity, idempotent reupload, deduplicated import, draft restoration, withdrawal and responsive workspace.');
+  console.log('Project browser checks passed: real upload/publication, anonymous frozen-version preview, private edits, version selection, full cloud/local backups, cross-device identity, idempotent reupload, deduplicated import, draft restoration/deletion, sharing cancellation/retry, member/guest access, withdrawal and three-language responsive workspace.');
 }catch(error){if(page)console.log('Browser failure state:',await page.evaluate(async()=>({url:location.href,user:window.TashanAccounts?.user?.username,scope:window.PracticeStore?.scope,projects:(await window.PracticeStore?.list())?.map(p=>({id:p.id,title:p.title})),body:document.body.innerText.slice(0,2200)})).catch(()=>null));if(page)await page.screenshot({path:'/tmp/tashan-v34-browser-failure.png',fullPage:true}).catch(()=>{});throw error;}
 finally{if(browser)await browser.close();server.kill('SIGTERM');await once(server,'exit').catch(()=>{});await rm(folder,{recursive:true,force:true});}

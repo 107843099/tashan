@@ -97,3 +97,7 @@ header.site-header .header-inner{display:grid;grid-template-columns:minmax(0,1fr
 .project-card--discovery .card-bookmark:focus-visible{opacity:1;outline:2px solid var(--brand);outline-offset:0}
 .project-card--discovery .card-bookmark:active{opacity:1;color:var(--brand)}
 @media(prefers-reduced-motion:reduce){.project-card--discovery .card-bookmark{transition:none}}
+
+/* Workspace actions retain their labels and touch targets at narrow widths. */
+.draft-row>.draft-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px}.draft-actions .btn,.draft-actions button{min-height:44px;font-size:12px}.local-row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:8px;flex:0 0 220px}.local-row-actions .btn,.local-row-actions button{min-height:44px;font-size:12px}.project-visibility{grid-column:1/-1;color:var(--muted);font-size:12px;text-align:left}.upload-next{flex-wrap:wrap}
+@media(max-width:767px){.draft-row>.draft-actions{flex-basis:100%;justify-content:flex-end}.local-row-actions{flex-basis:100%;align-items:center}.project-visibility{flex-basis:100%;text-align:left}.upload-next>button{flex:1 1 auto}}
