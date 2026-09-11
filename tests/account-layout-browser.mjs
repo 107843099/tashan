@@ -49,7 +49,12 @@ try{
     assert.equal(await page.locator('[name=affiliationType]').count(),0,label+' member affiliation is read-only');
     assert.equal(await page.locator('a[href="#admin"]').count(),0,label+' member has no admin link');
     assert.equal(await page.locator('[data-account-action="logout"]').count(),1,label+' has one sign-out action');
+    assert.equal(await page.locator('[name=newPassword]').count(),0,label+' passwords start collapsed');
+    await page.locator('[data-account-action="toggle-password-panel"]').click();
     assert.equal(await page.locator('[name=newPassword]').getAttribute('minlength'),'8',label+' new password uses eight-character minimum');
+    assert((await page.evaluate(()=>document.documentElement.scrollWidth))<=width+1,label+' expanded form must not overflow');
+    if(locale==='en'&&width===390)await page.screenshot({path:join(screenshots,label+'-expanded.png'),fullPage:true});
+    await page.locator('[data-account-action="toggle-password-panel"]').click();
    }
    await page.evaluate(()=>scrollTo(0,0));
    if(locale==='zh-CN'||(locale==='en'&&width===390))await page.screenshot({path:join(screenshots,label+'.png'),fullPage:true});

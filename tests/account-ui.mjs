@@ -61,7 +61,7 @@ function fixture({loginUser=member(),initialUser=null,locale='zh-CN',hash='#logi
  return {api,initialized,requests,transitions,scrolls,routes,feedback,formData,location,render,submit,click,filter,get html(){return html;},get entryCount(){return entryCount;},get mountCount(){return mountCount;},setLocale(value){document.documentElement.lang=value;render();}};
 }
 const login=f=>f.submit('login',{username:'classroom_member',password:'InitialClassroom123'});
-const password=f=>f.submit('password',{currentPassword:'InitialClassroom123',newPassword:'MyClassroomPassword234',confirmPassword:'MyClassroomPassword234'});
+const password=async f=>{if(!f.html.includes('data-account-form="password"'))await f.click('toggle-password-panel');return f.submit('password',{currentPassword:'InitialClassroom123',newPassword:'MyClassroomPassword234',confirmPassword:'MyClassroomPassword234'});};
 
 test('new account with server flag false enters through the stone animation without forced password setup',async()=>{
  const gate=deferred(),f=fixture({entryGate:gate});await f.initialized;
@@ -80,12 +80,13 @@ test('new account with server flag false enters through the stone animation with
 
 test('personal account page offers voluntary password change and stays on that page after success',async()=>{
  const f=fixture();await f.initialized;await login(f);f.location.hash='#account';f.render();
+ assert.doesNotMatch(f.html,/data-account-form="password"/);await f.click('toggle-password-panel');
  assert.match(f.html,/data-account-form="password"/);assert.match(f.html,/name="currentPassword"/);assert.match(f.html,/name="newPassword"/);assert.match(f.html,/name="confirmPassword"/);
- assert.match(f.html,/我的账户/);assert.doesNotMatch(f.html,/请先设置你的新密码/);
+ assert.match(f.html,/个人资料/);assert.doesNotMatch(f.html,/请先设置你的新密码/);
  const before=f.entryCount,form=await password(f);
  assert.equal(f.location.hash,'#account','A voluntary change keeps the person in their account page');
  assert.equal(f.entryCount,before,'Voluntary password changes do not replay the entrance');
- assert.equal(f.api.user.mustChangePassword,false);assert.match(f.html,/密码已更新/);
+ assert.equal(f.api.user.mustChangePassword,false);assert.match(f.html,/密码已更新/);assert.doesNotMatch(f.html,/data-account-form="password"/);
  assert.equal(f.requests.filter(request=>request.path.endsWith('/auth/password')).length,1);
  for(const name of ['currentPassword','newPassword','confirmPassword'])assert.equal(form.elements[name].value,'');
 });
@@ -118,27 +119,27 @@ test('incorrect current password keeps the normal account signed in and reports 
 
 test('optional password form validates confirmation without sending an invalid mutation',async()=>{
  const f=fixture({initialUser:member(),hash:'#account'});await f.initialized;
- const form=await f.submit('password',{currentPassword:'InitialClassroom123',newPassword:'MyClassroomPassword234',confirmPassword:'DifferentPassword456'});
+ await f.click('toggle-password-panel');const form=await f.submit('password',{currentPassword:'InitialClassroom123',newPassword:'MyClassroomPassword234',confirmPassword:'DifferentPassword456'});
  assert.equal(f.requests.filter(request=>request.path.endsWith('/auth/password')).length,0);assert.match(f.feedback.at(-1),/两次输入的新密码不一致/);assert.equal(form.elements.confirmPassword.attributes['aria-invalid'],'true');assert.equal(f.location.hash,'#account');
 });
 
 test('voluntary account settings remain available in simplified Chinese, traditional Chinese and English',async()=>{
  const f=fixture({initialUser:member(),hash:'#account'});await f.initialized;
- for(const [locale,title,change,forced] of [['zh-CN','我的账户','修改密码','请先设置你的新密码'],['zh-Hant','我的帳戶','修改密碼','請先設定你的新密碼'],['en','My account','Change password','Set your new password first']]){
-  f.setLocale(locale);assert.ok(f.html.includes(title));assert.ok(f.html.includes(change));assert.ok(!f.html.includes(forced));assert.match(f.html,/data-account-form="password"/);
+ for(const [locale,title,change,forced] of [['zh-CN','个人资料','修改密码','请先设置你的新密码'],['zh-Hant','個人資料','修改密碼','請先設定你的新密碼'],['en','Profile','Change password','Set your new password first']]){
+  f.setLocale(locale);assert.ok(f.html.includes(title));assert.ok(f.html.includes(change));assert.ok(!f.html.includes(forced));assert.doesNotMatch(f.html,/data-account-form="password"/);await f.click('toggle-password-panel');assert.match(f.html,/data-account-form="password"/);await f.click('toggle-password-panel');
  }
 });
 
 test('personal settings accept eight digits, reject seven, and retain the 72 UTF-8 byte limit',async()=>{
  const f=fixture({initialUser:member(),hash:'#account'});await f.initialized;
- assert.match(f.html,/minlength="8"/);assert.match(f.html,/纯数字/);assert.match(f.html,/account-session/);assert.match(f.html,/account-facts/);
+ await f.click('toggle-password-panel');assert.match(f.html,/minlength="8"/);assert.match(f.html,/纯数字/);assert.match(f.html,/account-session/);assert.match(f.html,/account-facts/);
  for(const invalid of ['1234567','密'.repeat(25)]){
   await f.submit('password',{currentPassword:'old-password',newPassword:invalid,confirmPassword:invalid});
   assert.equal(f.requests.filter(request=>request.path.endsWith('/auth/password')).length,0);
  }
  await f.submit('password',{currentPassword:'old-password',newPassword:'12345678',confirmPassword:'12345678'});
  assert.equal(f.requests.filter(request=>request.path.endsWith('/auth/password')).length,1);assert.match(f.html,/密码已更新/);
- for(const [locale,hint] of [['en','Numbers-only'],['zh-Hant','純數字']]){f.setLocale(locale);assert.ok(f.html.includes(hint));}
+ await f.click('toggle-password-panel');for(const [locale,hint] of [['en','Numbers-only'],['zh-Hant','純數字']]){f.setLocale(locale);assert.ok(f.html.includes(hint));}
 });
 
 test('administration separates selection, local-page filters and access actions',async()=>{
@@ -199,4 +200,15 @@ test('administrators can edit their own affiliation without changing their role'
  await f.submit('edit-user',{username:admin.username,displayName:admin.displayName,role:'member',affiliationType:'organization',organizationName:' 教学机构 '},admin.id);
  const patch=f.requests.find(r=>r.method==='PATCH');assert.equal(patch.body.affiliationType,'organization');assert.equal(patch.body.organizationName,'教学机构');assert.ok(!Object.hasOwn(patch.body,'role'));assert.equal(f.api.user.organizationName,'教学机构');assert.equal(f.api.user.role,'admin');
  f.location.hash='#account';f.render();assert.match(f.html,/机构 · 教学机构/);
+});
+
+
+test('personal entry opens workspace and the profile has a separate explicit link',async()=>{
+ const f=fixture({initialUser:member(),hash:'#account'});await f.initialized;
+ assert.match(f.api.header(),/href="#desk"/);assert.match(f.api.workspaceNotice(),/href="#account"[^>]*>个人资料/);
+ assert.doesNotMatch(f.html,/name="currentPassword"/);
+ await f.click('toggle-password-panel');assert.match(f.html,/aria-expanded="true"/);
+ await f.click('toggle-password-panel');assert.match(f.html,/aria-expanded="false"/);assert.doesNotMatch(f.html,/name="currentPassword"/);
+ await f.click('toggle-password-panel');f.location.hash='#desk';f.render();f.location.hash='#account';f.render();
+ assert.doesNotMatch(f.html,/data-account-form="password"/);assert.equal(f.requests.filter(r=>r.path.endsWith('/auth/password')).length,0);
 });

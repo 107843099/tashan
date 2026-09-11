@@ -888,7 +888,11 @@
     "暂时没填完可点击“保存草稿”，下次从工作台“继续填写”。不再需要时可“删除草稿”，确认后只清除未完成内容，不影响已保存的项目或云端版本。每个账号在此浏览器中保留一份进行中的草稿。": "Save unfinished work as a draft and continue from your workspace. “Delete draft” clears unfinished content after confirmation; saved projects and cloud versions remain. Each account keeps one active draft in this browser.",
     "本地项目可在工作台点击“上传并公开”。已经上传的私有项目，可在云端列表点击“发布最新版本”；也可进入详情选择固定版本发布。成功后点击“复制公开链接”，其他成员和游客就能查看。": "Use “Upload & publish” on a local project in your workspace. For a private cloud project, choose “Publish latest version”, or select a specific version in its details. After publication, use “Copy public link” to share with members and visitors.",
     "先看工作台中的“云端项目”。只在下方浏览器资料里的项目尚未完成云端分享，点击“上传并公开”；云端显示“仅自己可见”时，点击“发布最新版本”。发布后可在发现页下方的“公开作品”找到，也可复制公开链接分享。": "Check Cloud projects in your workspace. If a project is only in browser storage below, choose “Upload & publish”. If it is marked Private in the cloud, choose “Publish latest version”. Published versions appear under Published work on Discover, and can be shared with a public link.",
-    "上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。": "Uploads are currently unavailable. Save in this browser and retry from your workspace later."
+    "上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。": "Uploads are currently unavailable. Save in this browser and retry from your workspace later.",
+    "点击右上角的个人入口，先进入“我的工作台”，再点击“个人资料”。在这里查看个人及所属信息，需要改密时点击“修改密码”展开表单。取消或修改成功后表单会收起。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "Use the profile icon at the top right to open My workspace, then choose Profile. View your personal and affiliation details here. Select Change password to open the form; cancelling or saving closes it. Passwords need at least 8 characters and can be numbers only. Contact an administrator to change your name or affiliation.",
+    "前往个人资料": "Open profile",
+    "从“个人资料”进入“账户管理”，用“新建账户”填写用户名、显示名称、角色与初始密码。选中列表中的账户后，可修改资料、重置密码或启停用。": "From “Profile”, open “Manage accounts”. Select “Create account” and enter a username, display name, role and initial password. Select an existing account to edit its details, reset its password, or enable or disable access.",
+    "从“个人资料”进入“账户管理”，点击“新建账户”，填写用户名、显示名称、角色和初始密码，再选择所属类型。学校、机构需填写名称，个人不用填写。选中已有账户可编辑资料、重置密码或启停用。": "From “Profile”, open “Manage accounts” and choose “New account”. Enter the username, display name, role and initial password, then choose an affiliation. Schools and organisations require a name; personal accounts do not. Select an existing account to edit its details, reset its password or enable or disable access."
   },
   "zh-Hant": {
     "教师实践平台 V3 页面原型": "教師實踐平臺 V3 頁面原型",
@@ -1779,6 +1783,10 @@
     "暂时没填完可点击“保存草稿”，下次从工作台“继续填写”。不再需要时可“删除草稿”，确认后只清除未完成内容，不影响已保存的项目或云端版本。每个账号在此浏览器中保留一份进行中的草稿。": "暫時沒填完可點擊「儲存草稿」，下次從工作台「繼續填寫」。不再需要時可「刪除草稿」，確認後只清除未完成內容，不影響已儲存的專案或雲端版本。每個帳戶在此瀏覽器中保留一份進行中的草稿。",
     "本地项目可在工作台点击“上传并公开”。已经上传的私有项目，可在云端列表点击“发布最新版本”；也可进入详情选择固定版本发布。成功后点击“复制公开链接”，其他成员和游客就能查看。": "本機專案可在工作台點擊「上傳並公開」。已經上傳的私人專案，可在雲端列表點擊「發布最新版本」；也可進入詳情選擇固定版本發布。成功後點擊「複製公開連結」，其他成員和訪客就能查看。",
     "先看工作台中的“云端项目”。只在下方浏览器资料里的项目尚未完成云端分享，点击“上传并公开”；云端显示“仅自己可见”时，点击“发布最新版本”。发布后可在发现页下方的“公开作品”找到，也可复制公开链接分享。": "先看工作台中的「雲端專案」。只在下方瀏覽器資料裡的專案尚未完成雲端分享，點擊「上傳並公開」；雲端顯示「僅自己可見」時，點擊「發布最新版本」。發布後可在發現頁下方的「公開作品」找到，也可複製公開連結分享。",
-    "上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。": "上傳服務暫不可用，可先儲存至此瀏覽器，稍後在工作台重試。"
+    "上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。": "上傳服務暫不可用，可先儲存至此瀏覽器，稍後在工作台重試。",
+    "点击右上角的个人入口，先进入“我的工作台”，再点击“个人资料”。在这里查看个人及所属信息，需要改密时点击“修改密码”展开表单。取消或修改成功后表单会收起。新密码至少 8 位，允许纯数字；修改显示名称或所属学校、机构请联系管理员。": "點擊右上角的個人入口，先進入「我的工作台」，再點擊「個人資料」。在這裡查看個人及所屬資訊，需要改密時點擊「修改密碼」展開表單。取消或修改成功後表單會收起。新密碼至少 8 位，允許純數字；修改顯示名稱或所屬學校、機構請聯絡管理員。",
+    "前往个人资料": "前往個人資料",
+    "从“个人资料”进入“账户管理”，用“新建账户”填写用户名、显示名称、角色与初始密码。选中列表中的账户后，可修改资料、重置密码或启停用。": "從「個人資料」進入「帳戶管理」，用「建立帳戶」填寫使用者名稱、顯示名稱、角色與初始密碼。選取列表中的帳戶後，可修改資料、重設密碼或啟用、停用。",
+    "从“个人资料”进入“账户管理”，点击“新建账户”，填写用户名、显示名称、角色和初始密码，再选择所属类型。学校、机构需填写名称，个人不用填写。选中已有账户可编辑资料、重置密码或启停用。": "從「個人資料」進入「帳戶管理」，點擊「新建帳戶」，填寫使用者名稱、顯示名稱、角色和初始密碼，再選擇所屬類型。學校、機構需填寫名稱，個人不用填寫。選取已有帳戶可編輯資料、重設密碼或啟停用。"
   }
 }

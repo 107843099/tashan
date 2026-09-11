@@ -196,8 +196,10 @@ try {
   assert.equal(await createdPassword.getAttribute('readonly'),'','The handoff password is read-only');
   await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:'/tmp/tashan-account-admin.png',fullPage:true});
-  await page.locator('.account-header[href="#account"]').click();
-  await page.getByRole('heading',{name:'我的账户',exact:true}).waitFor();
+  await page.locator('.account-header[href="#desk"]').click();
+  await page.getByRole('heading',{name:'我的工作台',exact:true}).waitFor();
+  await page.locator('.account-workspace-note a[href="#account"]').click();
+  await page.getByRole('heading',{name:'个人资料',exact:true}).waitFor();
   await page.locator('.account-profile-links a[href="#admin"]').click();
   await page.getByRole('heading',{name:'账户管理',exact:true}).waitFor();
   assert.equal(await page.locator('.account-created').count(),0,'Leaving account management clears the temporary handoff card without a reload');
@@ -240,13 +242,21 @@ try {
 
   // Password changes are available voluntarily in the member's personal account page.
   await page.goto(origin + '/index.html#account');
-  await page.getByRole('heading', {name:'我的账户',exact:true}).waitFor();
+  await page.getByRole('heading', {name:'个人资料',exact:true}).waitFor();
+  assert.equal(await page.locator('.account-page [data-account-form="password"]').count(),0,'Profile does not show password inputs until requested');
+  await page.locator('[data-account-action="toggle-password-panel"]').click();
   const change = page.locator('.account-page [data-account-form="password"]');
+  await change.locator('[name=currentPassword]').fill('DiscardThisInput');
+  await page.locator('[data-account-action="toggle-password-panel"]').click();
+  assert.equal(await change.count(),0,'Cancel removes password inputs');
+  await page.locator('[data-account-action="toggle-password-panel"]').click();
+  assert.equal(await change.locator('[name=currentPassword]').inputValue(),'','Reopening starts with empty fields');
   await change.locator('[name=currentPassword]').fill('TeacherInitial123');
   await change.locator('[name=newPassword]').fill('TeacherChanged234');
   await change.locator('[name=confirmPassword]').fill('TeacherChanged234');
   await change.getByRole('button',{name:'保存新密码'}).click();
-  await change.getByRole('status').filter({hasText:'密码已更新。'}).waitFor();
+  await page.getByRole('status').filter({hasText:'密码已更新。'}).waitFor();
+  assert.equal(await change.count(),0,'Successful password change closes the form');
   assert.equal(new URL(page.url()).hash, '#account', 'Voluntary password changes stay on the personal account page');
   assert.equal(await scene().count(), 0, 'Voluntary password changes do not restart the entrance');
   assert.equal(await page.evaluate(async id => await window.PracticeStore.get(id), record.id),null);
@@ -257,7 +267,7 @@ try {
   await page.goto(origin + '/index.html#account');
   await page.getByRole('button',{name:'切换语言 · 简体中文'}).click();
   await page.getByRole('button',{name:'English',exact:true}).click();
-  await page.getByRole('heading',{name:'My account',exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Profile',exact:true}).waitFor();
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true,'Mobile account page must not overflow');
   await page.getByRole('button',{name:'Dark mode'}).click();
