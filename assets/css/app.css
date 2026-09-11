@@ -101,3 +101,39 @@ header.site-header .header-inner{display:grid;grid-template-columns:minmax(0,1fr
 /* Workspace actions retain their labels and touch targets at narrow widths. */
 .draft-row>.draft-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px}.draft-actions .btn,.draft-actions button{min-height:44px;font-size:12px}.local-row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:8px;flex:0 0 220px}.local-row-actions .btn,.local-row-actions button{min-height:44px;font-size:12px}.project-visibility{grid-column:1/-1;color:var(--muted);font-size:12px;text-align:left}.upload-next{flex-wrap:wrap}
 @media(max-width:767px){.draft-row>.draft-actions{flex-basis:100%;justify-content:flex-end}.local-row-actions{flex-basis:100%;align-items:center}.project-visibility{flex-basis:100%;text-align:left}.upload-next>button{flex:1 1 auto}}
+
+/* Two-step submission: editable suggestions first, explicit publication second. */
+.upload-section+.upload-section{border-top:1px solid var(--line);padding-top:30px;margin-top:30px}
+.upload-section-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:23px}
+.upload-section-heading>span{display:grid;place-items:center;flex:0 0 32px;height:32px;border:1px solid var(--line);border-radius:50%;color:var(--brand);font-size:12px;font-variant-numeric:tabular-nums}
+.upload-section-heading h2{margin:0 0 7px;font-size:21px;line-height:1.5}
+.upload-section-heading p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+.upload-editor .field>span{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.upload-editor .field-required{font-size:11px;font-weight:400;color:var(--muted);white-space:nowrap}
+.upload-editor textarea{min-height:94px;resize:vertical}
+.upload-editor textarea[data-draft=core]{min-height:160px}
+.upload-editor .field small{line-height:1.7}
+.upload-editor [aria-invalid=true]{border-color:var(--warn);outline-offset:3px}
+.upload-errors{padding:18px 20px;border:1px solid var(--warn);border-radius:10px;background:var(--warn-bg);margin:0 0 25px}
+.upload-errors ul{padding-left:19px;margin:8px 0 0}
+.upload-errors button{min-height:36px;padding:5px 0;text-align:left;border:0;background:transparent;box-shadow:none;color:inherit;font-weight:400;text-decoration:underline;text-underline-offset:3px}
+.upload-editor .field-error{display:block;color:var(--warn);font-size:12px;margin:5px 0 0}
+.upload-confirmation{margin:18px 0}
+.upload-confirmation .checkline{align-items:flex-start;line-height:1.85;font-size:14px;cursor:pointer}
+.upload-confirmation input{flex:0 0 18px;accent-color:var(--brand);margin-top:4px}
+.upload-confirmation .field-error{margin-left:28px}
+.publication-choices{padding:0;border:0;margin:30px 0 0;min-width:0}
+.publication-choices legend{font-size:18px;font-weight:600;margin-bottom:17px}
+.publication-choice{display:flex;gap:13px;align-items:flex-start;cursor:pointer;padding:19px;border:1px solid var(--line);border-radius:11px;background:var(--bg);margin-bottom:12px}
+.publication-choice:has(input:checked){background:var(--soft);border-color:var(--brand)}
+.publication-choice:focus-within{outline:2px solid var(--brand);outline-offset:3px}
+.publication-choice input{width:18px;height:18px;flex:0 0 18px;margin:3px 0 0;accent-color:var(--brand)}
+.publication-choice strong,.publication-choice small{display:block}
+.publication-choice strong{font-size:14px}
+.publication-choice small{font-size:12px;line-height:1.8;color:var(--muted);margin-top:5px}
+.upload-editor .review-facts{grid-template-columns:90px minmax(0,1fr)}
+.upload-editor .review-facts dd,.submission-details dd{overflow-wrap:anywhere;white-space:pre-wrap}
+.submission-details{border-top:1px solid var(--line);padding-top:26px;margin-top:26px}
+.submission-details h2{font-size:20px}
+.submission-details .facts{grid-template-columns:110px minmax(0,1fr)}
+@media(max-width:767px){.upload-section-heading{gap:10px}.upload-section-heading h2{font-size:19px}.upload-editor .form-columns{grid-template-columns:1fr;gap:0}.upload-section-heading p{font-size:12px}.upload-editor .upload-next>button{min-height:44px}.upload-editor .review-facts{grid-template-columns:75px minmax(0,1fr)}.upload-confirmation .checkline{font-size:13px}.publication-choice{padding:16px}.upload-side .draft-card:has(.preview-placeholder){display:none}}

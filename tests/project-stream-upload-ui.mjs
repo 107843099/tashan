@@ -6,6 +6,7 @@ import vm from 'node:vm';
 
 // Exercise the real controller through its mounted click handler. The fixture replaces
 // transport and browser storage only; it never contacts a server or uses an account.
+const requirements=readFileSync(new URL('../assets/js/project-requirements.js',import.meta.url),'utf8');
 const source=readFileSync(new URL('../assets/js/project-lifecycle.js',import.meta.url),'utf8');
 const id='local-711f38a7-9279-4af1-85e0-5cfe72757811',vid='version-9186d269-7b90-4505-8dd0-f2f56e2ad165';
 const fingerprint='ab'.repeat(32),MiB=1048576;
@@ -19,7 +20,7 @@ async function fixture({capability=caps(),core='观察不同星球上的自由�
   const calls=[],handlers={},timers=new Map(),counts={encoded:0,reads:0,hashes:0,reload:0,sessionRefresh:0};let timerId=0;
   class TrackedBlob extends Blob{async arrayBuffer(){counts.reads++;return super.arrayBuffer();}}
   const file=(name,type,contents)=>({name,type,blob:new TrackedBlob([typeof contents==='number'?new Uint8Array(contents):contents],{type})});
-  const snapshot={id,projectCode:'TS-L-711F38A792794AF1',currentVersionId:vid,title:'重力实验',kind:'visual',core,sourceReferences:[{projectId:'earth',versionId:'catalog-'+'1'.repeat(32)}],...(attachment===null?{}:{attachment:file(filename,attachmentType,attachment)}),...(cover===null?{}:{coverFile:file('cover.png',coverType,cover)})};
+  const snapshot={id,projectCode:'TS-L-711F38A792794AF1',currentVersionId:vid,title:'重力实验',kind:'visual',core,purpose:'比较重力影响',subject:'物理',stage:'初中',audience:'学生独立操作',prior:'速度概念',outcome:'理解重力加速度',setting:'独立探究',runtimeStatus:'works',practiceStatus:'author-tested',license:'teach',content:true,previewAuthentic:true,rightsConfirmed:true,privacyConfirmed:true,sourceReferences:[{projectId:'earth',versionId:'catalog-'+'1'.repeat(32)}],...(attachment===null?{}:{attachment:file(filename,attachmentType,attachment)}),...(cover===null?{}:{coverFile:file('cover.png',coverType,cover)})};
   const version={id:vid,number:2,createdAt:'2026-09-11T12:00:00.000Z',note:'课堂试验',snapshot},record={...snapshot};
   const account={initialized:true,user:{id:'fixture-owner',status:'active',mustChangePassword:false},refreshSession:async()=>{counts.sessionRefresh++;}};
   const location={hash:'#project/'+id};
@@ -27,7 +28,7 @@ async function fixture({capability=caps(),core='观察不同星球上的自由�
     counts.encoded++;const result={...value};for(const field of ['attachment','coverFile'])if(value[field])result[field]={name:value[field].name,type:value[field].type,base64:Buffer.from(await value[field].blob.arrayBuffer()).toString('base64')};return result;
   }};
   const window={PracticeStore:store,TashanAccounts:account};
-  const context=vm.createContext({window,document:{documentElement:{lang:locale}},location,Blob,TextEncoder,AbortController,Uint8Array,
+  const context=vm.createContext({window,document:{documentElement:{lang:locale}},location,URL,Blob,TextEncoder,AbortController,Uint8Array,
     crypto:{subtle:{digest:async(...args)=>{counts.hashes++;return digest?digest(...args):webcrypto.subtle.digest(...args);}}},
     setTimeout:(fn,ms)=>{const next=++timerId;timers.set(next,{fn,ms});return next;},clearTimeout:key=>timers.delete(key),queueMicrotask:()=>{},
     fetch:async(path,options)=>{
@@ -37,7 +38,7 @@ async function fixture({capability=caps(),core='观察不同星球上的自由�
       return result??response(path.endsWith('/uploads')?{ready:false,fingerprint}:{project:{id}},201);
     }
   });
-  vm.runInContext(source,context);const api=window.TashanProjects;
+  vm.runInContext(requirements,context);vm.runInContext(source,context);const api=window.TashanProjects;
   api.init({confirm,record:()=>record,render:()=>{},reloadLocal:async()=>{counts.reload++;await reloadLocal?.();}});
   api.mount({addEventListener:(type,fn)=>{handlers[type]=fn;},querySelectorAll:()=>[],querySelector:()=>null});
   await api.refresh();
@@ -198,4 +199,21 @@ test('combined sharing never publishes incomplete uploads and reports recoverabl
 test('already public current version is not published twice',async()=>{
   const f=await fixture({respondRead:call=>call.path==='/api/v1/projects/'+id?response({project:{id,publishedVersionId:vid}}):null});
   await f.api.share(id);assert.equal(f.mutations().filter(call=>call.path.endsWith('/publish')).length,0);
+});
+
+
+test('the explicit form publication choice bypasses only the redundant confirmation',async()=>{
+  let confirmations=0;const f=await fixture({confirm:async()=>{confirmations++;return false;}});
+  await f.api.share(id,{confirmed:true});
+  assert.equal(confirmations,0);assert.equal(f.mutations().at(-1).path.endsWith('/publish'),true);
+  const invalid=await fixture();delete invalid.record.rightsConfirmed;
+  await invalid.api.share(id,{confirmed:true});
+  assert.equal(invalid.mutations().length,0);assert.match(invalid.api.workspaceMarkup(),/编辑并补充资料/);
+});
+
+test('private cloud save preserves publication and still uploads the immutable snapshot',async()=>{
+  const f=await fixture();delete f.record.previewAuthentic;
+  await f.api.saveToCloud(id);
+  assert.deepEqual(f.mutations().map(call=>call.path.split('/').at(-1)),['uploads','attachment','coverFile','commit']);
+  assert.match(f.api.workspaceMarkup(),/公开状态保持不变/);assert.equal(f.location.hash,'cloud/'+id);
 });

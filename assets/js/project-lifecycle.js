@@ -2,12 +2,22 @@
 (() => {
   'use strict';
   const store=window.PracticeStore;
-  let hooks={},epoch=0,remoteGeneration=0,loaded=false,loading=false,busy=false,capabilities=null,error='',notice='';
+  let hooks={},epoch=0,remoteGeneration=0,loaded=false,loading=false,busy=false,capabilities=null,error='',notice='',correctionId='';
   let owned=[],published=[],ownTotal=0,publicTotal=0,ownPage=1,publicPage=1;
   const histories=new Map(),remoteViews=new Map(),pending=new Set(),remotePending=new Set(),historyOpen=new Set();
   const routeVersion=()=>{try{return decodeURIComponent(location.hash.split('/')[2]||'');}catch{return '';}};
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const copy={
+    '教学与使用信息':['教學與使用資訊','Teaching & use'], '适用学科':['適用學科','Subject'], '建议学段':['建議學段','Suggested stage'], '建议年级':['建議年級','Suggested grade'], '课程关联':['課程關聯','Curriculum links'],
+    '主要操作者与学习对象':['主要操作者與學習對象','Operators & learners'], '前置知识':['前置知識','Prior knowledge'], '预期学习结果':['預期學習結果','Expected learning outcomes'], '基本使用方式':['基本使用方式','How to use'],
+    '运行补充说明':['執行補充說明','Runtime notes'], '运行与实践记录':['執行與實踐記錄','Runtime & practice'], '当前运行状态':['目前執行狀態','Runtime status'], '实践状态':['實踐狀態','Practice status'], '课堂使用记录':['課堂使用記錄','Classroom notes'],
+    '正常运行':['正常執行','Runs normally'], '存在已知问题':['存在已知問題','Known issues'], '尚未测试':['尚未測試','Not tested'], '仅作者测试':['僅作者測試','Author tested'], '已用于课堂':['已用於課堂','Used in class'],
+    '以下为作者填写和确认的信息，不代表平台验证。':['以下為作者填寫和確認的資訊，不代表平台驗證。','The following information is reported and confirmed by the author; it is not platform verification.'],
+    'Prompt 测试与使用':['Prompt 測試與使用','Prompt testing & use'], '实际测试的 AI 工具':['實際測試的 AI 工具','AI tools actually tested'], 'Prompt 结构':['Prompt 結構','Prompt structure'], '单条 Prompt':['單條 Prompt','Single prompt'], '按顺序使用的组合':['按順序使用的組合','Ordered prompt sequence'], '使用顺序与依赖':['使用順序與依賴','Sequence & dependencies'],
+    '使用授权与责任':['使用授權與責任','Permissions & responsibility'], '允许下载、修改和再分享（需注明来源）':['允許下載、修改和再分享（需註明來源）','Download, adapt and reshare with attribution'], '仅用于教学（需注明来源）':['僅用於教學（需註明來源）','Teaching use with attribution'], '仅展示，其他使用需联系作者':['僅展示，其他使用需聯絡作者','Display only; contact the author for other uses'], '未记录':['未記錄','Not recorded'],
+    '作者已确认预览来自真实运行或实际输出。':['作者已確認預覽來自真實執行或實際輸出。','The author confirms the preview comes from an actual run or output.'], '作者已确认上传权利并处理个人隐私信息。':['作者已確認上傳權利並處理個人隱私資訊。','The author confirms upload rights and handling of personal information.'], 'AI 输出须由教师人工核查。':['AI 輸出須由教師人工核查。','Teachers must check AI outputs manually.'],
+    '打开项目链接':['開啟專案連結','Open project link'], '查看真实效果视频':['查看真實效果影片','Watch actual output video'], '编辑并补充资料':['編輯並補充資料','Edit project information'], '请先补充发布必填信息，再上传新的版本。':['請先補充發布必填資訊，再上傳新版本。','Complete the required publication information, then upload a new version.'], '发布检查未加载，请刷新后重试。':['發布檢查未載入，請重新整理後重試。','Publication checks did not load. Refresh and try again.'],
+
     '上传并公开':['上傳並公開','Upload & publish'],'浏览器副本':['瀏覽器副本','Browser copy'],'查看云端项目':['查看雲端專案','View cloud project'],'发布最新版本':['發布最新版本','Publish latest version'],
     '上传并公开这个项目？':['上傳並公開這個專案？','Upload and publish this project?'],'将保存当前版本到云端，并公开给其他成员和游客查看、下载。之后的修改仍需重新发布。':['將目前版本儲存至雲端，並公開供其他成員和訪客查看、下載。之後的修改仍需重新發布。','This version will be saved to the cloud and made available for members and visitors to view and download. Later edits require a new publication.'],
     '已公开，其他成员和游客均可查看。':['已公開，其他成員和訪客均可查看。','Published. Other members and visitors can now view it.'],'版本已上传，公开状态保持不变。':['版本已上傳，公開狀態維持不變。','Version uploaded. Publication remains unchanged.'],'上传未完成，本地副本已保留，可重新上传。':['上傳未完成，本機副本已保留，可重新上傳。','Upload incomplete. Your local copy is safe; you can retry.'],'项目已上传，但公开未完成，请点击“发布此版本”重试。':['專案已上傳，但公開未完成，請點擊「發布此版本」重試。','Uploaded, but publication did not complete. Retry with “Publish this version”.'],
@@ -40,7 +50,7 @@
     '来源项目':['來源專案','Source project'],'未记录版本':['未記錄版本','Version unspecified'],'当前文件尚未上传。':['目前檔案尚未上傳。','These files have not been uploaded yet.'],'此版本已上传。':['此版本已上傳。','This version is uploaded.'],'上传仅保存所选版本，公开发布需另外确认。':['上傳僅儲存所選版本，公開發布需另外確認。','Uploading saves this version. Publishing requires a separate confirmation.'],'内容版本':['內容版本','Content revision'],'文件校验失败，请重试下载。':['檔案校驗失敗，請重新下載。','File verification failed. Please download again.'],'查看已上传版本':['查看已上傳版本','View an uploaded version'],'替换当前草稿？':['取代目前草稿？','Replace the current draft?'],'恢复旧版会替换尚未完成的草稿。如需保留，请先导出备份或完成保存。':['還原舊版會取代尚未完成的草稿。如需保留，請先匯出備份或完成儲存。','Restoring replaces your unfinished draft. Export a backup or finish saving it first if you want to keep it.'],'备份此项目全部版本':['備份此專案全部版本','Back up all project versions'],'完整备份上限 50 MB，按去重后的附件与版本资料计算。':['完整備份上限 50 MB，按去重後的附件與版本資料計算。','Full backups support up to 50 MB of deduplicated files and version data.'],'包含此项目所有已上传版本、源文件、封面和来源引用。':['包含此專案所有已上傳版本、原始檔案、封面和來源引用。','Includes every uploaded version of this project, its files, covers and source references.']
   };
   const language=()=>document.documentElement.lang||'zh-CN';
-  const t=key=>copy[key]?.[language()==='en'?1:language()==='zh-Hant'?0:-1]||key;
+  const t=key=>copy[key]?.[language()==='en'?1:language()==='zh-Hant'?0:-1]||window.PRACTICE_TRANSLATIONS?.[language()]?.[key]||key;
   const text=key=>escape(t(key));
   const title=value=>typeof value==='object'?value?.[language()]||value?.['zh-CN']||value?.en||'':String(value||'');
   const user=()=>window.TashanAccounts?.user;
@@ -71,6 +81,7 @@
     return `<div class="public-project-actions"><a class="btn" href="#cloud/${encodeURIComponent(p.id)}/${encodeURIComponent(p.publishedVersionId)}">${text('查看公开版本')}</a><button data-project-action="copy-public-link" data-id="${escape(p.id)}" data-version="${escape(p.publishedVersionId)}">${text('复制公开链接')}</button></div>`;
   }
   const date=value=>Number.isFinite(Date.parse(value))?new Intl.DateTimeFormat(language(),{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)):'';
+  const externalURL=value=>{try{const url=new URL(typeof value==='string'?value:'');return ['http:','https:'].includes(url.protocol)&&url.hostname&&!url.username&&!url.password?url.href:'';}catch{return '';}};
   const assetURL=url=>typeof url==='string'&&/^\/api\/v1\/(projects|published)\//.test(url)?url:'';
   async function request(path,options={}){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);pending.add(controller);
@@ -95,24 +106,45 @@
     }catch(reason){if(ticket===epoch){error=reason.message;capabilities??={configured:false};}}
     finally{if(ticket===epoch){loading=false;loaded=true;hooks.render?.();}}
   }
-  function reset(){epoch++;remoteGeneration++;pending.forEach(controller=>controller.abort());pending.clear();loaded=false;loading=false;busy=false;capabilities=null;error='';notice='';owned=[];published=[];ownTotal=publicTotal=0;ownPage=publicPage=1;histories.clear();remoteViews.clear();remotePending.clear();historyOpen.clear();}
+  function reset(){epoch++;remoteGeneration++;pending.forEach(controller=>controller.abort());pending.clear();loaded=false;loading=false;busy=false;capabilities=null;error='';notice='';correctionId='';owned=[];published=[];ownTotal=publicTotal=0;ownPage=publicPage=1;histories.clear();remoteViews.clear();remotePending.clear();historyOpen.clear();}
   function sourceMarkup(refs=[]){return refs.length?`<ul class="project-references">${refs.map(ref=>`<li><a href="#${String(ref.projectId).startsWith('local-')&&!hooks.record?.(ref.projectId)?'cloud':'project'}/${encodeURIComponent(ref.projectId)}${String(ref.projectId).startsWith('local-')&&!hooks.record?.(ref.projectId)&&/^version-/.test(ref.versionId)?'/'+encodeURIComponent(ref.versionId):''}">${escape(title(ref.title)||ref.projectCode||ref.projectId)}</a><small>${escape(ref.projectCode||ref.projectId)} · ${ref.versionNumber?'v'+escape(ref.versionNumber):text('未记录版本')}</small>${ref.versionId?`<code>${escape(ref.versionId)}</code>`:''}</li>`).join('')}</ul>`:`<p class="library-note">${text('未声明参考项目')}</p>`;}
   function detailMarkup(p){
     const record=hooks.record?.(p.id),versions=histories.get(p.id)||[];
     return `<section class="project-lifecycle" data-local-history="${escape(p.id)}"><div class="section-title"><div><span class="project-code">${escape(record?.projectCode||p.projectCode||p.id)}</span><h2>${text('版本与来源')}</h2></div><span class="status">${record?.currentVersionNumber?'v'+record.currentVersionNumber:p.currentVersionId?text('内容版本')+' '+escape(p.currentVersionId.slice(-8)):text('尚未建立版本')}</span></div>${messageMarkup()}${record?`<p class="library-note">${text('每次完成保存都会留下版本；恢复旧版会生成可编辑草稿。')}</p><div class="row"><button class="primary" data-project-action="share" data-id="${escape(p.id)}" ${busy||!capabilities?.canUpload?'disabled':''}>${text('上传并公开')}</button><button data-project-action="version" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('保存一个版本')}</button><button data-project-action="upload" data-id="${escape(p.id)}" ${busy||!capabilities?.canUpload?'disabled':''}>${text(capabilities?.mode==='supabase'?'保存当前版本到云端':'上传到本机服务')} ↑</button></div>${uploadLimitsMarkup()}${capabilities?.configured?`<p class="library-note">${escape(modeLabel())} · ${text(owned.some(item=>item.id===p.id&&item.latestVersionId===record.currentVersionId)?'此版本已上传。':'上传仅保存所选版本，公开发布需另外确认。')}</p>`:`<p class="library-note">${text('云端尚未配置，当前资料仍可完整备份。')}</p>`}<details class="version-history" data-history-id="${escape(p.id)}" ${historyOpen.has(p.id)?'open':''}><summary>${text('版本记录')} · ${versions.length}</summary>${versions.map(v=>`<div class="version-row"><div><strong>${versionLabel(v)}</strong><small>${escape(date(v.createdAt))}</small>${v.note?`<p>${escape(v.note)}</p>`:''}</div><button data-project-action="restore" data-id="${escape(p.id)}" data-version="${escape(v.id)}" ${busy?'disabled':''}>${text('恢复为草稿')}</button></div>`).join('')}</details>`:''}<h3>${text('来源引用')}</h3>${sourceMarkup(record?.sourceReferences||p.sourceReferences||[])}</section>`;
   }
-  const messageMarkup=()=>`${notice?`<p class="account-message" role="status">${escape(notice)}</p>`:''}${error?`<p class="account-message account-message--error" role="alert">${escape(error)}</p>`:''}`;
+  function publicationErrors(metadata,files){
+    if(!window.TashanProjectRequirements)throw new Error(t('发布检查未加载，请刷新后重试。'));
+    return window.TashanProjectRequirements.errors(metadata,files,{phase:'publish'});
+  }
+  function requirePublication(metadata,files,id){
+    const issues=publicationErrors(metadata,files);
+    if(!issues.length)return true;
+    correctionId=id;error=t('请先补充发布必填信息，再上传新的版本。')+' '+issues.map(item=>t(item.message)).join(' ');hooks.render?.();return false;
+  }
+  const messageMarkup=()=>`${notice?`<p class="account-message" role="status">${escape(notice)}</p>`:''}${error?`<p class="account-message account-message--error" role="alert">${escape(error)}</p>${correctionId?`<button data-project-action="edit" data-id="${escape(correctionId)}" ${busy?'disabled':''}>${text('编辑并补充资料')}</button>`:''}`:''}`;
   function pagination(kind,page,total){return total>24?`<div class="account-pagination"><button data-project-action="${kind}-previous" ${page===1||loading?'disabled':''}>${text('上一页')}</button><span>${page} / ${Math.ceil(total/24)}</span><button data-project-action="${kind}-next" ${page*24>=total||loading?'disabled':''}>${text('下一页')}</button></div>`:'';}
   function listMarkup(list,own=false){return `<div class="remote-project-list">${list.map(p=>`<article class="remote-project"><a href="#cloud/${encodeURIComponent(p.id)}">${assetURL(p.coverURL)?`<img src="${escape(assetURL(p.coverURL))}" alt="" loading="lazy">`:''}<span><small class="project-code">${escape(p.projectCode||p.id)}</small><strong>${escape(title(p.title))}</strong><small>${p.publishedVersionId?text('已公开')+' · v'+(p.publishedVersionNumber||p.latestVersionNumber||1):text('仅自己可见')}</small></span><span aria-hidden="true">↗</span></a>${own?`<div class="remote-project-actions">${p.latestVersionId!==p.publishedVersionId?`<button data-project-action="publish" data-id="${escape(p.id)}" data-version="${escape(p.latestVersionId)}" ${busy?'disabled':''}>${text('发布最新版本')}</button>`:''}${p.publishedVersionId?`<button class="subtle" data-project-action="unpublish" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('撤回公开')}</button>`:''}</div>${publicActionsMarkup(p)}`:''}</article>`).join('')}</div>`;}
   function workspaceMarkup(){return `<section class="cloud-workspace"><div class="section-title"><div><span class="project-code">${capabilities?.mode==='supabase'?'CLOUD':'SERVER'}</span><h2>${escape(modeLabel())}</h2></div><button class="subtle" data-project-action="refresh" ${loading?'disabled':''}>${text('重新读取')} ↻</button></div><p class="library-note">${text(capabilities?.configured?(capabilities.mode==='supabase'?'文件与账号存储在云端，浏览器草稿仍由你选择上传。':'本机服务用于验证上传与发布；尚未连接云端。'):'云端尚未配置，当前资料仍可完整备份。')}</p>${uploadLimitsMarkup()}${messageMarkup()}${loading?`<p role="status">${text('正在处理…')}</p>`:owned.length?listMarkup(owned,true):`<p class="library-note">${text('还没有上传项目。')}</p>`}${pagination('own',ownPage,ownTotal)}</section>`;}
   function discoveryMarkup(){return published.length?`<section class="cloud-workspace published-library"><div class="section-title"><div><h2>${text('公开作品')}</h2><p class="library-note">${text('这些作品由平台成员选择固定版本公开。')}${capabilities?.mode==='local'?' '+text('本机服务存储'):''}</p></div></div>${listMarkup(published)}${pagination('public',publicPage,publicTotal)}</section>`:'';}
+  function metadataMarkup(m){
+    const facts=entries=>`<dl class="facts review-facts">${entries.filter(([,value])=>title(value)).map(([label,value])=>`<dt>${text(label)}</dt><dd class="preserve-lines">${escape(t(title(value)))}</dd>`).join('')}</dl>`;
+    const runtime={works:t('正常运行'),issues:t('存在已知问题'),'not-tested':t('尚未测试')};
+    const practice={'not-tested':t('尚未测试'),'author-tested':t('仅作者测试'),classroom:t('已用于课堂')};
+    const licenses={open:t('允许下载、修改和再分享（需注明来源）'),teach:t('仅用于教学（需注明来源）'),show:t('仅展示，其他使用需联系作者')};
+    const teaching=[['适用学科',m.subject],['建议学段',m.stage],['建议年级',m.grade],['课程关联',m.curriculum],['主要操作者与学习对象',m.audience],['前置知识',m.prior],['预期学习结果',m.outcome],['基本使用方式',m.setting]].filter(([,value])=>title(value));
+    return `${teaching.length?`<section class="submission-details"><h2>${text('教学与使用信息')}</h2>${facts(teaching)}</section>`:''}
+    <section class="submission-details"><h2>${text(m.kind==='prompt'?'Prompt 测试与使用':'运行与实践记录')}</h2><p class="library-note">${text('以下为作者填写和确认的信息，不代表平台验证。')}</p>${m.kind==='prompt'?facts([['实际测试的 AI 工具',m.tested||t('未记录')],['Prompt 结构',m.promptStructure==='single'?t('单条 Prompt'):m.promptStructure==='sequence'?t('按顺序使用的组合'):t('未记录')],['使用顺序与依赖',m.dependencies]]):facts([['当前运行状态',runtime[m.runtimeStatus]||t('未记录')],['实践状态',practice[m.practiceStatus]||t('未记录')],['课堂使用记录',m.record],['运行补充说明',m.runtimeNotes]])}</section>
+    <section class="submission-details"><h2>${text('使用授权与责任')}</h2><p>${escape(licenses[m.license]||t('未记录'))}</p>${m.previewAuthentic===true?`<p class="library-note">${text('作者已确认预览来自真实运行或实际输出。')}</p>`:''}${m.rightsConfirmed===true&&m.privacyConfirmed===true?`<p class="library-note">${text('作者已确认上传权利并处理个人隐私信息。')}</p>`:''}${m.kind==='prompt'?`<p class="library-note">${text('AI 输出须由教师人工核查。')}</p>`:''}</section>`;
+  }
   function remoteMarkup(id){
     const result=remoteViews.get(id);
     if(!result||result.routeVersion!==routeVersion())return `<section class="page-head" data-remote-project="${escape(id)}"><a href="#discover">← ${text('返回项目库')}</a><p role="status">${text('正在处理…')}</p></section>`;
     if(result.error)return `<section class="page-head"><a href="#discover">← ${text('返回项目库')}</a><p role="alert">${escape(result.error)}</p></section>`;
     const {project:p,version:v,own,versions=[]}=result,m=v.metadata||{},file=v.files?.attachment,cover=v.files?.coverFile;
     const preview=`./project-preview.html?remote=${encodeURIComponent(p.id)}&version=${encodeURIComponent(v.id)}${own?'':'&public=1'}`;
-    return `<section class="page-head"><a class="back-link" href="#discover">← ${text('返回项目库')}</a><p class="project-code">${escape(p.projectCode)} · ${versionLabel(v)} · ${escape(modeLabel())}</p><h1>${escape(title(m.title||p.title))}</h1><p>${escape(title(m.purpose||m.summary))}</p></section>${messageMarkup()}<div class="remote-detail"><div>${assetURL(cover?.url)?`<img class="remote-cover" src="${escape(assetURL(cover.url))}" alt="${escape(title(m.title))}">`:''}<p class="preserve-lines">${escape(title(m.core||m.outcome))}</p><h3>${text('来源引用')}</h3>${sourceMarkup(v.sourceReferences||m.sourceReferences||[])}</div><aside class="side-panel"><p>${escape(p.projectCode)} · ${versionLabel(v)}</p><p>${escape(date(v.createdAt))}</p><div class="side-actions">${own?`<label class="field"><span>${text('查看已上传版本')}</span><select data-remote-version="${escape(p.id)}" ${busy?'disabled':''}>${versions.map(item=>`<option value="${escape(item.id)}" ${item.id===v.id?'selected':''}>v${item.number} · ${escape(date(item.createdAt))}</option>`).join('')}</select></label><button data-project-action="backup" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('备份此项目全部版本')} ↓</button><small class="library-note">${text('完整备份上限 50 MB，按去重后的附件与版本资料计算。')}</small>`:''}${file&&/\.html?$/i.test(file.name)?`<a class="btn primary" href="${preview}">${text('运行固定版本')} ↗</a>`:''}${assetURL(file?.url)?`<a class="btn" href="${escape(assetURL(file.url))}" download>${text('下载源文件')} ↓</a>`:''}${user()?`<button data-project-action="download" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('保存到此浏览器')}</button>`:`<a class="btn" href="#login">${text('登录后可保存与继续创作')}</a>`}${own?`${publicActionsMarkup(p)}<button class="primary" data-project-action="publish" data-id="${escape(p.id)}" data-version="${escape(v.id)}" ${busy||p.publishedVersionId===v.id?'disabled':''}>${text(p.publishedVersionId===v.id?'已公开':'发布此版本')}</button>${p.publishedVersionId?`<button class="subtle" data-project-action="unpublish" data-id="${escape(p.id)}">${text('撤回公开')}</button>`:''}`:''}</div></aside></div>`;
+    const projectLink=m.kind==='visual'?externalURL(m.projectUrl)||externalURL(m.core):'',videoLink=m.kind==='visual'?externalURL(m.previewUrl):'';
+    const incomplete=own&&window.TashanProjectRequirements&&publicationErrors(m,v.files).length>0;
+    return `<section class="page-head"><a class="back-link" href="#discover">← ${text('返回项目库')}</a><p class="project-code">${escape(p.projectCode)} · ${versionLabel(v)} · ${escape(modeLabel())}</p><h1>${escape(title(m.title||p.title))}</h1><p>${escape(title(m.purpose||m.summary))}</p></section>${messageMarkup()}<div class="remote-detail"><div>${assetURL(cover?.url)?`<img class="remote-cover" src="${escape(assetURL(cover.url))}" alt="${escape(title(m.title))}">`:''}${videoLink?`<p><a class="btn" href="${escape(videoLink)}" target="_blank" rel="noopener noreferrer">${text('查看真实效果视频')} ↗</a></p>`:''}<p class="preserve-lines">${escape(title(m.core||m.outcome))}</p>${metadataMarkup(m)}<h3>${text('来源引用')}</h3>${sourceMarkup(v.sourceReferences||m.sourceReferences||[])}</div><aside class="side-panel"><p>${escape(p.projectCode)} · ${versionLabel(v)}</p><p>${escape(date(v.createdAt))}</p><div class="side-actions">${own?`<label class="field"><span>${text('查看已上传版本')}</span><select data-remote-version="${escape(p.id)}" ${busy?'disabled':''}>${versions.map(item=>`<option value="${escape(item.id)}" ${item.id===v.id?'selected':''}>v${item.number} · ${escape(date(item.createdAt))}</option>`).join('')}</select></label><button data-project-action="edit" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('编辑并补充资料')}</button>${incomplete?`<p class="library-note">${text('请先补充发布必填信息，再上传新的版本。')}</p>`:''}<button data-project-action="backup" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('备份此项目全部版本')} ↓</button><small class="library-note">${text('完整备份上限 50 MB，按去重后的附件与版本资料计算。')}</small>`:''}${file&&/\.html?$/i.test(file.name)?`<a class="btn primary" href="${preview}">${text('运行固定版本')} ↗</a>`:''}${projectLink?`<a class="btn" href="${escape(projectLink)}" target="_blank" rel="noopener noreferrer">${text('打开项目链接')} ↗</a>`:''}${assetURL(file?.url)?`<a class="btn" href="${escape(assetURL(file.url))}" download>${text('下载源文件')} ↓</a>`:''}${user()?`<button data-project-action="download" data-id="${escape(p.id)}" ${busy?'disabled':''}>${text('保存到此浏览器')}</button>`:`<a class="btn" href="#login">${text('登录后可保存与继续创作')}</a>`}${own?`${publicActionsMarkup(p)}<button class="primary" data-project-action="publish" data-id="${escape(p.id)}" data-version="${escape(v.id)}" ${busy||incomplete||p.publishedVersionId===v.id?'disabled':''}>${text(p.publishedVersionId===v.id?'已公开':'发布此版本')}</button>${p.publishedVersionId?`<button class="subtle" data-project-action="unpublish" data-id="${escape(p.id)}">${text('撤回公开')}</button>`:''}`:''}</div></aside></div>`;
   }
   function invalidateRemote(id){remoteGeneration++;remoteViews.delete(id);}
   async function remote(id){
@@ -131,7 +163,7 @@
     }catch(reason){if(ticket===epoch&&generation===remoteGeneration)remoteViews.set(id,{error:reason.message,routeVersion:selected});}
     finally{remotePending.delete(key);if(ticket===epoch)hooks.render?.();}
   }
-  async function work(fn){if(busy)return;const ticket=epoch;busy=true;error='';notice='';hooks.render?.();try{await fn(ticket);}catch(reason){if(ticket===epoch&&reason.name!=='ProjectSessionChanged')error=reason.message;}finally{if(ticket===epoch){busy=false;hooks.render?.();}}}
+  async function work(fn){if(busy)return;const ticket=epoch;busy=true;error='';notice='';correctionId='';hooks.render?.();try{await fn(ticket);}catch(reason){if(ticket===epoch&&reason.name!=='ProjectSessionChanged')error=reason.message;}finally{if(ticket===epoch){busy=false;hooks.render?.();}}}
   async function upload(id,ticket){
     const actorId=user()?.id,guard=()=>{if(ticket!==epoch||!actorId||user()?.id!==actorId||user()?.mustChangePassword||user()?.status==='disabled'){const reason=new Error('Session changed');reason.name='ProjectSessionChanged';throw reason;}};
     guard();
@@ -163,10 +195,13 @@
     return version.id;
   }
   // A local save is durable before sharing starts. Failed uploads/publication never discard it.
-  async function share(id){
+  async function share(id,{confirmed=false}={}){
     if(busy||!user())return;
     const ticket=epoch,actor=user().id;
-    const accepted=await hooks.confirm?.(t('上传并公开这个项目？'),t('将保存当前版本到云端，并公开给其他成员和游客查看、下载。之后的修改仍需重新发布。'),t('上传并公开'));
+    const record=await store.get(id);
+    if(ticket!==epoch||user()?.id!==actor||busy)return;
+    if(!record||!requirePublication(record,{attachment:record.attachment,coverFile:record.coverFile},id))return;
+    const accepted=confirmed||await hooks.confirm?.(t('上传并公开这个项目？'),t('将保存当前版本到云端，并公开给其他成员和游客查看、下载。之后的修改仍需重新发布。'),t('上传并公开'));
     if(!accepted||ticket!==epoch||user()?.id!==actor||busy)return;
     await work(async current=>{
       const guard=()=>{if(current!==epoch||user()?.id!==actor){const reason=new Error('Session changed');reason.name='ProjectSessionChanged';throw reason;}};
@@ -180,6 +215,7 @@
       }catch(reason){guard();notice='';throw new Error(t(uploaded?'项目已上传，但公开未完成，请点击“发布此版本”重试。':'上传未完成，本地副本已保留，可重新上传。')+' '+reason.message);}
     });
   }
+  async function saveToCloud(id){if(busy||!user())return;await work(ticket=>upload(id,ticket));}
   function checkUploadSize(record,version,stream=false){
     const limits=uploadLimits(stream);
     const {attachment,coverFile,...metadata}=version.snapshot;
@@ -233,6 +269,19 @@
     }
     if(ticket!==epoch)return;await hooks.reloadLocal?.();notice=t('已保存到当前账号的浏览器资料。');location.hash='project/'+record.id;
   }
+  async function edit(id,ticket){
+    if(!hooks.record?.(id)){
+      const view=remoteViews.get(id),path='/projects/'+encodeURIComponent(id);
+      const p=view?.own?view.project:(await request(path)).project;
+      if(ticket!==epoch)return;
+      const v=(await request(path+'/versions/'+encodeURIComponent(p.latestVersionId))).version;
+      if(ticket!==epoch)return;
+      const record=await readSnapshot(p,v,ticket);if(ticket!==epoch)return;
+      await store.adoptVersion(record,v);if(ticket!==epoch)return;
+      await hooks.reloadLocal?.();if(ticket!==epoch)return;
+    }
+    await hooks.edit?.(id);
+  }
   async function click(event){
     const button=event.target.closest('[data-project-action]');if(!button)return;event.preventDefault();event.stopImmediatePropagation();
     const {projectAction:action,id,version}=button.dataset;
@@ -247,6 +296,11 @@
     }
     if(action==='restore'&&Object.keys(await store.getDraft()||{}).length){const accepted=await hooks.confirm?.(t('替换当前草稿？'),t('恢复旧版会替换尚未完成的草稿。如需保留，请先导出备份或完成保存。'),t('恢复为草稿'));if(!accepted)return;}
     const actionEpoch=epoch,actorId=user()?.id;
+    if(action==='publish'){
+      const value=await request('/projects/'+encodeURIComponent(id)+'/versions/'+encodeURIComponent(version));
+      if(actionEpoch!==epoch||user()?.id!==actorId||busy)return;
+      if(!requirePublication(value.version.metadata,value.version.files,id))return;
+    }
     if(action==='publish'||action==='unpublish'){
       const accepted=await hooks.confirm?.(t(action==='publish'?'发布选定版本？':'撤回公开'),t(action==='publish'?'公开后，游客可以查看和下载这一版内容。请确认你有分享文件与素材的权限。':'撤回后，新的公开访问将被阻止。已经被他人下载的副本无法收回。'),t(action==='publish'?'确认发布':'撤回公开'));
       if(!accepted)return;
@@ -257,6 +311,7 @@
       if(action==='restore'){await store.restoreVersion(id,version);if(ticket!==epoch)return;await hooks.reloadLocal?.();notice=t('旧版已恢复为草稿，保存后会产生新版本。');location.hash='upload';}
       if(action==='upload')await upload(id,ticket);
       if(action==='download')await download(id,ticket);
+      if(action==='edit')await edit(id,ticket);
       if(action==='backup')await backup(id,ticket);
       if(action==='publish'||action==='unpublish'){
         const p=owned.find(item=>item.id===id)||remoteViews.get(id)?.project;
@@ -272,5 +327,5 @@
     root.querySelectorAll('[data-local-history]').forEach(node=>{const id=node.dataset.localHistory;if(histories.has(id)||!hooks.record?.(id))return;histories.set(id,[]);const ticket=epoch;store.listVersions(id).then(list=>{if(ticket===epoch){histories.set(id,list);hooks.render?.();}}).catch(()=>{});});
     const view=root.querySelector('[data-remote-project]');if(view&&loaded&&!loading)queueMicrotask(()=>remote(view.dataset.remoteProject));
   }
-  window.TashanProjects={init:options=>{hooks=options;},reset,invalidate:id=>{if(id)histories.delete(id);else histories.clear();},mount,detailMarkup,localActionsMarkup,workspaceMarkup,discoveryMarkup,remoteMarkup,refresh,share,get canShare(){return !!capabilities?.canUpload;},get busy(){return busy;}};
+  window.TashanProjects={init:options=>{hooks=options;},reset,invalidate:id=>{if(id)histories.delete(id);else histories.clear();},mount,detailMarkup,localActionsMarkup,workspaceMarkup,discoveryMarkup,remoteMarkup,refresh,share,saveToCloud,get canShare(){return !!capabilities?.canUpload;},get busy(){return busy;}};
 })();

@@ -20,6 +20,7 @@ const context = createContext({ document, Blob: LocalBlob, URL: LocalURL, locati
   PRACTICE_LIBRARY: catalog, PRACTICE_TRANSLATIONS: { en: {}, 'zh-Hant': {} }, PRACTICE_ICONS: {},
   PracticeStore: { list: async () => [], getDraft: async () => null }, addEventListener() {}, scrollTo() {} });
 runInContext('window = globalThis', context);
+runInContext(readFileSync('assets/js/project-requirements.js', 'utf8'), context);
 runInContext(readFileSync('assets/js/project-showcase.js', 'utf8'), context);
 let source = readFileSync('assets/js/app.js', 'utf8');
 const end = source.lastIndexOf('})();');

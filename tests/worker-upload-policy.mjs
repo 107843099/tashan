@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import worker from '../server/worker.mjs';
 import { handleApi } from '../server/api.mjs';
 import { handleProjectRequest, workerUploadPolicy, PROJECT_LIMITS } from '../server/projects-api.mjs';
+import { publicationMetadata } from './fixtures/project-publication.mjs';
 
 const origin = 'https://tashan.example.test';
 const id = 'local-01234567-89ab-4cde-8fab-0123456789ab';
@@ -19,7 +20,7 @@ function input() {
 }
 function fixture(mode='supabase') {
   const calls = {save:0,publish:0,read:0};
-  const existing = { project:{id,publishedVersionId:null}, version:{...input().version,metadata:input().metadata,files:{}} };
+  const existing = { project:{id,publishedVersionId:null}, version:{...input().version,metadata:{...publicationMetadata(),...input().metadata},files:{attachment:{name:'课堂.html',type:'text/html',size:12},coverFile:{name:'封面.png',type:'image/png',size:68}}} };
   const provider = {
     status:async()=>({configured:true,mode}), rateLimit:async()=>{},
     saveVersion:async(actor,snapshot)=>{ calls.save++;return {created:true,project:{id},version:snapshot}; },
@@ -85,7 +86,7 @@ test('paused uploads do not consume the body; saved versions remain readable and
   });
   assert.equal((await run(request('/projects/'+id+'/versions/version-test-1'),env,closed)).status,200);
   assert.equal((await run(request('/projects/'+id+'/publish',{versionId:'version-test-1',expectedVersionId:null}),env,closed)).status,200);
-  assert.equal(env.calls.read,1);assert.equal(env.calls.publish,1);
+  assert.equal(env.calls.read,2);assert.equal(env.calls.publish,1);
 });
 
 test('account API forwards Worker policy while retaining authentication',async()=>{

@@ -38,14 +38,25 @@ test('upload analysis validates classifications and title length while allowing 
   const accepted={...uploadFields,title:'名'.repeat(200),subject:'',stage:''};
   const f=fixture({fetchImpl:async()=>Response.json(output(accepted))});
   const response=await f.call({...input,task:'upload'});assert.equal(response.status,200);assert.deepEqual((await response.json()).result.fields,accepted);
-  for(const changed of [{subject:'科学'},{subject:'Science'},{stage:'大学一年级'},{stage:'Primary school'},{subject:null},{title:'名'.repeat(201)},{title:'   '}]){
+  for(const changed of [{subject:'未知学科'},{subject:'Science'},{stage:'大学一年级'},{stage:'Primary school'},{subject:null},{title:'名'.repeat(201)},{title:'   '}]){
     const rejected=fixture({fetchImpl:async()=>Response.json(output({...uploadFields,...changed}))});
     const result=await rejected.call({...input,task:'upload'});assert.equal(result.status,502,JSON.stringify(changed));
     const data=await result.json();assert.equal(data.error.code,'AI_INVALID_RESPONSE');assert.equal(data.result,undefined);assert.deepEqual(rejected.mutations,[]);
   }
 });
+test('upload analysis supports arts, physical education and the expanded school disciplines',async()=>{
+  for(const subject of ['英语','科学','道德与法治','音乐','美术','体育与健康','劳动']){
+    let sent;
+    const result={...uploadFields,subject};
+    const f=fixture({fetchImpl:async(_,init)=>{sent=JSON.parse(init.body);return Response.json(output(result));}});
+    const response=await f.call({...input,task:'upload'});assert.equal(response.status,200,subject);
+    assert.equal((await response.json()).result.fields.subject,subject);
+    assert.ok(sent.messages[0].content.includes(subject));
+    assert.match(sent.messages[0].content,/不得推断真实预览、运行状态、实践状态、实际测试的 AI 工具或隐私版权授权/);
+  }
+});
 test('upload analysis rejects permission and verification fields atomically instead of accepting partial suggestions',async()=>{
-  const protectedFields={license:'open',used:'yes',record:'模型虚构的已试教记录',verification:{status:'checked',classroomVerified:true}};
+  const protectedFields={license:'open',used:'yes',tested:'DeepSeek',runtimeStatus:'working',previewAuthentic:true,rightsConfirmed:true,privacyConfirmed:true,humanReviewConfirmed:true,record:'模型虚构的已试教记录',verification:{status:'checked',classroomVerified:true}};
   const variants=[...Object.entries(protectedFields).map(([key,value])=>({...uploadFields,[key]:value})),{...uploadFields,...protectedFields}];
   const substituted={...uploadFields,license:'open'};delete substituted.prior;variants.push(substituted);
   for(const result of variants){

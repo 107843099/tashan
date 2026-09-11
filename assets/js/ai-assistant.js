@@ -9,7 +9,7 @@
     '正在调用 AI':['正在呼叫 AI','AI is working'],
     '开启后，上传项目将自动调用 AI 分析':['開啟後，上傳專案將自動呼叫 AI 分析','When enabled, uploading a project automatically uses AI analysis'],
     '此内容由 AI 生成，请核对':['此內容由 AI 產生，請核對','AI-generated content. Please review it.'],
-    '上传后自动分析必填信息':['上傳後自動分析必填資訊','Automatically analyse required fields after upload'],
+    '上传后自动分析教学信息':['上傳後自動分析教學資訊','Automatically analyse teaching information after upload'],
     'AI 分析并补全':['AI 分析並補全','AI upload analysis'],'分析并补全':['分析並補全','Analyse and fill missing fields'],
     '只将从 HTML、Markdown、TXT 或 JSON 提取的教学文字发送给 DeepSeek，不发送整份文件或账号资料。AI 只补空项，不会自动保存或发布。':['只將從 HTML、Markdown、TXT 或 JSON 擷取的教學文字傳送給 DeepSeek，不傳送整份檔案或帳戶資料。AI 只補空項，不會自動儲存或發佈。','Only teaching text extracted from HTML, Markdown, TXT or JSON is sent to DeepSeek, excluding the full file and account details. AI fills empty fields; it does not save or publish.'],
     '正在提取教学文字…':['正在擷取教學文字…','Extracting teaching text…'],
@@ -17,7 +17,9 @@
     '可提取的教学文字不足，请补充至少 10 个字的项目说明。':['可擷取的教學文字不足，請補充至少 10 個字的專案說明。','There is too little teaching text to analyse. Add a project description of at least 10 characters.'],
     '文件文字提取失败，可以填写项目说明后手动分析。':['檔案文字擷取失敗，可以填寫專案說明後手動分析。','Text extraction failed. Add a description and analyse it manually.'],
     'AI 预填，请核对':['AI 預填，請核對','AI prefilled — please review'],'仍需填写':['仍需填寫','Still required'],
-    '必填信息已补齐，请到下一步逐项核对。':['必填資訊已補齊，請到下一步逐項核對。','Required fields are filled. Review each field in the next step.'],
+    '教学信息已预填，可在下方直接修改。':['教學資訊已預填，可在下方直接修改。','Teaching information is prefilled. Edit it directly below.'],
+    '真实预览、运行或测试情况与授权，仍需你亲自确认。':['真實預覽、運行或測試情況與授權，仍需你親自確認。','You must still confirm the real preview, running or testing status, and permissions yourself.'],
+    '查看 AI 建议，按需替换':['查看 AI 建議，按需替換','Review AI suggestions and choose replacements'],
     '已有内容已保留，未自动保存。':['已有內容已保留，未自動儲存。','Existing content was preserved. Nothing was saved automatically.'],
     '取消后，本次请求仍可能计入用量。':['取消後，本次請求仍可能計入用量。','A cancelled request may still count towards usage.'],
     '每分钟最多 3 次，请稍后再试。':['每分鐘最多 3 次，請稍後再試。','Up to 3 requests per minute. Please try again shortly.'],
@@ -155,7 +157,7 @@
     }
     const values = response.result?.fields;
     const required = task === 'upload' ? uploadFields : fields;
-    if (!values || required.some(key => typeof values[key] !== 'string' || (!values[key].trim() && !['subject','stage'].includes(key)) || values[key].length > (key === 'title' ? 200 : 1500))) throw Object.assign(new Error(),{code:'AI_OUTPUT_INVALID'});
+    if (!values || typeof values !== 'object' || Array.isArray(values) || Object.keys(values).length !== required.length || required.some(key => typeof values[key] !== 'string' || (!values[key].trim() && !['subject','stage'].includes(key)) || values[key].length > (key === 'title' ? 200 : 1500))) throw Object.assign(new Error(),{code:'AI_OUTPUT_INVALID'});
     return {fields:Object.fromEntries(required.map(key => [key,values[key]]))};
   }
   async function generate() {
@@ -176,6 +178,10 @@
         prefilled.set(snapshot.target,{fields:Object.keys(values)});titlePlaceholders.delete(snapshot.target);
         view.result = null;view.source = null;view.phase = 'applied';view.notice = 'AI 预填，请核对';
         active = null;hooks.apply?.('upload',snapshot.key,{fields:values});
+        // The form is already editable; keep the full suggestions behind a
+        // disclosure so replacing teacher-authored fields remains explicit.
+        const applied = capture(snapshot.task,snapshot.key);
+        if (same(snapshot,applied) && view) {view.result=result;view.source=applied;view.selected=new Set();paint();}
       } else {
         view.result = result;view.phase = 'review';view.selected = new Set(fields);view.model = typeof data.model === 'string' ? data.model : '';
       }
@@ -190,15 +196,21 @@
     if (!view?.result || busy()) return;
     const snapshot = view.source, current = capture(snapshot.task,snapshot.key);
     if (!same(snapshot,current) || current.fingerprint !== snapshot.fingerprint) {sync(snapshot.task,snapshot.key);paint();return;}
-    const result = snapshot.task === 'teaching' ? {fields:Object.fromEntries(fields.filter(key => view.selected.has(key)).map(key => [key,view.result.fields[key]]))} : {text:view.result.text};
-    if (snapshot.task === 'teaching' && !Object.keys(result.fields).length) return;
-    view.result = null;view.source = null;view.phase = 'applied';view.error = '';view.notice = snapshot.task === 'teaching' ? '已填入所选教学资料，请核对后保存。' : '已替换创作任务，可编辑后保存到工作台或作为新项目。';
+    const result = snapshot.task !== 'prompt' ? {fields:Object.fromEntries((snapshot.task === 'upload' ? uploadFields : fields).filter(key => view.selected.has(key) && view.result.fields[key].trim()).map(key => [key,view.result.fields[key]]))} : {text:view.result.text};
+    if (snapshot.task !== 'prompt' && !Object.keys(result.fields).length) return;
+    view.result = null;view.source = null;view.phase = 'applied';view.error = '';view.notice = snapshot.task !== 'prompt' ? '已填入所选教学资料，请核对后保存。' : '已替换创作任务，可编辑后保存到工作台或作为新项目。';
     hooks.apply?.(snapshot.task,snapshot.key,result);paint();
   }
   function prefillNotice(current) {
     if (!prefilled.has(current.target)) return '';
-    const missing = uploadFields.filter(key => !String(current.context[key] || '').trim());
-    return `<div class="ai-prefill-note" role="status"><strong>${text('AI 预填，请核对')}</strong><p>${missing.length ? text('仍需填写') + '：' + missing.map(key=>text(names[key])).join(' · ') : text('必填信息已补齐，请到下一步逐项核对。')}</p><small>${text('已有内容已保留，未自动保存。')}</small></div>`;
+    const missing = (current.context.kind === 'prompt' ? ['title','purpose'] : uploadFields).filter(key => !String(current.context[key] || '').trim());
+    return `<div class="ai-prefill-note" role="status"><strong>${text('AI 预填，请核对')}</strong><p>${missing.length ? text('仍需填写') + '：' + missing.map(key=>text(names[key])).join(' · ') : text('教学信息已预填，可在下方直接修改。')}</p><small>${text('已有内容已保留，未自动保存。')} ${text('真实预览、运行或测试情况与授权，仍需你亲自确认。')}</small></div>`;
+  }
+  function reviewMarkup(task,result) {
+    if (!result) return '';
+    const suggestions = task === 'upload' ? uploadFields : fields;
+    const content = `<div class="ai-review" tabindex="-1" data-ai-review><div class="ai-review-heading"><h4>${badge('此内容由 AI 生成，请核对')}${text('先审核，再采用')}</h4><span>${text('待核对')}</span></div>${task !== 'prompt' ? `<p>${text('选择要填入表单的建议；现有文字只在采用时更新。')}</p><div class="ai-suggestions">${suggestions.filter(name=>result.fields[name].trim()).map(name=>`<label class="ai-suggestion"><span><input type="checkbox" data-ai-field="${name}" ${view.selected.has(name)?'checked':''}>${text(names[name])}</span><span class="ai-suggestion-text">${escape(result.fields[name])}</span></label>`).join('')}</div>` : `<label class="ai-prompt-result"><span>${text('AI 优化创作 Prompt')}</span><textarea readonly rows="12" spellcheck="false">${escape(result.text)}</textarea></label>`}<div class="ai-review-actions"><button type="button" class="primary" data-ai-action="apply" ${busy()||task!=='prompt'&&!view.selected.size?'disabled':''}>${text(task!=='prompt'?'采用选中的建议':'采用这个 Prompt')}</button><button type="button" class="subtle" data-ai-action="dismiss">${text('收起结果')}</button></div><small>${text('未自动保存')}</small></div>`;
+    return task === 'upload' ? `<details class="ai-context ai-upload-review"><summary>${text('查看 AI 建议，按需替换')}</summary>${content}</details>` : content;
   }
   function markup(task,key) {
     const current = sync(task,key); if (!current) return '';
@@ -211,7 +223,7 @@
     const result = view.result;
     const calling = view.phase === 'loading';
     const callHint = text(calling ? '正在调用 AI' : '此操作将调用 AI');
-    return `<section class="ai-assistant" data-ai-slot data-ai-task="${task}" data-ai-key="${escape(key)}" aria-label="${text(title)}"><div class="ai-assistant-heading"><div>${icon}<h3>${text(title)}</h3></div><span class="ai-provider">DeepSeek</span></div>${task === 'upload' ? `<label class="ai-auto-option" title="${text('开启后，上传项目将自动调用 AI 分析')}"><input type="checkbox" data-ai-auto ${autoAnalyse?'checked':''}>${text('上传后自动分析必填信息')}${badge('开启后，上传项目将自动调用 AI 分析')}</label>` : ''}<p class="ai-disclosure">${text(task === 'upload' ? '只将从 HTML、Markdown、TXT 或 JSON 提取的教学文字发送给 DeepSeek，不发送整份文件或账号资料。AI 只补空项，不会自动保存或发布。' : '当前教学文字将发送给 DeepSeek，不包含附件或账号资料。结果需要你核对后采用。')}</p>${fileNotice ? `<p class="ai-file-note">${text(fileNotice)}</p>` : ''}${task !== 'prompt' ? prefillNotice(current) : ''}<details class="ai-context"><summary>${text('查看将发送的文字')}</summary>${shortened || fileContext?.truncated && fileContext.target === current.target ? `<p class="ai-shortened">${text('已按长度上限截取，请先检查发送内容。')}</p>` : ''}<dl>${Object.entries(context).map(([name,value])=>`<dt>${text(names[name])}</dt><dd>${escape(value)}</dd>`).join('')}</dl></details><div class="ai-actions"><button type="button" data-ai-action="generate" title="${callHint}" ${!available||loading||busy()?'disabled':''}>${loading?'<span class="ai-spinner" aria-hidden="true"></span>':''}${text(loading ? extracting ? '正在提取教学文字…' : '正在生成，通常需要十几秒…' : result ? '重新生成' : task==='upload'?'分析并补全':task==='teaching'?'生成建议':'优化 Prompt')}${badge(calling?'正在调用 AI':'此操作将调用 AI',calling)}</button>${loading?`<button type="button" class="subtle" data-ai-action="cancel">${text('取消生成')}</button>`:''}${unavailable||capability.error?`<button type="button" class="subtle" data-ai-action="retry">${text('重新检查')}</button>`:''}</div><p class="ai-status" role="${view.error||capability.error?'alert':'status'}" aria-live="polite" aria-atomic="true" tabindex="-1" data-ai-focus ${loading?'aria-busy="true"':''}>${status?text(status):''}</p>${calling ? `<small class="ai-quota">${text('取消后，本次请求仍可能计入用量。')}</small>` : ''}${available&&quota?`<small class="ai-quota">${escape(capability.data.model||'DeepSeek')} · ${text('每分钟')} ${escape(quota.perMinute)} ${text('次')} · ${text('每日')} ${escape(quota.perDay)} ${text('次')}</small>`:''}${result?`<div class="ai-review" tabindex="-1" data-ai-review><div class="ai-review-heading"><h4>${badge('此内容由 AI 生成，请核对')}${text('先审核，再采用')}</h4><span>${text('待核对')}</span></div>${task==='teaching'?`<p>${text('选择要填入表单的建议；现有文字只在采用时更新。')}</p><div class="ai-suggestions">${fields.map(name=>`<label class="ai-suggestion"><span><input type="checkbox" data-ai-field="${name}" ${view.selected.has(name)?'checked':''}>${text(names[name])}</span><span class="ai-suggestion-text">${escape(result.fields[name])}</span></label>`).join('')}</div>`:`<label class="ai-prompt-result"><span>${text('AI 优化创作 Prompt')}</span><textarea readonly rows="12" spellcheck="false">${escape(result.text)}</textarea></label>`}<div class="ai-review-actions"><button type="button" class="primary" data-ai-action="apply" ${busy()||task==='teaching'&&!view.selected.size?'disabled':''}>${text(task==='teaching'?'采用选中的建议':'采用这个 Prompt')}</button><button type="button" class="subtle" data-ai-action="dismiss">${text('收起结果')}</button></div><small>${text('未自动保存')}</small></div>`:''}</section>`;
+    return `<section class="ai-assistant" data-ai-slot data-ai-task="${task}" data-ai-key="${escape(key)}" aria-label="${text(title)}"><div class="ai-assistant-heading"><div>${icon}<h3>${text(title)}</h3></div><span class="ai-provider">DeepSeek</span></div>${task === 'upload' ? `<label class="ai-auto-option" title="${text('开启后，上传项目将自动调用 AI 分析')}"><input type="checkbox" data-ai-auto ${autoAnalyse?'checked':''}>${text('上传后自动分析教学信息')}${badge('开启后，上传项目将自动调用 AI 分析')}</label>` : ''}<p class="ai-disclosure">${text(task === 'upload' ? '只将从 HTML、Markdown、TXT 或 JSON 提取的教学文字发送给 DeepSeek，不发送整份文件或账号资料。AI 只补空项，不会自动保存或发布。' : '当前教学文字将发送给 DeepSeek，不包含附件或账号资料。结果需要你核对后采用。')}</p>${fileNotice ? `<p class="ai-file-note">${text(fileNotice)}</p>` : ''}${task !== 'prompt' ? prefillNotice(current) : ''}<details class="ai-context"><summary>${text('查看将发送的文字')}</summary>${shortened || fileContext?.truncated && fileContext.target === current.target ? `<p class="ai-shortened">${text('已按长度上限截取，请先检查发送内容。')}</p>` : ''}<dl>${Object.entries(context).map(([name,value])=>`<dt>${text(names[name])}</dt><dd>${escape(value)}</dd>`).join('')}</dl></details><div class="ai-actions"><button type="button" data-ai-action="generate" title="${callHint}" ${!available||loading||busy()?'disabled':''}>${loading?'<span class="ai-spinner" aria-hidden="true"></span>':''}${text(loading ? extracting ? '正在提取教学文字…' : '正在生成，通常需要十几秒…' : result ? '重新生成' : task==='upload'?'分析并补全':task==='teaching'?'生成建议':'优化 Prompt')}${badge(calling?'正在调用 AI':'此操作将调用 AI',calling)}</button>${loading?`<button type="button" class="subtle" data-ai-action="cancel">${text('取消生成')}</button>`:''}${unavailable||capability.error?`<button type="button" class="subtle" data-ai-action="retry">${text('重新检查')}</button>`:''}</div><p class="ai-status" role="${view.error||capability.error?'alert':'status'}" aria-live="polite" aria-atomic="true" tabindex="-1" data-ai-focus ${loading?'aria-busy="true"':''}>${status?text(status):''}</p>${calling ? `<small class="ai-quota">${text('取消后，本次请求仍可能计入用量。')}</small>` : ''}${available&&quota?`<small class="ai-quota">${escape(capability.data.model||'DeepSeek')} · ${text('每分钟')} ${escape(quota.perMinute)} ${text('次')} · ${text('每日')} ${escape(quota.perDay)} ${text('次')}</small>`:''}${reviewMarkup(task,result)}</section>`;
   }
   async function fileChanged(file,{generatedTitle=false,manual=false}={}) {
     cancel();fileContext=null;

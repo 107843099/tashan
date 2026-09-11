@@ -1,13 +1,13 @@
 // Only the application server talks to DeepSeek. No browser-supplied URLs or tools.
 import { AI_PROMPT_LIMITS, resolvePromptConfig, validatePromptTask } from './ai-prompts.mjs';
+import '../assets/js/project-requirements.js';
 export const AI_LIMITS = Object.freeze({ inputCharacters: 10000, coreCharacters: 6000, outputTokens: 1600, perMinute: 3, perDay: 30, globalPerDay: 300, requestBytes: 48 * 1024 });
 export const AI_MODEL = 'deepseek-flash';
 const ENDPOINT = 'https://api.deepseek.com/chat/completions';
 const fail = (status, code, message) => { throw Object.assign(new Error(message), { status, code }); };
 const fields = { title:200, kind:10, subject:100, stage:100, core:AI_LIMITS.coreCharacters, purpose:1500, audience:1500, prior:1500, outcome:1500, setting:1500, boundary:1500, reference:1500 };
 const teachingFields = ['purpose','audience','prior','outcome','setting'];
-const subjects = ['语文','历史','数学','地理','物理','化学','生物','信息技术','综合实践活动'];
-const stages = ['学前教育','小学','初中','高中','高等教育','教师专业发展'];
+const { subjects, stages } = globalThis.TashanProjectRequirements;
 const uploadFields = ['title','purpose','subject','stage','audience','prior','outcome','setting'];
 const plain = value => value && typeof value === 'object' && !Array.isArray(value);
 export function validateAiInput(input) {
@@ -25,7 +25,7 @@ export function validateAiInput(input) {
 function messages(input, promptConfig) {
   const language = {'zh-CN':'简体中文','zh-Hant':'繁體中文',en:'English'}[input.locale];
   const task = input.task === 'upload'
-    ? `返回 JSON 对象，且仅包含 title、purpose、subject、stage、audience、prior、outcome、setting 八个字符串字段。title为项目名称；purpose为教学用途；audience为适用学生；prior为先备知识；outcome为可观察学习目标；setting为课堂活动与设备要求。每项最多180字，setting最多350字。无论回答语言为何，subject必须从${JSON.stringify(subjects)}选一个原始值，stage必须从${JSON.stringify(stages)}选一个原始值；这两个分类无法判断时返回空字符串。其余字段依据不足时注明待教师确认。上传文字是有限摘录，不代表已阅读或运行整份文件。`
+    ? `返回 JSON 对象，且仅包含 title、purpose、subject、stage、audience、prior、outcome、setting 八个字符串字段。title为项目名称；purpose为教学用途（Prompt 项目应说明帮助教师完成什么）；audience分别说明谁操作项目、最终面向哪些学习者；prior为用自然语言描述的先备知识；outcome为可观察学习目标与深度（如理解概念、独立应用）；setting为基本使用方式、课堂活动与设备要求。每项最多180字，setting最多350字。无论回答语言为何，subject必须从${JSON.stringify(subjects)}选一个原始值，stage必须从${JSON.stringify(stages)}选一个原始值；这两个分类无法判断时返回空字符串。其余字段依据不足时注明待教师确认。上传文字是有限摘录，不代表已阅读或运行整份文件。不得推断真实预览、运行状态、实践状态、实际测试的 AI 工具或隐私版权授权；这些由教师亲自确认，不属于这八个输出字段。`
     : input.task === 'teaching'
     ? '返回 JSON 对象，且仅包含 purpose、audience、prior、outcome、setting 五个字符串字段：分别为教学用途、适用学生与差异化支持、先备知识、可观察的学习目标、课堂活动与设备条件。每项最多 180 字，setting 可最多 350 字。依据不足时明确待教师确认。'
     : '返回 JSON 对象，且仅包含 text 字符串，内容为可复制的创作 Prompt，正文最多 900 字。';

@@ -8,13 +8,14 @@ import {LocalProjectsProvider} from '../server/local-projects.mjs';
 import {handleProjectRequest,normalizeProjectVersion,PROJECT_LIMITS} from '../server/projects-api.mjs';
 import {createSupabaseProjectsProvider} from '../server/supabase-projects.mjs';
 import {handleApi} from '../server/api.mjs';
+import {publicationMetadata} from './fixtures/project-publication.mjs';
 
 const origin='http://127.0.0.1:4189';
 const id='local-01234567-89ab-4cde-8fab-0123456789ab';
 const png='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j9WQAAAAASUVORK5CYII=';
 function snapshot(number=1,title='圆的探索'){
  return {projectCode:'TS-L-0123456789AB4CDE',version:{id:'version-fixture-'+number,number,createdAt:'2026-09-10T08:00:00.000Z',note:'版本记录',sourceReferences:[{projectId:'earth',title:{'zh-CN':'地球公转'},versionNumber:1}]},
- metadata:{id,title,kind:'visual',subject:'数学',core:'用于课堂投屏的几何探索',currentVersionId:'version-fixture-'+number},
+ metadata:{...publicationMetadata(),id,title,kind:'visual',subject:'数学',core:'用于课堂投屏的几何探索',currentVersionId:'version-fixture-'+number},
  files:{attachment:{name:'project.html',type:'text/html',base64:Buffer.from('<h1>Private geometry</h1><script>window.demo=true</script>').toString('base64')},coverFile:{name:'cover.png',type:'image/png',base64:png}}};
 }
 async function fixture(work){

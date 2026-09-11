@@ -42,12 +42,13 @@
     "pretest:cloud-tools": "npm run check:runtime",
     "test:cloud-tools": "node scripts/cloud-check.mjs --self-test && node scripts/cloud-storage.mjs --self-test && node scripts/migrate-local-accounts.mjs --self-test",
     "pretest:projects": "npm run check:runtime",
-    "test:projects": "node tests/project-model.mjs && node tests/project-api.mjs && node tests/worker-upload-policy.mjs && node --test tests/project-stream-api.mjs tests/project-stream-upload-ui.mjs tests/project-stream-policy.mjs tests/r2-upload.mjs",
+    "test:projects": "node tests/project-publication-requirements.mjs && node tests/project-model.mjs && node tests/project-api.mjs && node tests/worker-upload-policy.mjs && node --test tests/project-stream-api.mjs tests/project-stream-upload-ui.mjs tests/project-stream-policy.mjs tests/r2-upload.mjs",
     "pretest:browser": "npm run check:runtime && npm run catalog",
     "test:browser": "node tests/account-browser.mjs && node tests/project-browser.mjs && node tests/account-layout-browser.mjs && node tests/admin-ai-browser.mjs && node tests/startup-browser.mjs",
     "test:ai": "node tests/ai-api.mjs && node tests/ai-extractor.mjs && node tests/ai-browser.mjs && node tests/ai-prompts.mjs && node --test tests/admin-ai-ui.mjs",
     "test:examples": "node --test tests/gravity-lab.mjs",
     "test:worker-storage": "node --test tests/r2-upload-workerd.mjs",
-    "verify:live": "node scripts/verify-live-site.mjs"
+    "verify:live": "node scripts/verify-live-site.mjs",
+    "test:upload": "node tests/upload-workflow-browser.mjs"
   }
 }

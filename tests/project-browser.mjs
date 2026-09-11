@@ -29,7 +29,7 @@ try{
   await login(page);
   const record=await page.evaluate(async()=>{
     const cover=await (await fetch('./assets/covers/earth.webp')).blob();
-    const p=await window.PracticeStore.put({title:'课堂版本一',kind:'visual',core:'可复现的课堂演示',purpose:'展示固定版本',subject:'地理',stage:'初中',audience:'初中学生',prior:'基础地理',outcome:'理解版本',setting:'教师演示',content:true,license:'open',sourceReferences:[{projectId:'earth',projectCode:'TS-0001',versionId:window.PRACTICE_LIBRARY.projects.find(p=>p.id==='earth').currentVersionId,title:'地球公转'}],coverFile:{name:'cover.webp',type:'image/webp',blob:cover},attachment:{name:'classroom.html',type:'text/html',blob:new Blob(['<h1>Published version one</h1><script>document.body.dataset.ready="yes"</script>'],{type:'text/html'})}},{saveVersion:true});
+    const p=await window.PracticeStore.put({title:'课堂版本一',kind:'visual',core:'可复现的课堂演示',purpose:'展示固定版本',subject:'地理',stage:'初中',audience:'初中学生',prior:'基础地理',outcome:'理解版本',setting:'教师演示',content:true,license:'open',runtimeStatus:'works',practiceStatus:'author-tested',previewAuthentic:true,rightsConfirmed:true,privacyConfirmed:true,sourceReferences:[{projectId:'earth',projectCode:'TS-0001',versionId:window.PRACTICE_LIBRARY.projects.find(p=>p.id==='earth').currentVersionId,title:'地球公转'}],coverFile:{name:'cover.webp',type:'image/webp',blob:cover},attachment:{name:'classroom.html',type:'text/html',blob:new Blob(['<h1>Published version one</h1><script>document.body.dataset.ready="yes"</script>'],{type:'text/html'})}},{saveVersion:true});
     await window.PracticeStore.putWorkspaceState({bookmarks:['earth'],tasks:{earth:{text:'备课任务',form:{goal:'课堂目标'}}}});return p;
   });
   assert.match(record.projectCode,/^TS-L-[A-F0-9]{16}$/);
@@ -67,9 +67,10 @@ try{
   // Edit the real wizard. Completing a save creates a new immutable version.
   await page.goto(origin+'/index.html#desk');
   await page.locator('[data-action="edit-project"][data-id="'+record.id+'"]').click();
-  await page.getByRole('button',{name:/下一步：教学信息/}).click();
   await page.locator('[data-draft="title"]').fill('课堂版本二');
-  await page.getByRole('button',{name:/下一步：确认保存/}).click();
+  await page.getByRole('button',{name:/下一步：确认与发布/}).click();
+  assert.equal(await page.locator('[data-confirm="content"]').isChecked(),false,'Editing teaching information requires a new author confirmation');
+  await page.locator('[data-confirm="content"]').check();
   await page.getByRole('button',{name:/保存修改/}).click();
   await page.waitForURL('**#project/'+record.id);
   await page.locator('.project-lifecycle').filter({hasText:'v2'}).waitFor();
@@ -140,19 +141,43 @@ try{
   // Exercise the new final-step sharing button with actual browser storage and server requests.
   await page.evaluate(async()=>{
     const cover=await (await fetch('./assets/covers/earth.webp')).blob();
-    await window.PracticeStore.putDraft({title:'一步分享的教学提示词',kind:'prompt',core:'请引导学生观察月相并记录形状。',purpose:'观察与记录',subject:'地理',stage:'初中',audience:'初中学生',prior:'认识月球',outcome:'记录月相',setting:'小组讨论',content:true,license:'teach',coverFile:{name:'cover.webp',type:'image/webp',blob:cover}});
+    await window.PracticeStore.putDraft({title:'一步分享的教学提示词',kind:'prompt',core:'请引导学生观察月相并记录形状。',purpose:'观察与记录',subject:'地理',stage:'初中',audience:'初中学生',prior:'认识月球',outcome:'记录月相',setting:'小组讨论',content:true,license:'teach',tested:'DeepSeek',promptStructure:'single',humanReviewConfirmed:true,previewAuthentic:true,rightsConfirmed:true,privacyConfirmed:true,coverFile:{name:'cover.webp',type:'image/webp',blob:cover}});
   });
   await page.reload();await page.locator('.draft-row a[href="#upload"]').click();
-  await page.getByRole('button',{name:/下一步：教学信息/}).click();await page.getByRole('button',{name:/下一步：确认保存/}).click();
-  await page.locator('[data-save-mode="share"]').click();await page.getByRole('dialog',{name:'上传并公开这个项目？'}).waitFor();
-  // Cancel retains the saved project. Retry is available on the local detail page.
-  await page.getByRole('dialog').getByRole('button',{name:'取消',exact:true}).click();
+  await page.getByRole('button',{name:/下一步：确认与发布/}).click();
+  await page.locator('[data-draft="publication"][value="private"]').check();
+  await page.locator('[data-save-mode="cloud"]').click();await page.waitForURL('**#cloud/*');await idle();
   const sharedId=page.url().split('/').at(-1);assert.ok(sharedId.startsWith('local-'));
-  assert.equal((await guest.request.get(origin+'/api/v1/published/'+sharedId)).status(),404);
-  await page.locator('[data-project-action="share"]:enabled').click();
-  await Promise.all([page.waitForResponse(r=>r.url().endsWith('/publish')&&r.request().method()==='POST'&&r.status()===200),page.getByRole('dialog').getByRole('button',{name:'上传并公开',exact:true}).click()]);await idle();
+  assert.equal((await guest.request.get(origin+'/api/v1/published/'+sharedId)).status(),404,'Private cloud selection is not public');
+  assert.equal((await page.request.get(origin+'/api/v1/projects/'+sharedId)).status(),200,'Private choice stores the project on the server');
+  await page.locator('[data-project-action="edit"]').click();await page.waitForURL('**#upload');
+  await page.getByRole('button',{name:/下一步：确认与发布/}).click();
+  await page.locator('[data-draft="publication"][value="public"]').check();
+  await Promise.all([page.waitForResponse(r=>r.url().endsWith('/publish')&&r.request().method()==='POST'&&r.status()===200),page.locator('[data-save-mode="cloud"]').click()]);
+  await idle();await page.waitForURL('**#cloud/'+sharedId);
+  assert.equal(await page.getByRole('dialog').count(),0,'Explicit public selection publishes directly without another confirmation');
   await guest.goto(origin+'/index.html#cloud/'+sharedId);await guest.getByRole('heading',{name:'一步分享的教学提示词',exact:true}).waitFor();
   await page.locator('[data-project-action="copy-public-link"]').waitFor();
+
+  // Older, incomplete cloud records are editable from a fresh browser, without inventing evidence.
+  const repairId=await page.evaluate(async()=>{
+    const p=await window.PracticeStore.put({title:'待补充的云端项目',kind:'visual',purpose:'音乐节拍练习',core:'节拍演示',projectUrl:'https://example.org/music-project',previewUrl:'https://example.org/music-video',subject:'音乐',stage:'小学',audience:'教师投屏，面向小学生',prior:'无需基础',outcome:'区分二拍与三拍',setting:'跟随节奏拍手',runtimeStatus:'works',practiceStatus:'author-tested'},{saveVersion:true});return p.id;
+  });
+  await page.goto(origin+'/index.html#project/'+repairId);await page.reload();
+  await page.locator('[data-project-action="upload"]:enabled').click();await page.waitForURL('**#cloud/'+repairId);await idle();
+  assert.equal(await page.locator('[data-project-action="publish"]').isDisabled(),true,'Incomplete evidence cannot be published from cloud details');
+  const projectLink=page.getByRole('link',{name:/打开项目链接/}),videoLink=page.getByRole('link',{name:/查看真实效果视频/});
+  assert.equal(await projectLink.getAttribute('href'),'https://example.org/music-project');
+  assert.equal(await videoLink.getAttribute('href'),'https://example.org/music-video');
+  assert.equal(await projectLink.getAttribute('rel'),'noopener noreferrer');
+  await page.getByText('教师投屏，面向小学生',{exact:true}).waitFor();
+  const repairContext=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),repair=await repairContext.newPage();
+  await login(repair);await repair.goto(origin+'/index.html#cloud/'+repairId);
+  await repair.locator('[data-project-action="edit"]').click();await repair.waitForURL('**#upload');await idle(repair);
+  assert.equal(await repair.locator('[data-draft="title"]').inputValue(),'待补充的云端项目');
+  assert.equal(await repair.locator('[data-draft="subject"]').inputValue(),'音乐');
+  assert.equal((await repair.evaluate(()=>window.PracticeStore.getDraft())).rightsConfirmed,undefined,'Repairing a legacy project does not automatically attest upload rights');
+  await repairContext.close();
   await page.goto(origin+'/index.html#desk');await page.locator('.cloud-workspace').waitFor();
   await page.locator('[data-action="edit-project"][data-id="'+record.id+'"]').click();await page.waitForURL('**#upload');await page.locator('#upload-form').waitFor();await page.goto(origin+'/index.html#desk');
   await page.locator('[data-action="delete-draft"]').waitFor();
@@ -170,6 +195,6 @@ try{
   await page.setViewportSize({width:812,height:375});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Landscape workspace has no horizontal overflow');
   assert.deepEqual(errors,[]);
-  console.log('Project browser checks passed: real upload/publication, anonymous frozen-version preview, private edits, version selection, full cloud/local backups, cross-device identity, idempotent reupload, deduplicated import, draft restoration/deletion, sharing cancellation/retry, member/guest access, withdrawal and three-language responsive workspace.');
+  console.log('Project browser checks passed: real upload/publication, anonymous frozen-version preview, private edits, version selection, full cloud/local backups, cross-device identity, idempotent reupload, deduplicated import, draft restoration/deletion, two-step metadata editing, private cloud choice, direct public submission, incomplete cloud-only editing, external asset/video links, member/guest access, withdrawal and three-language responsive workspace.');
 }catch(error){if(page)console.log('Browser failure state:',await page.evaluate(async()=>({url:location.href,user:window.TashanAccounts?.user?.username,scope:window.PracticeStore?.scope,projects:(await window.PracticeStore?.list())?.map(p=>({id:p.id,title:p.title})),body:document.body.innerText.slice(0,2200)})).catch(()=>null));if(page)await page.screenshot({path:'/tmp/tashan-v34-browser-failure.png',fullPage:true}).catch(()=>{});throw error;}
 finally{if(browser)await browser.close();server.kill('SIGTERM');await once(server,'exit').catch(()=>{});await rm(folder,{recursive:true,force:true});}

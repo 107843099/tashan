@@ -26,8 +26,9 @@ const write=(key,value)=>{try{localStorage.setItem(workspaceKey(key),JSON.string
 let locale='zh-CN';try{const l=localStorage.getItem('practice-language');if(['zh-CN','zh-Hant','en'].includes(l))locale=l;}catch{}
 const saved=read('practice-library-bookmarks',[]);
 const state={type:'all',search:'',subject:'',stage:'',region:'',grade:'',ungraded:true,verification:'',filtersOpen:false,saved:new Set(Array.isArray(saved)?saved:[]),tasks:read('practice-library-tasks',{}),draft:{},step:1,error:'',preview:'',fileName:'',busy:false,storageReady:false,storageError:'',detailTab:'teaching',deskTab:'projects',adapt:{},briefs:{},scroll:0,languageOpen:false};
-const subjects=['语文','历史','数学','地理','物理','化学','生物','信息技术','综合实践活动'];
-const stages=['学前教育','小学','初中','高中','高等教育','教师专业发展'];
+const requirements=window.TashanProjectRequirements;
+const subjects=requirements.subjects;
+const stages=requirements.stages;
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const t=(key,vars={})=>{let text=locale==='zh-CN'?key:(dictionaries[locale]?.[key]??key);return text.replace(/\{(\w+)\}/g,(_,k)=>String(vars[k]??''));};
 const e=value=>escapeHTML(value), txt=(key,vars)=>e(t(key,vars));
@@ -131,8 +132,8 @@ function detail(p){
  return `<div class="page-head detail-head"><a class="back-link" href="#discover">← ${txt('返回项目库')}</a><div class="row"><span class="subject-label">${txt(p.subject)} / ${txt(p.kind==='visual'?'教学可视化':'Prompt与AI工作流')}</span>${status(p)}${p.id==='conics'?`<span class="status needs-review">${txt('概念表述待修订')}</span>`:''}</div><h1>${e(local(p.title))}</h1><p>${e(local(p.summary))}</p></div>
  <div class="detail-layout"><div class="detail-main"><div class="detail-preview ${p.example?'artwork-preview':''}">${p.cover?`<button class="image-preview-button" data-action="view-image" data-id="${e(p.id)}" aria-label="${txt('查看完整预览图')}"><img ${coverAttributes(p,'(max-width: 760px) calc(100vw - 40px), 760px')} width="${p.coverWidth||1280}" height="${p.coverHeight||720}" alt="${e(local(p.example?.title||p.title))}"><span>${txt('查看大图')} ↗</span></button>`:`<div class="card-visual">${promptCover(p)}</div>`}<div class="preview-caption"><span>${txt(p.example?'AI 生成示例':p.isLocal?'上传的预览图':'实际页面截图')}</span><span>${p.example?e(local(p.example.title)):txt('先观察，再动手体验')}</span></div></div>
  <nav class="detail-tabs" aria-label="${txt('项目详情导航')}">${available.map(key=>`<button data-detail-tab="${key}" aria-pressed="${active===key}">${txt({teaching:'教学设计',example:'示例作品',prompts:'Prompt 原文',source:'来源与验证'}[key])}</button>`).join('')}</nav>
- <div class="detail-tab-content" id="detail-tab-content">${active==='teaching'?teaching(p):active==='example'?exampleDetail(p):active==='prompts'?prompts(p):sourceDetail(p)}</div></div>
- <aside class="side-panel project-aside"><div class="aside-heading"><span class="subject-label">${txt('带进你的下一节课')}</span><h2>${txt(p.kind==='visual'?'体验一个好想法':'把灵感变成作品')}</h2></div><dl class="facts"><dt>${txt('建议学段')}</dt><dd>${p.stages.map(s=>txt(s)).join(' / ')}</dd><dt>${txt('适用学生')}</dt><dd>${e(local(p.teaching?.audience||p.prior))}</dd><dt>${txt('教学方式')}</dt><dd>${e(local(p.teaching?.method|| (p.kind==='visual'?'浏览器打开，教师引导观察':'复制原始 Prompt 到外部 AI 工具')))}</dd>${p.teaching?.duration?`<dt>${txt('建议时长')}</dt><dd>${e(local(p.teaching.duration))}</dd>`:''}</dl>
+ <div class="detail-tab-content" id="detail-tab-content">${active==='teaching'?teaching(p)+submissionDetails(p):active==='example'?exampleDetail(p):active==='prompts'?prompts(p):sourceDetail(p)}</div></div>
+ <aside class="side-panel project-aside"><div class="aside-heading"><span class="subject-label">${txt('带进你的下一节课')}</span><h2>${txt(p.kind==='visual'?'体验一个好想法':'把灵感变成作品')}</h2></div><dl class="facts"><dt>${txt('建议学段')}</dt><dd>${p.stages.length?p.stages.map(s=>txt(s)).join(' / '):txt('未限定学段')}</dd><dt>${txt('适用学生')}</dt><dd>${e(local(p.teaching?.audience||p.prior))}</dd><dt>${txt('教学方式')}</dt><dd>${e(local(p.teaching?.method|| (p.kind==='visual'?'浏览器打开，教师引导观察':'复制原始 Prompt 到外部 AI 工具')))}</dd>${p.teaching?.duration?`<dt>${txt('建议时长')}</dt><dd>${e(local(p.teaching.duration))}</dd>`:''}</dl>
  <div class="side-actions">${p.kind==='visual'?projectLaunch(p):`<button class="primary" data-action="show-prompts">${txt('查看与复制 Prompt')} →</button>`}<a class="btn" href="#adapt/${e(p.id)}">${txt('基于它继续创作')}</a>${bookmarkButton(p,true)}${p.isLocal?`<button class="subtle" data-action="edit-project" data-id="${e(p.id)}">${txt('编辑这个项目')}</button>`:''}</div><div class="aside-source"><span class="avatar">${e(p.contributors[0].slice(-1))}</span><div><strong>${p.isLocal?txt('我的本地项目'):e(p.contributors.join(' / '))}</strong><small>${txt(p.isLocal?'保存在此浏览器':'来自本地教学作品库')}</small></div></div></aside></div>
  ${lifecycle?.detailMarkup(p)||''}
  ${p.related.length?`<section class="detail-section"><h2>${txt('沿着这个思路，继续探索')}</h2><div class="related-list">${p.related.map(id=>project(id)).filter(Boolean).map(item=>`<a href="${projectURL(item.id)}">${item.cover?`<img ${coverAttributes(item,'90px')} alt="" width="90" height="60" loading="lazy">`:''}<div><span class="subject-label">${txt(item.subject)}</span><strong>${e(local(item.title))}</strong></div><span>→</span></a>`).join('')}</div></section>`:''}`;
@@ -150,6 +151,12 @@ function teaching(p){
  ${a.activities?.length?`<h3 class="activity-title">${txt('一节课，可以这样展开')}</h3><ol class="activity-timeline">${a.activities.map((step,i)=>`<li><span class="step-number">${String(i+1).padStart(2,'0')}</span><p>${e(local(step))}</p></li>`).join('')}</ol>`:''}
  <div class="evidence-note"><h3>${txt('看见学生学会了什么')}</h3><p>${e(local(a.evidence||a.objective))}</p></div>${a.limitation?`<details class="teaching-boundary" ${['conics','chemistry','dynasty'].includes(p.id)?'open':''}><summary>${txt('教学边界与使用提醒')}</summary><p>${e(local(a.limitation))}</p></details>`:''}
  ${a.sources?.length?`<details class="reference-notes"><summary>${txt('课程与教学参考')} <span>${a.sources.length}</span></summary><p>${txt('以下资料支持教学建议的整理，项目的具体适配仍需教师判断。')}</p>${a.sources.map(ref=>`<a href="${e(ref.url)}" target="_blank" rel="noopener"><strong>${e(ref.title)} ↗</strong><span>${e(local(ref.note))}</span></a>`).join('')}</details>`:''}</section>`;
+}
+function submissionDetails(p){
+ const d=p.submission;if(!d)return '';
+ const labels={works:'可正常运行',issues:'可运行，但有已知问题','not-tested':'尚未测试','author-tested':'仅作者测试',classroom:'已用于实际课堂',single:'单条 Prompt，可独立使用',sequence:'多步骤组合，按顺序使用'};
+ const facts=[['建议年级',d.grade],['课程关联',d.curriculum],...(p.kind==='prompt'?[['测试工具',d.tested],['Prompt 使用顺序',t(labels[d.promptStructure]||'待确认')],['使用顺序与依赖关系',d.dependencies]]:[['当前运行状态',t(labels[d.runtimeStatus]||'待确认')],['实践状态',t(labels[d.practiceStatus]||'待确认')],['运行补充说明',d.runtimeNotes],['课堂使用记录',d.record]]),['开放权限',t(p.licenseLabel)]];
+ return `<section class="submission-details"><h2>${txt('使用说明与作者确认')}</h2><p class="library-note">${txt('以下信息由作者提供，不代表平台或课堂成效验证。')}</p><dl class="facts">${facts.filter(([,value])=>value).map(([label,value])=>`<dt>${txt(label)}</dt><dd>${e(value)}</dd>`).join('')}</dl>${p.previewUrl?`<a class="btn" href="${e(p.previewUrl)}" target="_blank" rel="noopener noreferrer">${txt('查看真实效果视频')} ↗</a>`:''}</section>`;
 }
 function exampleDetail(p){
  const a=p.example;
@@ -192,17 +199,46 @@ function workspace(){
 }
 
 function upload(){
- const d=state.draft;
- return `<div class="page-head"><a class="back-link" href="#desk">← ${txt('返回工作台')}</a><h1>${txt(d.id?'继续打磨你的作品':'分享你的教学实践')}</h1><p>${txt('整理作品与教学信息，最后选择仅保存到此浏览器，或上传并公开分享。')}</p></div><div class="upload-layout"><section class="editor upload-editor"><div class="upload-toolbar"><span class="subject-label">${txt(d.id?'编辑本地项目':'新项目')} · ${state.step} / 3</span><button class="subtle" data-action="save-draft" ${state.busy?'disabled':''}>${txt(state.busy?'正在保存…':'保存草稿')}</button></div><ol class="step-nav">${['提交成果','补充教学信息','确认并保存'].map((name,i)=>`<li ${state.step===i+1?'aria-current="step"':''}><b>${i+1}</b>${txt(name)}</li>`).join('')}</ol><form id="upload-form">
- ${state.step===1?`<h2>${txt('先让我们看见你的作品')}</h2><div class="kind-choices" role="group" aria-label="${txt('项目类别')}">${[['visual','教学可视化','可运行的网页、互动实验或演示'],['prompt','Prompt 工具','可复用的提示词、模板与生成示例']].map(([value,label,note])=>`<button type="button" data-draft-kind="${value}" aria-pressed="${(d.kind||'visual')===value}"><strong>${txt(label)}</strong><span>${txt(note)}</span></button>`).join('')}</div>${draftField('core',d.kind==='prompt'?'Prompt 正文':'项目链接或成果说明',d.kind==='prompt'?'粘贴可复用的完整提示词':'粘贴链接或描述你准备分享的成果')}
- <div class="file-drop"><label class="field"><span>${txt('添加项目文件')}</span><input id="upload-file" type="file" accept=".html,.htm,.zip,.md,.markdown,.txt,.json,.pdf,.docx,.pptx"><small>${e(d.attachment?.name||t('HTML、ZIP、Markdown 或文档，最大 10 MB。'))}</small></label>${d.attachment?`<button type="button" class="subtle" data-action="remove-attachment">${txt('移除文件')}</button>`:''}</div>
- ${ai?.markup('upload','draft')||''}
- <div class="file-drop"><label class="field"><span>${txt('添加封面或生成示例')}</span><input id="upload-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small>${txt('PNG、JPEG、WebP 或 GIF，最大 5 MB；会随项目保存。')}</small></label>${d.coverFile?`<button type="button" class="subtle" data-action="remove-cover">${txt('更换前可移除当前图片')}</button>`:''}</div><button type="button" class="subtle" data-action="load-example">${txt('用一个示例试试流程')} ↗</button>`
- :state.step===2?`<h2>${txt('让另一位教师知道，怎样用它')}</h2>${draftField('title','项目名称','让另一位教师一眼知道这是什么',false)}${draftField('purpose','它能帮助教师或学生完成什么？')}<div class="form-columns"><label class="field"><span>${txt('学科')}</span><select data-draft="subject"><option value="">${txt('请选择')}</option>${subjects.map(x=>`<option value="${e(x)}" ${d.subject===x?'selected':''}>${txt(x)}</option>`).join('')}</select></label><label class="field"><span>${txt('建议学段')}</span><select data-draft="stage"><option value="">${txt('请选择')}</option>${stages.map(x=>`<option value="${e(x)}" ${d.stage===x?'selected':''}>${txt(x)}</option>`).join('')}</select></label></div>${ai?.markup('teaching','draft')||''}${draftField('audience','谁会操作？最终帮助谁？')}${draftField('prior','使用前需要具备什么基础？')}${draftField('outcome','希望达到什么结果？')}${draftField('setting','准备怎样使用？有什么设备或环境要求？')}<details class="optional-fields"><summary>${txt('补充测试、课堂记录与来源')}</summary>${d.kind==='prompt'?draftField('tested','实际测试过的 AI 工具','未测试请如实填写'):''}<label class="field"><span>${txt('实际课堂使用记录')}</span><select data-draft="used"><option value="no" ${d.used!=='yes'?'selected':''}>${txt('尚无课堂使用记录')}</option><option value="yes" ${d.used==='yes'?'selected':''}>${txt('已有课堂使用记录')}</option></select></label>${draftField('record','实际在哪些学生中使用过？')}${draftField('source','参考来源','填写参考项目或材料来源')}${referenceEditor()}</details>`
- :`<h2>${txt('准备好，加入你的作品库')}</h2><div class="review-title"><strong>${e(d.title)}</strong><span class="status">${txt('待验证')}</span></div><p>${e(d.purpose)}</p><dl class="facts review-facts"><dt>${txt('适用学生')}</dt><dd>${e(d.audience)}</dd><dt>${txt('前置知识')}</dt><dd>${e(d.prior)}</dd><dt>${txt('学习目标')}</dt><dd>${e(d.outcome)}</dd><dt>${txt('教学方式')}</dt><dd>${e(d.setting)}</dd><dt>${txt('项目文件')}</dt><dd>${e(d.attachment?.name||t('使用填写的文字内容'))}</dd></dl><button type="button" class="subtle" data-action="previous-step">${txt('返回调整教学信息')}</button><label class="field"><span>${txt('开放权限')}</span><select data-draft="license">${[['unconfirmed','待确认'],['open','开放再创作'],['teach','仅限教学使用'],['show','仅供展示体验']].map(([v,l])=>`<option value="${v}" ${(d.license||'unconfirmed')===v?'selected':''}>${txt(l)}</option>`).join('')}</select></label><label class="checkline"><input data-confirm="content" type="checkbox" ${d.content?'checked':''}>${txt('我已检查预览、教学信息和实际使用状态。')}</label><p class="library-note">${txt('仅保存到此浏览器时，其他人看不到。选择“上传并公开”并确认后，其他成员和游客才能查看。')}</p>${!lifecycle?.canShare?`<p class="library-note" role="status">${txt('上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。')}</p>`:''}`}
- ${errorMarkup()}<div class="upload-next">${state.step>1?`<button type="button" data-action="previous-step">← ${txt('上一步')}</button>`:''}${state.step===3?`<button type="submit" data-save-mode="local" ${state.busy||!state.storageReady?'disabled':''}>${txt(d.id?'保存修改':'仅保存到此浏览器')}</button>`:''}<button type="submit" class="primary" data-save-mode="share" ${state.busy||!state.storageReady||(state.step===3&&!lifecycle?.canShare)?'disabled':''}>${txt(state.busy?'正在保存…':state.step===1?'下一步：教学信息':state.step===2?'下一步：确认保存':'上传并公开')} →</button></div></form></section>
- <aside class="upload-side"><div class="section-title"><h2>${txt('项目卡片预览')}</h2><span class="subject-label">${txt('实时预览')}</span></div><div id="draft-card-preview">${draftPreview()}</div><div class="upload-hint"><h3>${txt('一个好项目，也讲得清楚')}</h3><p>${txt('清晰的作品图、适合的学生，以及一个具体的课堂用法，会让好想法更容易被理解。')}</p><small>${txt('本地副本可继续编辑和导出备份；上传并公开后，他人可在发现页的“公开作品”查看。')}</small></div></aside></div>`;
+ const d=state.draft,prompt=d.kind==='prompt',publicMode=d.publication!=='private';
+ return `<div class="page-head"><a class="back-link" href="#desk">← ${txt('返回工作台')}</a><h1>${txt(d.id?'继续打磨你的作品':'分享你的教学实践')}</h1><p>${txt('上传作品，和 AI 一起补充说明，再由你确认并发布。')}</p></div>
+ <div class="upload-layout"><section class="editor upload-editor"><div class="upload-toolbar"><span class="subject-label">${txt(d.id?'编辑本地项目':'新项目')} · ${state.step} / 2</span><button class="subtle" data-action="save-draft" ${state.busy?'disabled':''}>${txt(state.busy?'正在保存…':'保存草稿')}</button></div>
+ <ol class="step-nav">${['作品与教学信息','确认与发布'].map((name,i)=>`<li ${state.step===i+1?'aria-current="step"':''}><b>${i+1}</b>${txt(name)}</li>`).join('')}</ol>
+ <form id="upload-form" novalidate>${uploadErrors()}
+ ${state.step===1?`<section class="upload-section"><div class="upload-section-heading"><span>01</span><div><h2>${txt('从你的作品开始')}</h2><p>${txt('AI 会读取支持的文件并填写建议；所有文字都可以直接修改。')}</p></div></div>
+ <div class="kind-choices" role="group" aria-label="${txt('项目类别')}">${[['visual','教学可视化','可运行的网页、互动实验或演示'],['prompt','Prompt 工具','可复用的提示词、模板与生成示例']].map(([value,label,note])=>`<button type="button" data-draft-kind="${value}" aria-pressed="${(d.kind||'visual')===value}"><strong>${txt(label)}</strong><span>${txt(note)}</span></button>`).join('')}</div>
+ <div class="file-drop"><label class="field"><span>${txt(prompt?'添加 Prompt 文件（选填）':'添加项目文件')} ${!prompt?'<span class="field-required">'+txt('文件或链接必填')+'</span>':''}</span><input id="upload-file" type="file" accept=".html,.htm,.zip,.md,.markdown,.txt,.json,.pdf,.docx,.pptx"><small>${e(d.attachment?.name||t('HTML、ZIP、Markdown 或文档，最大 10 MB。'))}</small></label>${d.attachment?`<button type="button" class="subtle" data-action="remove-attachment">${txt('移除文件')}</button>`:''}</div>
+ ${prompt?uploadField('core','Prompt 正文','粘贴完整提示词；多步骤请按顺序编号。',true,true):`${uploadField('projectUrl','项目或下载链接','https://…',false,false)}${uploadField('core','作品补充说明','可补充操作方法或下载说明；说明文字不能代替项目文件。')}`}
+ ${ai?.markup('upload','draft')||''}</section>
+ <section class="upload-section"><div class="upload-section-heading"><span>02</span><div><h2>${txt('把用途讲清楚')}</h2><p>${txt(prompt?'必填名称和用途；面向学生的使用建议可以按需补充。':'以下教学信息均需确认；没有前置要求时可以如实填写“无需基础”。')}</p></div></div>
+ ${uploadField('title','项目名称','让另一位教师一眼知道这是什么',false,true)}${uploadField('purpose',prompt?'它能帮教师完成什么？':'它主要帮助理解什么？','说明具体场景和要解决的问题。',true,true)}
+ <div class="form-columns">${uploadSelect('subject','学科',subjects.map(x=>[x,x]),!prompt)}${uploadSelect('stage','建议学段',stages.map(x=>[x,x]),!prompt)}</div>
+ ${prompt?`<details class="optional-fields"><summary>${txt('补充学习对象与教学建议（选填）')}</summary>`:''}
+ ${uploadField('audience','谁会操作？最终帮助谁？','例如：教师投屏操作，面向小学高年级学生。',true,!prompt)}${uploadField('prior','前置知识','学生使用前需要学过什么？',true,!prompt)}${uploadField('outcome','预期学习结果','希望学生理解概念、独立应用，还是解决问题？',true,!prompt)}${uploadField('setting','基本使用方式','例如：教师投屏演示；学生用平板独立操作。',true,!prompt)}
+ ${prompt?'</details>':''}
+ <details class="optional-fields"><summary>${txt('补充年级、课程与参考来源（选填）')}</summary><div class="form-columns">${uploadField('grade','建议年级','不确定可以留空',false)}${uploadField('curriculum','课程关联','课程、单元或章节',false)}</div>${draftField('source','参考来源','填写参考项目或材料来源')}${referenceEditor()}</details></section>
+ <section class="upload-section"><div class="upload-section-heading"><span>03</span><div><h2>${txt('留下真实的使用效果')}</h2><p>${txt(prompt?'上传实际运行这条 Prompt 得到的截图或动图，并填写使用的 AI 工具。':'优先使用动图，也可以上传真实截图或提供效果视频链接。')}</p></div></div>
+ <div class="file-drop"><label class="field"><span>${txt(prompt?'真实输出截图或动图':'真实效果截图或动图')} <span class="field-required">${txt(prompt?'必填':'图片或视频必填')}</span></span><input id="upload-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" ${uploadInvalid('coverFile')}><small>${e(d.coverFile?.name||t('PNG、JPEG、WebP 或 GIF，最大 5 MB；会随项目保存。'))}</small>${uploadFieldError('coverFile')}</label>${d.coverFile?`<button type="button" class="subtle" data-action="remove-cover">${txt('移除预览图')}</button>`:''}</div>
+ ${!prompt?uploadField('previewUrl','真实效果视频链接（选填）','填写可以访问的视频页面；无需上传视频文件。',false):''}
+ ${prompt?`${uploadField('tested','实际测试过的 AI 工具','例如：DeepSeek · deepseek-chat；可补充模型和测试日期。',false,true)}${uploadSelect('promptStructure','Prompt 使用顺序',[['single','单条 Prompt，可独立使用'],['sequence','多步骤组合，按顺序使用']],true)}<div ${d.promptStructure==='sequence'?'':'hidden'} data-dependent="promptStructure">${uploadField('dependencies','使用顺序与依赖关系','按 1、2、3 说明顺序，是否必须在同一对话，以及需要引用哪些前序输出。',true,true)}</div>`:`<div class="form-columns">${uploadSelect('runtimeStatus','当前运行状态',[['works','可正常运行'],['issues','可运行，但有已知问题'],['not-tested','当前版本尚未测试']],true)}${uploadSelect('practiceStatus','实践状态',[['not-tested','尚未完成作者测试'],['author-tested','仅作者测试'],['classroom','已用于实际课堂']],true)}</div><div ${d.practiceStatus==='classroom'?'':'hidden'} data-dependent="practiceStatus">${uploadField('record','课堂使用记录','说明学生群体、使用时间和观察到的情况。',true,true)}</div>${uploadField('runtimeNotes','运行补充说明（选填）','已知问题、浏览器要求、依赖的外部服务等。')}`}
+ <p class="library-note">${txt('装饰封面不能代替真实效果。作者的测试说明不等于平台或课堂成效验证。')}</p></section>`:
+ `<section class="upload-section"><div class="upload-section-heading"><span>✓</span><div><h2>${txt('确认这一次分享')}</h2><p>${txt('检查信息和真实效果，再选择谁可以看到这个版本。')}</p></div></div><div class="review-title"><strong>${e(d.title)}</strong><span class="status">${txt(prompt?'Prompt 工具':'教学可视化')}</span></div><p>${e(d.purpose)}</p><dl class="facts review-facts"><dt>${txt('项目实体')}</dt><dd>${e(prompt?'Prompt 正文':d.attachment?.name||d.projectUrl||d.core)}</dd><dt>${txt('真实效果')}</dt><dd>${e(d.coverFile?.name||d.previewUrl)}</dd>${prompt?`<dt>${txt('测试工具')}</dt><dd>${e(d.tested)}</dd>`:`<dt>${txt('学科与学段')}</dt><dd>${txt(d.subject)} · ${txt(d.stage)}</dd><dt>${txt('学习目标')}</dt><dd>${e(d.outcome)}</dd>`}</dl><button type="button" class="subtle" data-action="previous-step">${txt('返回调整作品与教学信息')}</button></section>
+ <section class="upload-section"><h2>${txt('开放权限与责任确认')}</h2>${uploadSelect('license','允许他人怎样使用',[['open','开放再创作'],['teach','仅限教学使用'],['show','仅供展示体验']],true)}<p id="license-description" class="library-note" role="status">${txt(licenseDescription(d.license))}</p><p class="library-note">${txt('使用权限是你的授权声明。公开网页和文件可能被保存，请勿上传不能公开的内容。')}</p>
+ ${uploadCheck('previewAuthentic',prompt?'我确认图片来自这条 Prompt 的实际输出，并非设想的效果。':'我确认预览展示了这个项目的真实运行效果。')}
+ ${uploadCheck('rightsConfirmed','我有权分享项目及其素材，引用内容已注明来源。')}${uploadCheck('privacyConfirmed','我已检查并移除学生个人信息及其他不应公开的隐私。')}${prompt?uploadCheck('humanReviewConfirmed','我已人工核查示例输出；使用 AI 结果前，教师仍需检查事实、适宜性与版权。'):''}${uploadCheck('content','我已核对 AI 建议、教学信息和实际测试情况。')}</section>
+ <fieldset class="publication-choices"><legend>${txt('谁可以看到这个版本？')}</legend>${[['public','直接公开发布','上传后立即展示在发现页，其他成员和游客均可查看。'],['private','先存到云端，仅自己可见','此版本仅自己可见；已公开的旧版本保持不变。']].map(([value,label,note])=>`<label class="publication-choice"><input type="radio" name="publication" data-draft="publication" value="${value}" ${(d.publication||'public')===value?'checked':''}><span><strong>${txt(label)}</strong><small>${txt(note)}</small></span></label>`).join('')}</fieldset>${!lifecycle?.canShare?`<p class="library-note" role="status">${txt('上传服务暂不可用，可先保存到此浏览器，稍后在工作台重试。')}</p>`:''}`}
+ <div class="upload-next">${state.step>1?`<button type="button" data-action="previous-step">← ${txt('上一步')}</button><button type="submit" data-save-mode="local" ${state.busy||!state.storageReady?'disabled':''}>${txt(d.id?'保存修改':'仅保存到此浏览器')}</button>`:''}<button type="submit" class="primary" data-save-mode="cloud" ${state.busy||!state.storageReady||(state.step===2&&!lifecycle?.canShare)?'disabled':''}>${txt(state.busy?'正在保存…':state.step===1?'下一步：确认与发布':publicMode?'上传并公开':'上传，仅自己可见')} →</button></div></form></section>
+ <aside class="upload-side"><div class="section-title"><h2>${txt('项目卡片预览')}</h2><span class="subject-label">${txt('实时预览')}</span></div><div id="draft-card-preview">${draftPreview()}</div><div class="upload-hint"><h3>${txt('你的经验，让作品更有用')}</h3><p>${txt('AI 帮你整理初稿，你来判断是否适合真实课堂。上传后也可以继续编辑，并保留每一次版本。')}</p><small>${txt('还没准备好？随时保存草稿，文件与文字会留在此浏览器。')}</small></div></aside></div>`;
 }
+function uploadInvalid(key){return state.uploadErrors?.some(item=>item.field===key)?`aria-invalid="true" aria-describedby="error-${e(key)}"`:'';}
+function uploadFieldError(key){const error=state.uploadErrors?.find(item=>item.field===key);return error?`<small class="field-error" id="error-${e(key)}">${txt(error.message)}</small>`:'';}
+function uploadField(key,label,placeholder='',area=true,required=false){
+ const value=e(state.draft[key]||''),attributes=`id="draft-${e(key)}" data-draft="${e(key)}" ${required?'aria-required="true"':''} ${uploadInvalid(key)}`;
+ return `<label class="field"><span>${txt(label)} ${required?`<span class="field-required">${txt('必填')}</span>`:''}</span>${area?`<textarea ${attributes} rows="3" placeholder="${txt(placeholder)}">${value}</textarea>`:`<input ${attributes} type="${['projectUrl','previewUrl'].includes(key)?'url':'text'}" value="${value}" placeholder="${txt(placeholder)}">`}${uploadFieldError(key)}</label>`;
+}
+function uploadSelect(key,label,options,required=false){return `<label class="field"><span>${txt(label)} ${required?`<span class="field-required">${txt('必填')}</span>`:''}</span><select id="draft-${e(key)}" data-draft="${e(key)}" ${required?'aria-required="true"':''} ${uploadInvalid(key)}><option value="">${txt('请选择')}</option>${options.map(([value,text])=>`<option value="${e(value)}" ${state.draft[key]===value?'selected':''}>${txt(text)}</option>`).join('')}</select>${uploadFieldError(key)}</label>`;}
+function licenseDescription(value){return ({open:'允许下载、修改与再分享，请保留作者署名和来源。',teach:'允许下载及课堂内改编；不授予教学场景以外的使用或再分享权限。',show:'仅授权在线体验；不授予下载复用、修改或再分享权限。'})[value]||'请选择与你希望分享的方式一致的授权。';}
+function uploadCheck(key,label){return `<div class="upload-confirmation"><label class="checkline"><input id="draft-${e(key)}" data-confirm="${e(key)}" type="checkbox" ${state.draft[key]===true?'checked':''} ${uploadInvalid(key)}><span>${txt(label)}</span></label>${uploadFieldError(key)}</div>`;}
+function uploadErrors(){return state.uploadErrors?.length?`<div class="upload-errors error" role="alert" tabindex="-1"><strong>${txt('还需要补充以下内容')}</strong><ul>${state.uploadErrors.map(error=>`<li><button type="button" data-error-field="${e(error.field)}">${txt(error.message)}</button></li>`).join('')}</ul></div>`:errorMarkup();}
 function referenceEditor(){
  const refs=state.draft.sourceReferences||[];
  return `<label class="field"><span>${txt('引用平台项目与当前版本')}</span><select id="reference-project"><option value="">${txt('请选择参考项目')}</option>${projects.filter(p=>p.id!==state.draft.id).map(p=>`<option value="${e(p.id)}">${e(p.projectCode||p.id)} · ${e(local(p.title))}</option>`).join('')}</select></label><button type="button" class="subtle" data-action="reference-add">${txt('添加引用')} ＋</button><ul class="project-references">${refs.map((ref,i)=>`<li><span>${e(local(ref.title)||ref.projectCode||ref.projectId)}</span><small>${e(ref.projectCode||ref.projectId)} · ${ref.versionNumber?'v'+ref.versionNumber:e(ref.versionId||t('未记录版本'))}</small><button type="button" class="subtle" data-action="reference-remove" data-index="${i}">${txt('移除引用')}</button></li>`).join('')}</ul>`;
@@ -236,17 +272,17 @@ function updateCatalog(){document.getElementById('catalog-tools').innerHTML=tabs
 async function copy(text,field){try{await navigator.clipboard.writeText(text);toast('已复制，可以粘贴使用。');}catch{if(field){field.focus();field.select();}toast('自动复制不可用，请选中文字后按 Ctrl+C 或 ⌘C。');}}
 function sourceReference(p){return {projectId:p.id,projectCode:p.projectCode||p.id,versionId:p.currentVersionId||null,versionNumber:p.currentVersionNumber||null,title:local(p.title)};}
 function taskReference(p){const r={};for(const key of ['id','projectCode','currentVersionId','currentVersionNumber','sourceReferences','kind','title','summary','prior','subject','stages','teaching','source','contributors','verification'])r[key]=p[key];return {...r,related:[],duplicates:[],cover:p.isLocal?null:p.cover,sourceHref:p.isLocal?null:p.sourceHref};}
-function normalizeDraft(input){const d=input&&typeof input==='object'?{...input}:{};for(const key of ['title','purpose','audience','prior','outcome','setting','stage','subject','core','source','tested','record','kind','used','license'])if(key in d)d[key]=typeof d[key]==='string'?d[key]:d[key]&&!Array.isArray(d[key])&&typeof d[key]==='object'?plain(d[key][locale]||d[key]['zh-CN']||d[key].en):'';return d;}
+function normalizeDraft(input){const d=input&&typeof input==='object'?{...input}:{};for(const key of ['title','purpose','audience','prior','outcome','setting','stage','subject','core','source','tested','record','kind','used','license','projectUrl','previewUrl','grade','curriculum','runtimeStatus','practiceStatus','runtimeNotes','promptStructure','dependencies','publication'])if(key in d)d[key]=typeof d[key]==='string'?d[key]:d[key]&&!Array.isArray(d[key])&&typeof d[key]==='object'?plain(d[key][locale]||d[key]['zh-CN']||d[key].en):'';return d;}
 function formatDate(value){const date=new Date(value);return Number.isFinite(date.getTime())?new Intl.DateTimeFormat(locale,{year:'numeric',month:'2-digit',day:'2-digit'}).format(date):t('待确认');}
 function plain(value,fallback=''){if(typeof value==='string')return value;if(value&&!Array.isArray(value)&&typeof value==='object'){const text=value[locale]||value['zh-CN']||value.en;if(typeof text==='string')return text;}return fallback;}
 function languageValue(value){return {'zh-CN':value,'zh-Hant':value,en:value};}
 function objectURL(blob){const url=URL.createObjectURL(blob);objectURLs.push(url);return url;}
-function safeLink(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)?u.href:'';}catch{return '';}}
+function safeLink(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&u.hostname&&!u.username&&!u.password?u.href:'';}catch{return '';}}
 function runtimeProject(record){
  const r=record, kind=r.kind==='prompt'?'prompt':'visual', content=plain(r.core), title=plain(r.title).trim()||t('未命名实践');
  const file=r.attachment, fileURL=file?.blob?objectURL(file.blob):'';
  const docURL=kind==='prompt'?objectURL(new Blob([content],{type:'text/markdown;charset=utf-8'})):'';
- return {id:r.id,projectCode:r.projectCode,currentVersionId:r.currentVersionId,currentVersionNumber:r.currentVersionNumber,sourceReferences:r.sourceReferences||[],kind,title:languageValue(title),summary:languageValue(plain(r.purpose)),prior:languageValue(plain(r.prior)),subject:subjects.includes(r.subject)?r.subject:'综合实践活动',stages:[stages.includes(r.stage)?r.stage:'教师专业发展'],contributors:[t('我')],cover:r.coverFile?.blob?objectURL(r.coverFile.blob):null,source:plain(r.source)||file?.name||t('浏览器本地项目'),sourceHref:fileURL,attachmentName:file?.name||'',userLink:safeLink(content.trim()),resultDescription:content,tested:plain(r.tested),isLocal:true,updatedAt:plain(r.updatedAt),licenseLabel:({unconfirmed:'待确认',open:'开放再创作',teach:'仅限教学使用',show:'仅供展示体验'})[r.license]||'待确认',classroomRecord:r.used==='yes'?plain(r.record):'',duplicates:[],related:[],packageHref:null,hasCompanionFiles:/\.zip$/i.test(file?.name||''),verification:{status:'pending',scope:'本地上传，尚未完成独立运行与内容检查',evidence:'教学说明与使用记录由上传者提供，待核对。',classroomVerified:false,date:null},document:kind==='prompt'?{content,blocks:[{title:t('Prompt 正文'),text:content}],download:docURL}:null,teaching:{audience:languageValue(plain(r.audience)),prior:languageValue(plain(r.prior)),method:languageValue(plain(r.setting)),objective:languageValue(plain(r.outcome)),activities:[],evidence:languageValue(plain(r.outcome)),sources:[]}};
+ return {id:r.id,projectCode:r.projectCode,currentVersionId:r.currentVersionId,currentVersionNumber:r.currentVersionNumber,sourceReferences:r.sourceReferences||[],kind,title:languageValue(title),summary:languageValue(plain(r.purpose)),prior:languageValue(plain(r.prior)),subject:subjects.includes(r.subject)?r.subject:'未限定学科',stages:stages.includes(r.stage)?[r.stage]:[],contributors:[t('我')],cover:r.coverFile?.blob?objectURL(r.coverFile.blob):null,source:plain(r.source)||file?.name||t('浏览器本地项目'),sourceHref:fileURL,attachmentName:file?.name||'',userLink:safeLink(r.projectUrl||content.trim()),previewUrl:safeLink(r.previewUrl),submission:r,resultDescription:content,tested:plain(r.tested),isLocal:true,updatedAt:plain(r.updatedAt),licenseLabel:({unconfirmed:'待确认',open:'开放再创作',teach:'仅限教学使用',show:'仅供展示体验'})[r.license]||'待确认',classroomRecord:r.practiceStatus==='classroom'||r.used==='yes'?plain(r.record):'',duplicates:[],related:[],packageHref:null,hasCompanionFiles:/\.zip$/i.test(file?.name||''),verification:{status:'pending',scope:'本地上传，尚未完成独立运行与内容检查',evidence:'教学说明与使用记录由上传者提供，待核对。',classroomVerified:false,date:null},document:kind==='prompt'?{content,blocks:[{title:t('Prompt 正文'),text:content}],download:docURL}:null,teaching:{audience:languageValue(plain(r.audience)),prior:languageValue(plain(r.prior)),method:languageValue(plain(r.setting)),objective:languageValue(plain(r.outcome)),activities:[],evidence:languageValue(plain(r.outcome)),sources:[]}};
 }
 function rebuildProjects(){
  objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs=[];
@@ -271,14 +307,14 @@ async function prepareNewDraft(next={}){
   const accepted=await confirmAction('开始新的项目？','当前草稿会被替换；如需保留，请先完成保存或导出备份。','开始新项目');
   if(!accepted||epoch!==workspaceEpoch)return;
  }
- state.draft=next;state.step=1;state.error='';refreshDraftPreview();await store.putDraft(next);if(epoch!==workspaceEpoch)return;
+ state.draft=next;state.step=1;state.error='';state.uploadErrors=[];refreshDraftPreview();await store.putDraft(next);if(epoch!==workspaceEpoch)return;
  if(route().view==='upload')render();else location.hash='upload';
 }
 async function editProject(id){
  const epoch=workspaceEpoch;
  const record=localRecords.find(r=>r.id===id);if(!record)return;
  if(Object.keys(state.draft).length&&state.draft.id!==id){const accepted=await confirmAction('编辑另一个项目？','当前草稿会被替换；如需保留，请先完成保存或导出备份。','继续编辑');if(!accepted||epoch!==workspaceEpoch)return;}
- state.draft=normalizeDraft(record);state.step=1;refreshDraftPreview();await store.putDraft(state.draft);if(epoch!==workspaceEpoch)return;location.hash='upload';
+ state.draft=normalizeDraft(record);state.uploadErrors=[];state.step=1;refreshDraftPreview();await store.putDraft(state.draft);if(epoch!==workspaceEpoch)return;location.hash='upload';
 }
 function confirmAction(title,body,label){
  return new Promise(resolve=>{
@@ -304,18 +340,19 @@ async function loadExample(){
  const epoch=workspaceEpoch;
  const p=project('poetry'), res=await fetch(p.example?.imageHref||p.cover||'./assets/covers/gcd.webp');if(!res.ok)throw new Error(t('示例读取失败，请刷新后重试。'));
  const blob=await res.blob();if(epoch!==workspaceEpoch)return;
- Object.assign(state.draft,{kind:'prompt',title:t('我的古诗课堂海报'),core:p.document.blocks[0].text,purpose:t('用诗句与画面建立联系，引导学生说出自己的理解。'),subject:'语文',stage:'小学',audience:local(p.teaching?.audience||p.prior),prior:local(p.teaching?.prior||p.prior),outcome:local(p.teaching?.objective||p.summary),setting:local(p.teaching?.method||'教师引导阅读与观察'),source:p.source,tested:t('本次示例由平台制作，尚未课堂试教'),used:'no',coverFile:{name:'poetry-example.png',type:blob.type,blob},sample:true,sourceReferences:[sourceReference(p)]});
+ Object.assign(state.draft,{kind:'prompt',title:t('我的古诗课堂海报'),core:p.document.blocks[0].text,purpose:t('用诗句与画面建立联系，引导学生说出自己的理解。'),subject:'语文',stage:'小学',audience:local(p.teaching?.audience||p.prior),prior:local(p.teaching?.prior||p.prior),outcome:local(p.teaching?.objective||p.summary),setting:local(p.teaching?.method||'教师引导阅读与观察'),source:p.source,tested:'',promptStructure:'single',previewAuthentic:false,rightsConfirmed:false,privacyConfirmed:false,content:false,humanReviewConfirmed:false,used:'no',coverFile:{name:'poetry-example.png',type:blob.type,blob},sample:true,sourceReferences:[sourceReference(p)]});
  refreshDraftPreview();state.error='';await saveDraft(true);render();toast('已载入示例，可修改内容后保存到本地。');
 }
 root.addEventListener('click',async event=>{
  const interactionEpoch=workspaceEpoch;
  if(state.busy||accounts?.busy||lifecycle?.busy){event.preventDefault();return;}
+ const invalidField=event.target.closest('[data-error-field]');if(invalidField){const key=invalidField.dataset.errorField;const step=['license','previewAuthentic','rightsConfirmed','privacyConfirmed','humanReviewConfirmed','content'].includes(key)?2:1;if(state.step!==step){state.step=step;render();}const field=root.querySelector(`[data-draft="${key}"],[data-confirm="${key}"]`)||root.querySelector(key==='coverFile'?'#upload-image':'#upload-file');if(field){const details=field.closest('details');if(details)details.open=true;field.focus();}return;}
  const language=event.target.closest('[data-language]');if(language){const restoreFocus=state.languageOpen;locale=language.dataset.language;state.languageOpen=false;try{localStorage.setItem('practice-language',locale);}catch{}render();if(restoreFocus)root.querySelector('[data-action="language-menu"]')?.focus({preventScroll:true});return;}
  const save=event.target.closest('[data-save]');if(save){if(!requireAccount())return;await bookmark(save.dataset.save);if(route().view==='desk')render();return;}
  const type=event.target.closest('[data-type]');if(type){state.type=type.dataset.type;updateCatalog();return;}
  const detailTab=event.target.closest('[data-detail-tab]');if(detailTab){const y=scrollY;state.detailTab=detailTab.dataset.detailTab;render();window.scrollTo(0,y);root.querySelector(`[data-detail-tab="${state.detailTab}"]`)?.focus({preventScroll:true});return;}
  const deskTab=event.target.closest('[data-desk-tab]');if(deskTab){state.deskTab=deskTab.dataset.deskTab;render();root.querySelector(`[data-desk-tab="${state.deskTab}"]`)?.focus({preventScroll:true});return;}
- const kind=event.target.closest('[data-draft-kind]');if(kind){state.draft.kind=kind.dataset.draftKind;render();return;}
+ const kind=event.target.closest('[data-draft-kind]');if(kind){if(state.draft.kind!==kind.dataset.draftKind){state.draft.kind=kind.dataset.draftKind;state.draft.content=false;state.draft.previewAuthentic=false;state.uploadErrors=[];state.error='';ai?.reset();}render();return;}
  const cp=event.target.closest('[data-copy]');if(cp){const [id,index]=cp.dataset.copy.split(':');const doc=project(id)?.document;if(doc)copy(index==='full'?doc.content:doc.blocks[Number(index)].text,cp.closest('.prompt-block-content').querySelector('textarea'));return;}
  const resume=event.target.closest('[data-resume]');if(resume){const id=resume.dataset.resume;state.briefs[id]=state.tasks[id].text;state.adapt[id]=state.tasks[id].form||defaultAdapt(project(id));}
  const b=event.target.closest('[data-action]');if(!b)return;const id=b.dataset.id;
@@ -333,17 +370,17 @@ root.addEventListener('click',async event=>{
  case 'show-prompts':state.detailTab='prompts';render();document.getElementById('original-prompts')?.scrollIntoView({behavior:'instant'});document.querySelector('#original-prompts summary')?.focus({preventScroll:true});break;
  case 'copy-image-prompt':copy(project(id).example.prompt,b.parentElement.querySelector('textarea'));break;
  case 'view-image':showImage(project(id));break;
- case 'reference-add':{const p=project(document.getElementById('reference-project')?.value);if(p){const ref=sourceReference(p);state.draft.sourceReferences=[...(state.draft.sourceReferences||[]).filter(r=>r.projectId!==ref.projectId||r.versionId!==ref.versionId),ref];render();root.querySelector('.optional-fields')?.setAttribute('open','');}break;}
- case 'reference-remove':state.draft.sourceReferences=(state.draft.sourceReferences||[]).filter((_,i)=>i!==Number(b.dataset.index));render();root.querySelector('.optional-fields')?.setAttribute('open','');break;
+ case 'reference-add':{const p=project(document.getElementById('reference-project')?.value);if(p){invalidateDraftEvidence('sourceReferences');state.draft.rightsConfirmed=false;const ref=sourceReference(p);state.draft.sourceReferences=[...(state.draft.sourceReferences||[]).filter(r=>r.projectId!==ref.projectId||r.versionId!==ref.versionId),ref];render();root.querySelector('#reference-project')?.closest('details')?.setAttribute('open','');}break;}
+ case 'reference-remove':invalidateDraftEvidence('sourceReferences');state.draft.rightsConfirmed=false;state.draft.sourceReferences=(state.draft.sourceReferences||[]).filter((_,i)=>i!==Number(b.dataset.index));render();root.querySelector('#reference-project')?.closest('details')?.setAttribute('open','');break;
  case 'copy-saved-task':copy(state.tasks[id].text);break;
  case 'copy-brief':copy(state.briefs[id],document.getElementById('task-brief'));break;
  case 'save-brief':state.busy=true;await persistWorkspace({taskUpserts:{[id]:{text:state.briefs[id],form:state.adapt[id],reference:taskReference(project(id))}}});if(interactionEpoch!==workspaceEpoch)return;state.busy=false;toast('任务说明已保存');break;
  case 'brief-to-draft':await prepareNewDraft({kind:'prompt',title:local(project(id).title)+' · '+t('课堂改编'),core:state.briefs[id],subject:project(id).subject,stage:project(id).stages[0],audience:state.adapt[id].audience,prior:local(project(id).prior),purpose:state.adapt[id].goal,outcome:state.adapt[id].goal,setting:state.adapt[id].setting,source:project(id).source,sourceReferences:[sourceReference(project(id))]});break;
  case 'save-draft':b.disabled=true;await saveDraft();b.disabled=false;break;
- case 'previous-step':state.step=Math.max(1,state.step-1);state.error='';render();document.querySelector('.upload-editor')?.scrollIntoView({behavior:'instant'});break;
+ case 'previous-step':state.uploadErrors=[];state.step=Math.max(1,state.step-1);state.error='';render();document.querySelector('.upload-editor')?.scrollIntoView({behavior:'instant'});break;
  case 'load-example':b.disabled=true;state.busy=true;await loadExample();if(interactionEpoch!==workspaceEpoch)return;state.busy=false;render();break;
- case 'remove-attachment':ai?.fileRemoved();delete state.draft.attachment;refreshDraftPreview();render();break;
- case 'remove-cover':delete state.draft.coverFile;refreshDraftPreview();render();break;
+ case 'remove-attachment':ai?.fileRemoved();invalidateDraftEvidence('attachment');delete state.draft.attachment;refreshDraftPreview();render();break;
+ case 'remove-cover':invalidateDraftEvidence('coverFile');delete state.draft.coverFile;refreshDraftPreview();render();break;
  case 'restore-legacy-draft':state.busy=true;await prepareNewDraft(normalizeDraft(read('practice-library-draft',{})));if(interactionEpoch!==workspaceEpoch)return;state.busy=false;render();break;
  case 'new-project':state.busy=true;await prepareNewDraft();if(interactionEpoch!==workspaceEpoch)return;state.busy=false;render();break;
  case 'edit-project':state.busy=true;await editProject(id);if(interactionEpoch!==workspaceEpoch)return;state.busy=false;render();break;
@@ -351,7 +388,7 @@ root.addEventListener('click',async event=>{
   const accepted=await confirmAction('删除这份草稿？','将删除这份未完成草稿及其未保存的修改，已保存的项目和云端版本不受影响。','删除草稿');
   if(!accepted||interactionEpoch!==workspaceEpoch)break;
   state.busy=true;render();await store.clearDraft();if(interactionEpoch!==workspaceEpoch)return;
-  state.draft={};state.step=1;state.error='';ai?.reset();refreshDraftPreview();state.busy=false;render();
+  state.draft={};state.uploadErrors=[];state.step=1;state.error='';ai?.reset();refreshDraftPreview();state.busy=false;render();
   root.querySelector('[data-action="new-project"]')?.focus({preventScroll:true});toast('草稿已删除。');break;
  }
  case 'delete-project':if(await confirmAction('删除这个本地项目？','只删除这个上传条目及其附件，原始教学作品库保持可用。','删除项目')){state.busy=true;await store.remove(id);if(interactionEpoch!==workspaceEpoch)return;localRecords=await store.list();if(interactionEpoch!==workspaceEpoch)return;const updatedWorkspace=await store.getWorkspaceState();state.saved=new Set(updatedWorkspace.bookmarks);state.tasks=updatedWorkspace.tasks;if(interactionEpoch!==workspaceEpoch)return;if(state.draft.id===id){await store.clearDraft();if(interactionEpoch!==workspaceEpoch)return;state.draft={};}state.busy=false;rebuildProjects();render();toast('本地项目已删除。');}break;
@@ -375,12 +412,36 @@ root.addEventListener('keydown',event=>{
  const next=event.key==='Home'?0:event.key==='End'?choices.length-1:index<0?(event.key==='ArrowUp'?choices.length-1:0):(index+(event.key==='ArrowDown'?1:-1)+choices.length)%choices.length;
  choices[next]?.focus();
 });
+function refreshUploadValidation(){
+ if(!state.uploadErrors?.length)return;
+ const d=state.draft,current=requirements.errors({...d,kind:d.kind||'visual'},{attachment:d.attachment,coverFile:d.coverFile},{phase:state.step===1?'details':'publish'});
+ state.uploadErrors=state.uploadErrors.filter(previous=>current.some(error=>error.field===previous.field));
+ for(const node of root.querySelectorAll('[aria-invalid="true"]')){const key=node.dataset.draft||node.dataset.confirm||(node.id==='upload-image'?'coverFile':'');if(!state.uploadErrors.some(error=>error.field===key)){node.removeAttribute('aria-invalid');node.removeAttribute('aria-describedby');document.getElementById('error-'+key)?.remove();}}
+ const summary=root.querySelector('.upload-errors');if(summary){if(state.uploadErrors.length)summary.outerHTML=uploadErrors();else summary.remove();}
+ if(!state.uploadErrors.length&&state.error==='还需要补充以下内容')state.error='';
+}
+function invalidateDraftEvidence(key){
+ state.draft.content=false;
+ if(['attachment','core','projectUrl'].includes(key)){state.draft.previewAuthentic=false;state.draft.runtimeStatus='';state.draft.practiceStatus='';state.draft.tested='';state.draft.humanReviewConfirmed=false;}
+ if(['coverFile','previewUrl'].includes(key)){state.draft.previewAuthentic=false;state.draft.humanReviewConfirmed=false;}
+ for(const field of ['content','previewAuthentic','humanReviewConfirmed']){const checkbox=root.querySelector(`[data-confirm="${field}"]`);if(checkbox)checkbox.checked=state.draft[field]===true;}
+ if(['attachment','core','projectUrl'].includes(key))for(const field of ['runtimeStatus','practiceStatus','tested']){const input=root.querySelector(`[data-draft="${field}"]`);if(input)input.value='';}
+}
+function updateDraftInput(node){
+ const key=node.dataset.draft,value=node.value;
+ if(state.draft[key]!==value&&key!=='publication'&&key!=='license')invalidateDraftEvidence(key);
+ state.draft[key]=value;refreshUploadValidation();
+ const preview=document.getElementById('draft-card-preview');if(preview)preview.innerHTML=draftPreview();
+ if(['promptStructure','practiceStatus'].includes(key)){const dependent=root.querySelector(`[data-dependent="${key}"]`);if(dependent)dependent.hidden=value!==(key==='promptStructure'?'sequence':'classroom');}
+ if(key==='license'){const description=document.getElementById('license-description');if(description)description.textContent=t(licenseDescription(value));}
+ if(key==='publication'){const button=root.querySelector('[data-save-mode="cloud"]');if(button)button.innerHTML=txt(value==='private'?'上传，仅自己可见':'上传并公开')+' →';}
+}
 root.addEventListener('input',event=>{
  if(state.busy||accounts?.busy||lifecycle?.busy){event.preventDefault();return;}
  const node=event.target;
  if(node.name==='search'){state.search=node.value;clearTimeout(state.searchTimer);state.searchTimer=setTimeout(()=>{if(route().view==='discover')document.getElementById('catalog-results').innerHTML=resultMarkup();},180);}
  if(node.dataset.edit){const id=route().id;state.adapt[id][node.dataset.edit]=node.value;}
- if(node.dataset.draft){state.draft[node.dataset.draft]=node.value;const preview=document.getElementById('draft-card-preview');if(preview)preview.innerHTML=draftPreview();}
+ if(node.dataset.draft){updateDraftInput(node);}
  if(node.dataset.brief)state.briefs[node.dataset.brief]=node.value;
 });
 root.addEventListener('change',async event=>{
@@ -390,25 +451,25 @@ root.addEventListener('change',async event=>{
  if((node.dataset.draft||node.dataset.confirm||['upload-file','upload-image','import-backup'].includes(node.id))&&!requireAccount())return;
  if(node.dataset.filter){const key=node.dataset.filter;state[key]=node.type==='checkbox'?node.checked:node.value;if(['region','stage'].includes(key))state.grade='';updateCatalog();document.querySelector(`[data-filter="${key}"]`)?.focus({preventScroll:true});}
  if(node.dataset.mechanism)state.adapt[route().id].mechanisms=[...root.querySelectorAll('[data-mechanism]:checked')].map(n=>n.dataset.mechanism);
- if(node.dataset.draft){state.draft[node.dataset.draft]=node.value;const preview=document.getElementById('draft-card-preview');if(preview)preview.innerHTML=draftPreview();}
- if(node.dataset.confirm)state.draft[node.dataset.confirm]=node.checked;
+ if(node.dataset.draft){updateDraftInput(node);}
+ if(node.dataset.confirm){state.draft[node.dataset.confirm]=node.checked;refreshUploadValidation();}
  try{
  if(node.id==='upload-file'){
   const file=node.files[0];if(!file)return;state.busy=true;
   if(file.size>10*1024*1024)throw new Error(t('项目文件不能超过 10 MB。'));
   if(!/\.(html?|zip|md|markdown|txt|json|pdf|docx|pptx)$/i.test(file.name))throw new Error(t('请选择 HTML、ZIP、Markdown 或支持的文档。'));
-  state.draft.attachment={name:file.name,type:file.type,blob:file};
+  invalidateDraftEvidence('attachment');state.draft.attachment={name:file.name,type:file.type,blob:file};
   if(/\.(md|markdown|txt)$/i.test(file.name)&&file.size<=1000000){const content=await file.text();if(interactionEpoch!==workspaceEpoch||state.draft.attachment?.blob!==file)return;state.draft.kind='prompt';state.draft.core=content;}
   const generatedTitle=!state.draft.title;
   if(generatedTitle)state.draft.title=file.name.replace(/\.[^.]+$/,'');
-  state.busy=false;state.error='';refreshDraftPreview();render();ai?.fileChanged(file,{generatedTitle});
+  state.busy=false;state.error='';refreshUploadValidation();refreshDraftPreview();render();ai?.fileChanged(file,{generatedTitle});
  }
  if(node.id==='upload-image'){
   const file=node.files[0];if(!file)return;state.busy=true;
   if(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>5*1024*1024)throw new Error(t('请选择 5 MB 以内的 PNG、JPEG、WebP 或 GIF。'));
   const image=new Image(),url=URL.createObjectURL(file);
   try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error(t('图片无法显示，请换一张图片。')));image.src=url;});}finally{URL.revokeObjectURL(url);}
-  if(interactionEpoch!==workspaceEpoch)return;state.draft.coverFile={name:file.name,type:file.type,blob:file};state.busy=false;state.error='';refreshDraftPreview();render();
+  if(interactionEpoch!==workspaceEpoch)return;invalidateDraftEvidence('coverFile');state.draft.coverFile={name:file.name,type:file.type,blob:file};state.busy=false;state.error='';refreshUploadValidation();refreshDraftPreview();render();
  }
  if(node.id==='import-backup'){
   const file=node.files[0];if(!file)return;state.busy=true;
@@ -434,24 +495,23 @@ root.addEventListener('submit',async event=>{
  }
  if(form.id!=='upload-form'||state.busy)return;
  const d=state.draft;state.error='';
+ state.uploadErrors=[];
  if(state.step===1){
-  if(!d.core?.trim()&&!d.attachment)state.error='请提供成果说明、链接或项目文件。';
-  else if(d.kind==='prompt'&&!d.core?.trim())state.error='请粘贴 Prompt 正文，或上传 Markdown / TXT 文件。';
-  else if(!d.coverFile)state.error='请选择一张项目封面，或载入示例资料。';else state.step=2;
- }else if(state.step===2){
-  if(['title','purpose','audience','prior','outcome','setting','stage','subject'].some(key=>!d[key]?.trim()))state.error='请补充名称、学科、学段、用途、对象、基础、目标与使用方式。';
-  else if(d.used==='yes'&&!d.record?.trim())state.error='请说明实际在哪些学生中使用过。';else state.step=3;
+  state.uploadErrors=requirements.errors({...d,kind:d.kind||'visual'},{attachment:d.attachment,coverFile:d.coverFile},{phase:'details'});
+  if(state.uploadErrors.length)state.error='还需要补充以下内容';else state.step=2;
  }else{
-  if(!d.content)state.error='请先确认已检查预览与教学信息。';
+  const localOnly=event.submitter?.dataset.saveMode==='local';
+  state.uploadErrors=requirements.errors({...d,kind:d.kind||'visual'},{attachment:d.attachment,coverFile:d.coverFile},{phase:localOnly||d.publication==='private'?'details':'publish'});
+  if(state.uploadErrors.length)state.error='还需要补充以下内容';
   else{
-   const sharing=event.submitter?.dataset.saveMode==='share';
    state.busy=true;render();
    try{
     const record=await store.put({...d,kind:d.kind||'visual'},{clearDraft:true,saveVersion:true});if(interactionEpoch!==workspaceEpoch)return;
-    
     localRecords=await store.list();if(interactionEpoch!==workspaceEpoch)return;
-    state.draft={};state.busy=false;state.step=1;lifecycle?.invalidate(record.id);rebuildProjects();state.detailTab='teaching';location.hash='project/'+record.id;render();
-    if(sharing)await lifecycle.share(record.id);else toast('已保存到此浏览器，尚未上传或更新公开版本。');return;
+    state.draft={};state.uploadErrors=[];state.busy=false;state.step=1;lifecycle?.invalidate(record.id);rebuildProjects();state.detailTab='teaching';location.hash='project/'+record.id;render();
+    if(localOnly)toast('已保存到此浏览器，尚未上传或更新公开版本。');
+    else if(d.publication==='private')await lifecycle.saveToCloud(record.id);
+    else await lifecycle.share(record.id,{confirmed:true});return;
    }catch(error){if(interactionEpoch!==workspaceEpoch)return;state.busy=false;state.error=storageFailure(error);}
   }
  }
@@ -485,7 +545,7 @@ function confirmBackupImport(plan){
 async function loadWorkspace(user=null){
  ai?.reset({account:true});
  const epoch=++workspaceEpoch;lifecycle?.reset();document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close('cancel'));state.storageReady=false;state.storageError='';state.busy=true;
- localRecords=[];state.draft={};state.tasks={};state.saved=new Set();state.adapt={};state.briefs={};state.step=1;state.error='';
+ localRecords=[];state.draft={};state.tasks={};state.saved=new Set();state.adapt={};state.briefs={};state.uploadErrors=[];state.step=1;state.error='';
  rebuildProjects();render();
  try{
   if(!store)throw new Error('本地存储暂时不可用，请导出或复制内容后重试。');
@@ -507,7 +567,7 @@ async function loadWorkspace(user=null){
 function aiCapture(task,key){
  const current=route();
  if(['upload','teaching'].includes(task)){
-  if(current.view!=='upload'||state.step!==(task==='upload'?1:2))return null;
+  if(current.view!=='upload'||state.step!==1)return null;
   const d=state.draft,context=Object.fromEntries(['title','kind','subject','stage','core','purpose','audience','prior','outcome','setting'].map(name=>[name,typeof d[name]==='string'?d[name]:'']));
   context.kind=d.kind==='prompt'?'prompt':'visual';
   context.reference=(d.sourceReferences||[]).map(ref=>[ref.projectCode||ref.projectId,local(ref.title)].filter(Boolean).join(' · ')).join('\n');
@@ -518,17 +578,19 @@ function aiCapture(task,key){
  return {epoch:workspaceEpoch,target:form,context:{title:local(p.title),kind:p.kind,subject:p.subject||'',stage:p.stages?.[0]||'',core:state.briefs[key]||p.document?.content||p.document?.blocks?.map(block=>block.text).join('\n\n')||local(p.summary),purpose:form.goal,audience:form.audience,prior:local(p.teaching?.prior||p.prior),outcome:form.goal,setting:form.setting,boundary:[form.boundary,...(form.mechanisms||[]).map(value=>t(value))].filter(Boolean).join('\n'),reference:[p.projectCode||p.id,local(p.title)].filter(Boolean).join(' · ')}};
 }
 function aiApply(task,key,result){
+ if(task!=='prompt')state.draft.content=false;
  if(task==='prompt')state.briefs[key]=result.text;
  else for(const [name,value] of Object.entries(result.fields||{})){
   if(name==='subject'&&!subjects.includes(value)||name==='stage'&&!stages.includes(value))continue;
   if(['title','purpose','subject','stage','audience','prior','outcome','setting'].includes(name))state.draft[name]=value;
  }
+ if(task!=='prompt')refreshUploadValidation();
  render();
  if(task==='prompt')root.querySelector('#task-brief')?.focus({preventScroll:true});
  else if(task==='teaching'){const first=Object.keys(result.fields||{})[0];if(first)root.querySelector(`[data-draft="${first}"]`)?.focus({preventScroll:true});}
 }
 ai?.init({capture:aiCapture,apply:aiApply,busy:()=>state.busy||lifecycle?.busy});
-lifecycle?.init({render,record:id=>localRecords.find(p=>p.id===id),confirm:confirmAction,reloadLocal:reloadLocalWorkspace,showBackup});
+lifecycle?.init({render,edit:editProject,record:id=>localRecords.find(p=>p.id===id),confirm:confirmAction,reloadLocal:reloadLocalWorkspace,showBackup});
 render();
 if(accounts){
  accounts.init({

@@ -1,4 +1,5 @@
 import { ApiError } from './api.mjs';
+import '../assets/js/project-requirements.js';
 
 const MB = 1024 * 1024;
 export const PROJECT_LIMITS = Object.freeze({ requestBytes: 36 * MB, attachmentBytes: 10 * MB, coverBytes: 5 * MB, metadataBytes: MB, ownerBytes: 200 * MB, projectsPerOwner: 100, versionsPerProject: 100, pageSize: 24 });
@@ -131,7 +132,7 @@ export async function normalizeProjectVersion(id, input, limits = PROJECT_LIMITS
   for (const field of FIELDS) if (fileInput[field] && !manifest) checkFileSize(fileInput[field], field, limits);
   const files = {};
   for (const field of FIELDS) if (fileInput[field]) files[field] = manifest ? describeFile(fileInput[field], field, limits) : await decodeFile(fileInput[field], field, limits);
-  if (!files.attachment && !String(metadata.core || metadata.resultDescription || metadata.source || '').trim()) invalid('项目需要附件、Prompt 正文或成果说明。');
+  if (!files.attachment && !String(metadata.core || metadata.projectUrl || metadata.resultDescription || metadata.source || '').trim()) invalid('项目需要附件、项目链接、Prompt 正文或成果说明。');
   const fileManifest = Object.fromEntries(Object.entries(files).map(([field, { bytes, ...info }]) => [field, info]));
   return { projectId: id, projectCode, ...version, files, fingerprint: await sha256(canonicalJSON({ projectId:id,projectCode,...version,files:fileManifest })) };
 }
@@ -232,6 +233,15 @@ export async function handleProjectRequest(request, {user, provider, clientIp, u
       if (!input || Array.isArray(input) || !Object.hasOwn(input,'expectedVersionId') || input.expectedVersionId !== null && !validVersionId(input.expectedVersionId)) invalid('请提供当前公开版本，用于防止覆盖另一处更新。');
       if (method === 'POST') {
         if (!validVersionId(input.versionId)) invalid('请选择要发布的版本。');
+        // Read the owned immutable snapshot, rather than trusting fields on the
+        // publication request. The provider also rejects unfinished uploads.
+        const {version} = await provider.getVersion(user,id,input.versionId);
+        const issues = globalThis.TashanProjectRequirements.errors(version.metadata,version.files,{phase:'publish'});
+        if (issues.length) {
+          const error = projectError(422,'PUBLICATION_INCOMPLETE',`当前版本还不能公开：${issues[0].message}${issues.length > 1 ? ` 另有 ${issues.length - 1} 项待完善。` : ''}请在工作台编辑并保存新版本后重试。`);
+          error.fields = issues;
+          throw error;
+        }
         return response({project:await provider.publish(user,id,input)});
       }
       return response({project:await provider.unpublish(user,id,input)});
@@ -239,6 +249,6 @@ export async function handleProjectRequest(request, {user, provider, clientIp, u
     throw projectError(405,'METHOD_NOT_ALLOWED','项目接口不支持此操作。');
   } catch (error) {
     const safe = Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 && typeof error.code === 'string';
-    return response({error:{code:safe ? error.code : 'PROJECT_ERROR',message:safe ? error.message : '项目操作未完成，请稍后重试。'}},safe ? error.status : 500);
+    return response({error:{code:safe ? error.code : 'PROJECT_ERROR',message:safe ? error.message : '项目操作未完成，请稍后重试。',...(safe && error.code === 'PUBLICATION_INCOMPLETE' ? {fields:error.fields} : {})}},safe ? error.status : 500);
   }
 }

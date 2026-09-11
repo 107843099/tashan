@@ -78,6 +78,20 @@ test('automatic upload is default on, uses extracted text and fills empty requir
  const file={name:'earth-demo.html',binary:'PRIVATE FILE BYTES'};await f.setFile(file,{generatedTitle:true});
  assert.equal(f.requests.filter(x=>x.body).length,1);assert.equal(f.requests.at(-1).body.task,'upload');assert.equal(f.requests.at(-1).body.context.core,'Extracted teaching text about sunlight and seasons.');assert.doesNotMatch(JSON.stringify(f.requests.at(-1).body),/PRIVATE FILE BYTES|binary|license|tested|used/);
  assert.equal(f.data.core,'');assert.equal(f.data.title,uploadFields.title);assert.equal(f.data.purpose,'Keep this teacher wording');assert.equal(f.data.subject,'地理');assert.equal(f.applied.length,1);assert.match(f.html,/AI 预填，请核对/);assert.match(f.html,/未自动保存/);
+ assert.match(f.html,/可在下方直接修改/);assert.doesNotMatch(f.html,/请到下一步逐项核对/);assert.match(f.html,/仍需你亲自确认/);
+ assert.match(f.html,/<details class="ai-context ai-upload-review">/);assert.doesNotMatch(f.html,/data-ai-field="[^"]+" checked/,'Upload replacement suggestions are opt-in');
+});
+test('upload replacement suggestions require selecting fields and cannot silently replace teacher wording',async()=>{
+ const f=fixture({task:'upload',context:{core:'',purpose:'Teacher original',audience:'My class'}});await f.ready();await f.setFile({name:'lesson.html'});
+ assert.equal(f.data.purpose,'Teacher original');await f.click('apply');assert.equal(f.applied.length,1,'No selected fields causes no second application');
+ await f.select('purpose',true);await f.click('apply');assert.equal(f.applied.length,2);assert.deepEqual(f.applied[1].result.fields,{purpose:fields.purpose});
+ assert.equal(f.data.purpose,fields.purpose);assert.equal(f.data.audience,'My class');assert.doesNotMatch(f.html,/data-ai-review/);
+});
+test('upload browser rejects responses containing teacher-only confirmations instead of partially applying them',async()=>{
+ for(const extra of [{runtimeStatus:'working'},{tested:'DeepSeek'},{rightsConfirmed:true},{previewAuthentic:true},{privacyConfirmed:true},{humanReviewConfirmed:true}]){
+  const f=fixture({task:'upload',context:{core:''},respond:()=>({task:'upload',result:{fields:{...uploadFields,...extra}}})});await f.ready();await f.setFile({name:'lesson.html'});
+  assert.equal(f.applied.length,0);assert.match(f.html,/返回内容不完整/);
+ }
 });
 test('turning off automatic analysis sends nothing; manual analysis still works',async()=>{
  const f=fixture({task:'upload',context:{core:'',title:'User title'}});await f.ready();await f.toggle(false);await f.setFile({name:'file.html'});assert.equal(f.requests.filter(x=>x.body).length,0);await f.click('generate');assert.equal(f.requests.filter(x=>x.body).length,1);assert.equal(f.data.title,'User title');assert.doesNotMatch(f.html,/data-ai-auto checked/);
@@ -109,17 +123,20 @@ test('service configuration and malformed upstream errors remain specific withou
  }
 });
 
-test('actual app hooks wire both upload steps and Prompt adoption without saving or verification changes',async()=>{
+test('actual app hooks combine upload and teaching on the first step while keeping review and publishing free of AI mutations',async()=>{
  const catalog=JSON.parse(readFileSync(new URL('../data/generated/catalog.json',import.meta.url),'utf8'));
  const root={innerHTML:'',addEventListener(){},querySelector(){return null;}},calls=[];let hooks,saves=0;
  const ai={init:options=>{hooks=options;},markup:(task,key)=>{calls.push([task,key]);return '<div data-fixture-ai></div>';},mount:()=>{calls.push(['mount']);},reset(){},guide:()=> 'Configured AI assistance'};
  const env=vm.createContext({document:{documentElement:{lang:'zh-CN',dataset:{theme:'light'}},getElementById:id=>id==='practice-ui'?root:{focus(){}},querySelectorAll:()=>[]},location:{hash:'#upload'},localStorage:{getItem:()=>null,setItem(){}},sessionStorage:{getItem:()=>null},PRACTICE_LIBRARY:catalog,PRACTICE_TRANSLATIONS:{},PRACTICE_ICONS:{},TashanAI:ai,TashanAccounts:{initialized:true,user:{id:'test-member',status:'active'},header:()=>'',bind(){},init(){}},PracticeStore:{put:()=>{saves++;},putDraft:()=>{saves++;}},addEventListener(){},setTimeout,clearTimeout,URL,Blob});
  vm.runInContext('window=globalThis',env);
+ vm.runInContext(readFileSync(new URL('../assets/js/project-requirements.js',import.meta.url),'utf8'),env);
  let app=readFileSync(new URL('../assets/js/app.js',import.meta.url),'utf8');const end=app.lastIndexOf('})();');app=app.slice(0,end)+'window.appFixture={state,render};'+app.slice(end);vm.runInContext(app,env);
  assert.equal(typeof hooks.capture,'function');assert.ok(calls.some(([task])=>task==='upload'));assert.ok(calls.some(([task])=>task==='mount'));
- const draft=hooks.capture('upload','draft').target;Object.assign(draft,{core:'Original project source',used:'no',tested:'not tested',license:'unconfirmed'});
+ const draft=hooks.capture('upload','draft').target;Object.assign(draft,{core:'Original project source',used:'no',tested:'not tested',license:'unconfirmed',runtimeStatus:'',previewAuthentic:false,rightsConfirmed:false,privacyConfirmed:false,humanReviewConfirmed:false});
  hooks.apply('upload','draft',{fields:uploadFields});assert.equal(draft.core,'Original project source');assert.equal(draft.used,'no');assert.equal(draft.tested,'not tested');assert.equal(draft.license,'unconfirmed');assert.equal(saves,0);
- env.appFixture.state.step=2;env.appFixture.render();assert.ok(calls.some(([task])=>task==='teaching'));assert.equal(hooks.capture('upload','draft'),null);assert.equal(hooks.capture('teaching','draft').context.title,uploadFields.title);
+ assert.equal(hooks.capture('teaching','draft').context.title,uploadFields.title,'The merged upload page exposes editable teaching context');
+ for(const name of ['previewAuthentic','rightsConfirmed','privacyConfirmed','humanReviewConfirmed'])assert.equal(draft[name],false,'AI cannot confirm '+name);assert.equal(draft.runtimeStatus,'');
+ env.appFixture.state.step=2;env.appFixture.render();assert.equal(hooks.capture('upload','draft'),null);assert.equal(hooks.capture('teaching','draft'),null,'Final review does not invoke AI or alter confirmations');
  env.location.hash='#adapt/poetry';env.appFixture.render();const prompt=hooks.capture('prompt','poetry');assert.equal(prompt.context.core,catalog.projects.find(p=>p.id==='poetry').document.content);assert.equal(prompt.context.reference.includes('/Users'),false);hooks.apply('prompt','poetry',{text:'Refined task text'});assert.equal(env.appFixture.state.briefs.poetry,'Refined task text');assert.equal(saves,0);
  const index=readFileSync(new URL('../index.html',import.meta.url),'utf8');assert.ok(index.indexOf('assets/js/ai-extractor.js')<index.indexOf('assets/js/ai-assistant.js'));assert.ok(index.indexOf('assets/js/ai-assistant.js')<index.indexOf('assets/js/app.js'));assert.match(root.innerHTML,/Refined task text/);
 });
