@@ -1,5 +1,7 @@
 # 他山 · Tashan
 
+<img src="assets/brand/tashan-logo.webp" width="88" height="88" alt="他山 Logo">
+
 **以他山之石，琢教学之玉。**
 
 他山是一个面向教师的教学项目展示、创作与分享平台。你可以发现可视化实验和课堂 Prompt，结合学生的需要继续改编，再把自己的作品整理、保存并分享给其他教师。

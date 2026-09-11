@@ -152,7 +152,7 @@ def build() -> None:
     try:
         for page in PAGES:
             put(source_file(page), page)
-        for folder in ("js", "css", "data", "vendor"):
+        for folder in ("js", "css", "data", "vendor", "brand"):
             copy_runtime_tree(ROOT / "assets" / folder, "assets/" + folder)
         if (ROOT / "assets/icons/LICENSE").exists():
             put(source_file("assets/icons/LICENSE"), "assets/icons/LICENSE")

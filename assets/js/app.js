@@ -33,7 +33,7 @@ const t=(key,vars={})=>{let text=locale==='zh-CN'?key:(dictionaries[locale]?.[ke
 const e=value=>escapeHTML(value), txt=(key,vars)=>e(t(key,vars));
 const local=value=>value==null?'':typeof value==='object'?(value[locale]||value['zh-CN']||''):t(String(value));
 const icon=name=>icons[name]||'';
-const brandSymbol='<svg class="brand-symbol" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M6 23.5 8.5 10.5 16 5 24.5 10 27 23.5 17 28Z" fill="currentColor" opacity=".13"/><path d="m6 23.5 2.5-13L16 5l8.5 5 2.5 13.5L17 28Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="m9 21 5.5-9 3.5 6 3-4 3 7" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/><path d="m16 5-1.5 7M27 23.5 24 21M6 23.5 9 21" stroke="currentColor" stroke-width="1.15" opacity=".55"/><path d="m18 18 3-4 3 7-7 2Z" fill="#cde6b7" opacity=".8"/></svg>';
+const brandSymbol='<img class="brand-symbol" src="./assets/brand/tashan-logo.webp?v=9e7e73ba10" width="192" height="192" alt="" decoding="async">';
 const project=id=>projects.find(p=>p.id===id)||state.tasks[id]?.reference;
 const projectURL=id=>'#project/'+encodeURIComponent(id);
 function route(){let hash='';try{hash=decodeURIComponent(location.hash.slice(1));}catch{}const [requested,id]=hash.split('/'),view=requested==='publish'?'upload':requested;return {view:['discover','project','adapt','guide','desk','upload','login','account','admin','cloud'].includes(view)?view:'discover',id};}
